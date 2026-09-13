@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Swarm Intelligence Lab — V4</title>
+<style>
+:root{--bg:#05070b;--panel:rgba(8,12,20,.88);--line:rgba(255,255,255,.12);--text:#e8eef7;--muted:#8794a8;--accent:#6ee7ff}
+*{box-sizing:border-box;margin:0;padding:0;user-select:none}html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:12px/1.35 Inter,system-ui,-apple-system,Segoe UI,sans-serif}canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.panel{position:absolute;z-index:10;right:14px;top:14px;width:min(390px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:hidden;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(18px);box-shadow:0 20px 70px #000c}
+.head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;cursor:pointer}.title{font-weight:800;letter-spacing:.12em;text-transform:uppercase}.sub{color:var(--muted);font-size:10px;margin-top:3px}.head b{color:var(--accent)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);background:#0006}.tabs button{padding:10px 3px;border:0;background:none;color:#748198;font-size:10px;text-transform:uppercase;cursor:pointer}.tabs button.active{color:var(--accent);border-bottom:2px solid var(--accent);background:#6ee7ff0b}
+.body{padding:12px 14px;overflow:auto;max-height:calc(100vh - 116px)}.tab{display:none;gap:10px}.tab.active{display:flex;flex-direction:column}.row{display:flex;flex-direction:column;gap:5px}.label{display:flex;justify-content:space-between;color:#c9d2df}.value{font-family:ui-monospace,monospace;color:var(--accent)}input[type=range]{width:100%;accent-color:var(--accent)}select,input[type=text]{width:100%;padding:8px 9px;background:#101725;border:1px solid var(--line);border-radius:7px;color:#eef5ff;outline:none}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{padding:9px;border:1px solid var(--line);border-radius:8px;background:#111827;color:#dbe6f3;cursor:pointer;font-weight:700;font-size:10px;text-transform:uppercase}.btn:hover{border-color:#6ee7ff88}.btn.primary{border-color:#6ee7ff;background:#6ee7ff18;color:#6ee7ff}.btn.danger{border-color:#fb7185;background:#fb718514;color:#fb7185}.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.color{padding:7px;background:#0005;border:1px solid var(--line);border-radius:7px;text-align:center;font-size:9px}.color input{width:100%;height:30px;border:0;background:none}.stats{position:absolute;left:14px;bottom:14px;z-index:5;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#0008;backdrop-filter:blur(10px);font:10px ui-monospace,monospace;color:#aab5c5}.stats b{color:var(--accent)}.collapsed .tabs,.collapsed .body{display:none}.legend{padding:9px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:10px}.hint{position:absolute;left:50%;top:18px;transform:translateX(-50%);z-index:4;color:#718096;font-size:10px;letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
+@media(max-width:600px){.panel{right:8px;top:8px;width:calc(100vw - 16px)}.body{max-height:58vh}.hint{display:none}}
+:fullscreen .panel, :fullscreen .stats, :fullscreen .hint, :fullscreen #pointerStatus { display: none !important; }
+:-webkit-full-screen .panel, :-webkit-full-screen .stats, :-webkit-full-screen .hint, :-webkit-full-screen #pointerStatus { display: none !important; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<button id="fullscreenBtn" title="Fullscreen" style="
+position:fixed;right:18px;top:18px;z-index:50;
+width:42px;height:42px;border:1px solid rgba(255,255,255,.16);
+border-radius:10px;background:rgba(5,7,11,.72);color:#fff;
+font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
+<video id="input_video" style="display:none;" autoplay playsinline></video>
+<canvas id="c"></canvas>
+<div class="hint">MOVE MOUSE / TOUCH TO ATTRACT • HOLD CLICK / TOUCH TO REPEL</div><div id="pointerStatus" style="position:absolute;left:18px;bottom:18px;z-index:4;padding:7px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(5,7,11,.55);backdrop-filter:blur(8px);font:10px ui-monospace,monospace;color:#8794a8;pointer-events:none">MOUSE: READY</div>
+
+<section class="panel" id="panel">
+  <header class="head" id="toggle">
+    <div><div class="title">✦ Swarm Intelligence <b>LAB</b></div><div class="sub">Interactive algorithm visualizer · V4</div></div>
+    <span id="chev">▲</span>
+  </header>
+  <nav class="tabs">
+    <button class="active" data-tab="algorithm">Algorithm</button>
+    <button data-tab="population">Population</button>
+    <button data-tab="style">Shape & Color</button>
+    <button data-tab="advanced">Advanced</button>
+  </nav>
+  <main class="body">
+    <div class="tab active" id="algorithm">
+      <div class="row"><div class="label"><span>Swarm Algorithm</span></div>
+        <select id="algo">
+          <option value="boids">Boids / Reynolds Flocking</option>
+          <option value="pso">Particle Swarm Optimization (PSO)</option>
+          <option value="mopso">Multi-Objective PSO</option>
+          <option value="aco">Ant Colony Optimization (ACO)</option>
+          <option value="abc">Artificial Bee Colony (ABC)</option>
+          <option value="gwo">Grey Wolf Optimizer (GWO)</option>
+          <option value="woa">Whale Optimization Algorithm (WOA)</option>
+          <option value="fa">Firefly Algorithm</option>
+          <option value="bfo">Bacterial Foraging Optimization</option>
+          <option value="afs">Artificial Fish Swarm</option>
+        </select>
+      </div>
+      <div class="legend" id="desc">Collective motion using separation, alignment and cohesion.</div>
+      <div class="row"><div class="label"><span>Exploration</span><span class="value" id="vExplore">0.65</span></div><input id="explore" type="range" min="0" max="1" step=".01" value=".65"></div>
+      <div class="row"><div class="label"><span>Social / Attraction</span><span class="value" id="vSocial">0.70</span></div><input id="social" type="range" min="0" max="1.5" step=".01" value=".70"></div>
+      <div class="row"><div class="label"><span>Convergence</span><span class="value" id="vConv">0.45</span></div><input id="conv" type="range" min="0" max="1.5" step=".01" value=".45"></div>
+      <div class="grid"><button class="btn primary" id="pause">Pause</button><button class="btn" id="reset">Reset</button></div>
+    </div>
+
+    <div class="tab" id="population">
+      <div class="row"><div class="label"><span>Population</span><span class="value" id="vCount">700</span></div><input id="count" type="range" min="80" max="1800" step="20" value="700"></div>
+      <div class="row"><div class="label"><span>Particle Speed</span><span class="value" id="vSpeed">5.0</span></div><input id="speed" type="range" min="1" max="12" step=".1" value="5"></div>
+      <div class="row"><div class="label"><span>Neighborhood Radius</span><span class="value" id="vRadius">75</span></div><input id="radius" type="range" min="20" max="180" step="1" value="75"></div>
+      <div class="row"><div class="label"><span>Separation</span><span class="value" id="vSep">1.8</span></div><input id="sep" type="range" min="0" max="4" step=".05" value="1.8"></div>
+      <div class="row"><div class="label"><span>Trail</span><span class="value" id="vTrail">0.18</span></div><input id="trail" type="range" min=".03" max=".6" step=".01" value=".18"></div>
+    </div>
+
+    <div class="tab" id="style">
+      <div class="row"><div class="label"><span>Shape</span></div>
+        <select id="shape">
+          <option value="circle">Circle</option><option value="ring">Ring</option><option value="square">Square</option>
+          <option value="diamond">Diamond</option><option value="triangle">Triangle</option><option value="star">Star</option>
+          <option value="hex">Hexagon</option><option value="cross">Cross</option><option value="arrow">Arrow</option>
+          <option value="capsule">Capsule</option><option value="spark">4-Point Spark</option><option value="line">Needle / Line</option>
+        </select>
+      </div>
+      <div class="row"><div class="label"><span>Color Mode</span></div>
+        <select id="colorMode"><option value="gradient">3-Color Gradient</option><option value="speed">Speed Heatmap</option><option value="rainbow">Rainbow</option><option value="state">Algorithm State</option><option value="mono">Monochrome</option></select>
+      </div>
+      <div class="colors"><div class="color">A<input type="color" id="ca" value="#00e5ff"></div><div class="color">B<input type="color" id="cb" value="#7c3aed"></div><div class="color">C<input type="color" id="cc" value="#ff3d81"></div></div>
+      <div class="row"><div class="label"><span>Particle Size</span><span class="value" id="vSize">1.4</span></div><input id="size" type="range" min=".4" max="3.5" step=".1" value="1.4"></div>
+      <div class="row"><div class="label"><span>Glow</span><span class="value" id="vGlow">28</span></div><input id="glow" type="range" min="0" max="80" step="1" value="28"></div>
+      <div class="row"><div class="label"><span>Glow Opacity</span><span class="value" id="vAlpha">0.65</span></div><input id="alpha" type="range" min="0" max="1" step=".01" value=".65"></div>
+    </div>
+
+    <div class="tab" id="advanced">
+      <div class="row"><div class="label"><span>Objective Landscape</span></div>
+        <select id="landscape"><option value="multi">Multi-Well</option><option value="sphere">Sphere</option><option value="rastrigin">Rastrigin</option><option value="rosenbrock">Rosenbrock</option><option value="waves">Wave Field</option></select>
+      </div>
+      <div class="row"><div class="label"><span>Objective Pull</span><span class="value" id="vObj">0.60</span></div><input id="obj" type="range" min="0" max="1.5" step=".01" value=".60"></div>
+      <div class="row"><div class="label"><span>Mouse Influence</span><span class="value" id="vMouse">0.70</span></div><input id="mouse" type="range" min="0" max="2" step=".01" value=".70"></div>
+      <div class="row"><div class="label"><span>Interaction Reach</span><span class="value" id="vReach">400</span></div><input id="reach" type="range" min="100" max="1500" step="10" value="400"></div>
+      <div class="row"><div class="label"><span>Depth / Perspective</span><span class="value" id="vDepth">0.55</span></div><input id="depth" type="range" min="0" max="1" step=".01" value=".55"></div>
+      <div class="grid"><button class="btn primary" id="save">Save Preset</button><button class="btn danger" id="random">Randomize</button></div>
+      <div class="grid"><button class="btn" id="clear">Clear Trails</button><button class="btn" id="defaults">Defaults</button></div>
+      <div class="legend">Tip: For PSO/GWO/WOA/ABC, the brighter particles represent stronger candidate solutions. The objective field is intentionally visual and interactive rather than a scientific benchmark.</div>
+      <div class="grid" style="margin-top:8px"><button class="btn" id="handTrackBtn" style="border-color:#8b5cf6; color:#8b5cf6">🤚 Hand Tracking</button><button class="btn" id="audioBtn" style="border-color:#10b981; color:#10b981">🎤 Audio React</button></div>
+      <div class="grid" style="margin-top:8px"><button class="btn" id="recordBtn" style="grid-column: 1 / -1; border-color:#ef4444; color:#ef4444">🔴 Record Video</button></div>
+    </div>
+  </main>
+</section>
+
+<div class="stats">ALGO <b id="sAlgo">BOIDS</b> · AGENTS <b id="sCount">0</b> · FPS <b id="fps">0</b><br>BEST FITNESS <b id="best">—</b> · <span id="state">RUNNING</span></div>
+
+<script>
+(()=> {
+const c=document.getElementById('c'),x=c.getContext('2d'); let W,H,dpr=1,paused=false,t=0,frames=0,last=performance.now(),fpsAccum=0;
+const D={algo:'boids',count:700,speed:5,radius:75,sep:1.8,trail:.18,explore:.65,social:.70,conv:.45,shape:'circle',colorMode:'gradient',ca:'#00e5ff',cb:'#7c3aed',cc:'#ff3d81',size:1.4,glow:28,alpha:.65,landscape:'multi',obj:.60,mouse:.70,reach:400,depth:.55};
+let q={...D}, p=[], pointer={x:innerWidth/2,y:innerHeight/2,prevX:innerWidth/2,prevY:innerHeight/2,vx:0,vy:0,down:false,active:false,mode:'open',blast:0}, activeHands=[], best=0, grid={}, gridSize=75;
+let audioCtx, analyser, audioData, mediaRecorder, recordedChunks=[];
+const desc={boids:'Collective motion using separation, alignment and cohesion.',pso:'Particles share personal-best and global-best information.',mopso:'Multi-objective PSO visualizes a Pareto-like set of competing solutions.',aco:'Agents reinforce attractive routes and converge toward strong paths.',abc:'Employed, onlooker and scout behavior balances exploitation and exploration.',gwo:'Alpha, beta and delta leaders guide the rest of the pack.',woa:'Agents spiral and encircle promising solutions like whales.',fa:'Fireflies move toward brighter / better candidates.',bfo:'Bacteria chemotax toward favorable regions while exploring new areas.',afs:'Fish school, chase, follow and search for promising regions.'};
+const $=id=>document.getElementById(id);
+function resize(){W=innerWidth;H=innerHeight;dpr=Math.min(devicePixelRatio||1,2);c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';x.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',resize);resize();
+function rgb(h){h=h.replace('#','');let n=parseInt(h,16);return[n>>16&255,n>>8&255,n&255]} function mix(a,b,k){return a.map((v,i)=>v+(b[i]-v)*k)} function col(a){return `rgb(${a.map(v=>Math.max(0,Math.min(255,v|0))).join(',')})`}
+function objective(X,Y){let nx=(X-W/2)/(Math.min(W,H)*.45),ny=(Y-H/2)/(Math.min(W,H)*.45);let v;
+if(q.landscape==='sphere')v=nx*nx+ny*ny; else if(q.landscape==='rastrigin')v=20+nx*nx+ny*ny-10*(Math.cos(18*nx)+Math.cos(18*ny)); else if(q.landscape==='rosenbrock')v=(1-nx)**2+100*(ny-nx*nx)**2; else if(q.landscape==='waves')v=Math.sin(nx*5+t*.4)*Math.cos(ny*5-t*.3)+.35*(nx*nx+ny*ny); else v=Math.sin(nx*4)**2+Math.cos(ny*5)**2+.18*(nx*nx+ny*ny);
+return v}
+function buildGrid(){grid={};gridSize=Math.max(q.radius,20);for(let i=0;i<p.length;i++){let a=p[i],cx=(a.x/gridSize)|0,cy=(a.y/gridSize)|0,key=cx+','+cy;if(!grid[key])grid[key]=[];grid[key].push(a)}}
+function getNeighbors(a){let cx=(a.x/gridSize)|0,cy=(a.y/gridSize)|0,result=[];for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){let key=(cx+dx)+','+(cy+dy);if(grid[key])for(let o of grid[key])if(o!==a)result.push(o)}return result}
+function curlNoise(px,py,time){let s=.003;return(Math.sin(px*s+time*.8)*Math.cos(py*s*.9+time*.6)+Math.cos(px*s*1.2-time*.5)*Math.sin(py*s*1.1+time*.7))*Math.PI}
+const gCv=document.createElement("canvas"),gCx=gCv.getContext("2d");gCv.width=gCv.height=128;
+(function(){let h=64,g=gCx.createRadialGradient(h,h,0,h,h,h);g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(.15,"rgba(255,255,255,.9)");g.addColorStop(.35,"rgba(255,255,255,.45)");g.addColorStop(.65,"rgba(255,255,255,.15)");g.addColorStop(1,"rgba(255,255,255,0)");gCx.fillStyle=g;gCx.beginPath();gCx.arc(h,h,h,0,Math.PI*2);gCx.fill()})();
+const gCa=new Map();function getGlow(r,g,b){let k=`${r=Math.round(r/12)*12}_${g=Math.round(g/12)*12}_${b=Math.round(b/12)*12}`;if(gCa.has(k))return gCa.get(k);let c=document.createElement("canvas"),x=c.getContext("2d");c.width=c.height=128;x.fillStyle=`rgb(${r},${g},${b})`;x.fillRect(0,0,128,128);x.globalCompositeOperation="destination-in";x.drawImage(gCv,0,0);gCa.set(k,c);return c}
+class Agent{
+constructor(){this.reset()}
+reset(){this.x=Math.random()*W;this.y=Math.random()*H;let a=Math.random()*6.28,s=q.speed*(.5+Math.random());this.vx=Math.cos(a)*s;this.vy=Math.sin(a)*s;this.bestX=this.x;this.bestY=this.y;this.fit=Infinity;this.phase=Math.random();this.life=Math.random();this.z=.65+Math.random()*.7}
+update(){
+let A=q.algo, R=q.radius, mf=.45, ms=q.speed*(1.3+q.explore*.7);
+// --- Neighbor forces (separation / alignment / cohesion) ---
+let sx=0,sy=0,nSep=0, ax=0,ay=0,nAli=0, cx=0,cy=0,nCoh=0;
+let rSep2=(q.sep*12*this.z)**2, rNb2=(R*this.z)**2;
+let nb=getNeighbors(this);
+for(let j=0;j<nb.length;j++){let o=nb[j];let dx=o.x-this.x,dy=o.y-this.y,d2=dx*dx+dy*dy;
+if(d2>rNb2||d2===0)continue;
+if(d2<rSep2){sx-=dx/d2;sy-=dy/d2;nSep++}
+else if(nAli<9){ax+=o.vx;ay+=o.vy;nAli++;cx+=o.x;cy+=o.y;nCoh++}}
+let fx=0,fy=0;
+// 1. Separation (Reynolds Steering)
+if(nSep>0){let m=Math.hypot(sx,sy);if(m>0){
+let dx=(sx/m)*ms-this.vx,dy=(sy/m)*ms-this.vy,dmag=Math.hypot(dx,dy);
+if(dmag>mf){dx=(dx/dmag)*mf;dy=(dy/dmag)*mf;}
+fx+=dx*q.explore*2.5;fy+=dy*q.explore*2.5;}}
+// 2. Alignment (Reynolds Steering)
+if(nAli>0){ax/=nAli;ay/=nAli;let am=Math.hypot(ax,ay);if(am>0){
+let dx=(ax/am)*ms-this.vx,dy=(ay/am)*ms-this.vy,dmag=Math.hypot(dx,dy);
+if(dmag>mf){dx=(dx/dmag)*mf;dy=(dy/dmag)*mf;}
+fx+=dx*q.social*0.85;fy+=dy*q.social*0.85;}}
+// 3. Cohesion (Reynolds Steering)
+if(nCoh>0){cx=(cx/nCoh)-this.x;cy=(cy/nCoh)-this.y;let cm=Math.hypot(cx,cy);if(cm>0){
+let dx=(cx/cm)*ms-this.vx,dy=(cy/cm)*ms-this.vy,dmag=Math.hypot(dx,dy);
+if(dmag>mf){dx=(dx/dmag)*mf;dy=(dy/dmag)*mf;}
+fx+=dx*q.conv*0.6;fy+=dy*q.conv*0.6;}}
+// --- Algorithm-specific forces ---
+if(A!=='boids'){
+let od=objective(this.x,this.y),improved=od<this.fit;if(improved){this.fit=od;this.bestX=this.x;this.bestY=this.y}
+let gx=W/2,gy=H/2;
+let bestA=p.reduce((m,z)=>z.fit<m.fit?z:m,this);if(bestA){gx=bestA.bestX;gy=bestA.bestY}
+let k=q.social*(A==='gwo'?.8:A==='woa'?1.1:A==='fa'?1.25:1);
+if(A==='aco'||A==='abc')k*=.75;if(A==='bfo')k*=.55;if(A==='afs')k*=.9;
+fx+=(this.bestX-this.x)*q.conv*.004+(gx-this.x)*k*.0015;
+fy+=(this.bestY-this.y)*q.conv*.004+(gy-this.y)*k*.0015;
+if(A==='woa'){let ang=t*.8+this.phase*6.28,rad=Math.hypot(gx-this.x,gy-this.y);fx+=Math.cos(ang)*rad*.0015;fy+=Math.sin(ang)*rad*.0015}
+if(A==='fa'){let br=Math.max(0,1/(1+od));fx+=(gx-this.x)*br*.004;fy+=(gy-this.y)*br*.004}
+if(A==='gwo'){fx+=(gx-this.x)*.003*(.5+.5*Math.sin(t+this.phase));fy+=(gy-this.y)*.003*(.5+.5*Math.cos(t+this.phase))}
+if(A==='mopso'){fx+=(Math.sin(this.phase*20+t)-.5)*.4;fy+=(Math.cos(this.phase*17-t)-.5)*.4}
+if(A==='aco'){fx+=Math.sin((this.x+this.y)*.015+t)*.6;fy+=Math.cos((this.x-this.y)*.015-t)*.6}
+}
+// 4. Pointer interaction — multi-gesture
+let bx=0,by=0;
+let interactors = [];
+if(pointer.active) interactors.push(pointer);
+if(activeHands.length > 0) interactors.push(...activeHands);
+if(interactors.length === 0) interactors.push(pointer);
+for(let pt of interactors){
+let mx=pt.x-this.x,my=pt.y-this.y,md=Math.hypot(mx,my);
+if(md>0){
+if(pt.blast>0&&md<q.reach*1.5){let bp=(pt.blast/20)*50;bx-=(mx/md)*bp;by-=(my/md)*bp}
+if(pt.mode==='grab'){
+if(md<q.reach*1.25){let pull=1.8*ms*(1-md/(q.reach*1.25));fx+=(mx/md)*pull;fy+=(my/md)*pull}
+}else if(pt.mode==='vortex'){
+if(md<q.reach){let v=(1-md/q.reach)*ms*1.6;fx+=-(my/md)*v;fy+=(mx/md)*v}
+}else if(pt.mode==='repel'||pt.down){
+if(md<q.reach*0.85){let rep=(1-md/(q.reach*0.85))*12*q.mouse;fx-=(mx/md)*rep*ms;fy-=(my/md)*rep*ms}
+}else{
+let pull=q.mouse*0.5*(1.0+Math.pow(md/q.reach,1.6));
+let dx=(mx/md)*ms-this.vx,dy=(my/md)*ms-this.vy,dmag=Math.hypot(dx,dy);
+if(dmag>mf){dx=(dx/dmag)*mf;dy=(dy/dmag)*mf;}
+fx+=dx*pull;fy+=dy*pull;
+let swirl=q.mouse*1.15;
+let tx=(-my/md)*ms-this.vx,ty=(mx/md)*ms-this.vy,tmag=Math.hypot(tx,ty);
+if(tmag>mf){tx=(tx/tmag)*mf;ty=(ty/tmag)*mf;}
+fx+=tx*swirl;fy+=ty*swirl;
+}}}
+fx+=bx; fy+=by;
+// 5. Curl noise turbulence
+let audioLvl=0; if(audioData){analyser.getByteFrequencyData(audioData); audioLvl=audioData[(this.phase*audioData.length)|0]/255;}
+let cn=curlNoise(this.x,this.y,t);
+fx+=Math.cos(cn)*q.explore*mf*(1.6 + audioLvl*4);
+fy+=Math.sin(cn)*q.explore*mf*(1.6 + audioLvl*4);
+// 6. Boundary leashing
+let pad=70;
+if(this.x<pad)fx+=mf*2.5*((pad-this.x)/pad);
+if(this.x>W-pad)fx-=mf*2.5*((this.x-(W-pad))/pad);
+if(this.y<pad)fy+=mf*2.5*((pad-this.y)/pad);
+if(this.y>H-pad)fy-=mf*2.5*((this.y-(H-pad))/pad);
+// --- Velocity integration ---
+this.vx+=fx;this.vy+=fy;
+let spd=Math.hypot(this.vx,this.vy);
+if(spd>ms){this.vx=(this.vx/spd)*ms;this.vy=(this.vy/spd)*ms}
+else{let minSpd=ms*.5;if(spd<minSpd&&spd>0){this.vx=(this.vx/spd)*minSpd;this.vy=(this.vy/spd)*minSpd}}
+this.x+=this.vx+bx;this.y+=this.vy+by;
+if(this.x<-30)this.x=W+30;if(this.x>W+30)this.x=-30;if(this.y<-30)this.y=H+30;if(this.y>H+30)this.y=-30;
+}
+color(){let A=rgb(q.ca),B=rgb(q.cb),C=rgb(q.cc),k=(this.x/W*.55+this.y/H*.45+this.phase*.2)%1;if(k<0)k+=1;
+if(q.colorMode==='speed'){let s=Math.min(1,Math.hypot(this.vx,this.vy)/(q.speed*1.5));return [Math.round(255*s),Math.round(90+150*(1-s)),255-Math.round(150*s)]}
+if(q.colorMode==='rainbow'){let h=(k*360+t*25)%360;return hsv(h,1,1)}
+if(q.colorMode==='mono')return mix(A,[255,255,255],.45);
+if(q.colorMode==='state'){let aa=q.algo==='boids'?A:q.algo==='pso'||q.algo==='mopso'?B:q.algo==='gwo'||q.algo==='woa'?C:[120,255,150];return aa}
+return k<.5?mix(A,B,k*2):mix(B,C,(k-.5)*2)}
+drawGlow(cc){if(!q.glow)return;let gd=q.glow*this.z*(q.size*.85);if(audioData)gd*=1+(audioData[(this.phase*audioData.length)|0]/255)*1.5;let sp=getGlow(cc[0],cc[1],cc[2]);x.save();x.globalAlpha=q.alpha*.65*this.z;x.drawImage(sp,this.x-gd*.5,this.y-gd*.5,gd,gd);x.restore()}
+drawBody(cc,pr){let spd=Math.hypot(this.vx,this.vy);let s=q.size*this.z;if(audioData)s*=1+(audioData[(this.phase*audioData.length)|0]/255)*1.5;let ang=Math.atan2(this.vy,this.vx);x.save();x.translate(this.x,this.y);x.scale(1,1-pr*.45);x.rotate(ang);x.fillStyle=`rgb(${Math.round(cc[0]+(255-cc[0])*.6)},${Math.round(cc[1]+(255-cc[1])*.6)},${Math.round(cc[2]+(255-cc[2])*.6)})`;shape(q.shape,s,spd);x.restore()}
+}
+function hsv(h,s,v){let f=(n,k=(n+h/60)%6)=>v-v*s*Math.max(Math.min(k,4-k,1),0);return [f(5)*255,f(3)*255,f(1)*255]}
+function shape(sh,s,v=0){x.beginPath();if(sh==='lantern'){x.roundRect(-4.8*s-v,-1.8*s,9.6*s+v,3.6*s,1.4*s)}else if(sh==='starling'){x.moveTo(8*s,0);x.lineTo(-6*s-v,-3.5*s);x.lineTo(-3*s-v,0);x.lineTo(-6*s-v,3.5*s)}else if(sh==='drone'){x.roundRect(-v-2.8*s,-2.8*s,v+5.6*s,5.6*s,2.8*s)}else if(sh==='fiber'){x.rect(-10*s-v,-s,20*s+v,2*s)}else if(sh==='circle'){x.roundRect(-v-3*s,-3*s,v+6*s,6*s,3*s)}else if(sh==='ring'){x.roundRect(-v-4*s,-4*s,v+8*s,8*s,4*s);x.strokeStyle=x.fillStyle;x.lineWidth=s;x.stroke();return}else if(sh==='square'){x.rect(-3*s-v,-3*s,6*s+v,6*s)}else if(sh==='diamond'){x.moveTo(5*s,0);x.lineTo(0,3*s);x.lineTo(-5*s-v,0);x.lineTo(0,-3*s)}else if(sh==='triangle'){x.moveTo(5*s,0);x.lineTo(-4*s-v,3.5*s);x.lineTo(-4*s-v,-3.5*s)}else if(sh==='star'||sh==='spark'){for(let i=0;i<(sh==='star'?10:8);i++){let r=i%2?2*s:5*s,a=i*Math.PI/5-Math.PI/2,dx=Math.cos(a)*r,dy=Math.sin(a)*r;if(dx<0)dx-=v;x.lineTo(dx,dy)}}else if(sh==='hex'){for(let i=0;i<6;i++){let a=i*Math.PI/3,dx=Math.cos(a)*4*s;if(dx<0)dx-=v;x.lineTo(dx,Math.sin(a)*4*s)}}else if(sh==='cross'){x.rect(-s,-5*s,2*s,10*s);x.rect(-5*s-v,-s,10*s+v,2*s)}else if(sh==='arrow'){x.moveTo(6*s,0);x.lineTo(-3*s-v,4*s);x.lineTo(-1*s-v,0);x.lineTo(-3*s-v,-4*s)}else if(sh==='capsule'){x.roundRect(-5*s-v,-2*s,10*s+v,4*s,2*s)}else{x.rect(-6*s-v,-.8*s,12*s+v,1.6*s)}x.closePath();x.fill()}
+function sync(){while(p.length<q.count)p.push(new Agent());if(p.length>q.count)p.length=q.count;$('sCount').textContent=p.length;$('sAlgo').textContent=q.algo.toUpperCase();Object.entries({count:'Count',speed:'Speed',radius:'Radius',sep:'Sep',trail:'Trail',explore:'Explore',social:'Social',conv:'Conv',size:'Size',glow:'Glow',alpha:'Alpha',obj:'Obj',mouse:'Mouse',reach:'Reach',depth:'Depth'}).forEach(([k,n])=>{let e=$(k),v=$('v'+n);if(e)e.value=q[k];if(v)v.textContent=typeof q[k]==='number'?q[k].toFixed(k==='count'||k==='radius'||k==='glow'||k==='reach'?0:2):q[k]});$('algo').value=q.algo;$('shape').value=q.shape;$('colorMode').value=q.colorMode;$('landscape').value=q.landscape;$('ca').value=q.ca;$('cb').value=q.cb;$('cc').value=q.cc;$('desc').textContent=desc[q.algo]}
+function reset(){p=[];sync()}
+function loop(now){let dt=now-last;last=now;frames++;fpsAccum+=dt;if(fpsAccum>=1000){$('fps').textContent=Math.round(frames*1000/fpsAccum);frames=0;fpsAccum=0}
+if(!paused){t+=.014;
+// Auto-wander pointer when mouse isn't active
+if(!pointer.active){pointer.x=W/2+Math.cos(t*.7)*(W*.32);pointer.y=H/2+Math.sin(t*.95)*(H*.25)}
+pointer.vx*=.85;pointer.vy*=.85;
+x.globalCompositeOperation='source-over';x.fillStyle=`rgba(1,2,4,${q.trail})`;x.fillRect(0,0,W,H);buildGrid();for(let a of p)a.update();
+p.sort((a,b)=>a.z-b.z);let ccs=p.map(a=>a.color());
+x.globalCompositeOperation='lighter';for(let i=0;i<p.length;i++)p[i].drawGlow(ccs[i]);
+x.globalCompositeOperation='source-over';let pr=(q.depth||.5)*.8;for(let i=0;i<p.length;i++)p[i].drawBody(ccs[i],pr);
+let actInt = pointer.active ? [pointer, ...activeHands] : activeHands;
+for(let pt of actInt){
+  if(pt.blast>0) pt.blast--;
+  x.save();x.globalCompositeOperation='lighter';
+  let targetSize = pt.mode === 'grab' ? 24 : pt.mode === 'vortex' ? 80 : pt.mode === 'repel' ? 120 : 45;
+  pt.visSize = (pt.visSize || 45) + (targetSize - (pt.visSize || 45)) * 0.15;
+  let mc = pt.mode === 'grab' ? [255,40,120] : pt.mode === 'vortex' ? [40,200,255] : pt.mode === 'repel' ? [255,200,40] : [150,160,180];
+  pt.visC = pt.visC || [150,160,180];
+  pt.visC[0] += (mc[0]-pt.visC[0])*.1; pt.visC[1] += (mc[1]-pt.visC[1])*.1; pt.visC[2] += (mc[2]-pt.visC[2])*.1;
+  let sp = getGlow(pt.visC[0], pt.visC[1], pt.visC[2]), vs = pt.visSize;
+  if(pt.mode==='vortex'){x.translate(pt.x,pt.y);x.rotate(t*4);x.drawImage(sp,-vs/2,-vs/2,vs,vs)}
+  else{x.drawImage(sp,pt.x-vs/2,pt.y-vs/2,vs,vs)}
+  x.restore();
+}
+best=Infinity;for(let i=0;i<p.length;i++){let f=p[i].fit;if(Number.isFinite(f)&&f<best)best=f}$('best').textContent=Number.isFinite(best)?best.toFixed(3):'—'}requestAnimationFrame(loop)}
+for(let b of document.querySelectorAll('.tabs button'))b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(z=>z.classList.remove('active'));document.querySelectorAll('.tab').forEach(z=>z.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active')};
+$('toggle').onclick=()=>{$('panel').classList.toggle('collapsed');$('chev').textContent=$('panel').classList.contains('collapsed')?'▼':'▲'};
+const ranges=['count','speed','radius','sep','trail','explore','social','conv','size','glow','alpha','obj','mouse','reach','depth'];
+ranges.forEach(k=>$(k).oninput=e=>{q[k]=+e.target.value;sync()});
+$('algo').onchange=e=>{q.algo=e.target.value;reset();sync()};$('shape').onchange=e=>q.shape=e.target.value;$('colorMode').onchange=e=>{q.colorMode=e.target.value;gCa.clear()};
+['ca','cb','cc'].forEach(k=>$(k).oninput=e=>{q[k]=e.target.value;gCa.clear()});$('landscape').onchange=e=>q.landscape=e.target.value;
+$('pause').onclick=()=>{paused=!paused;$('pause').textContent=paused?'Resume':'Pause';$('state').textContent=paused?'PAUSED':'RUNNING'};
+$('reset').onclick=reset;$('clear').onclick=()=>{x.fillStyle='#05070b';x.fillRect(0,0,W,H)};
+$('random').onclick=()=>{q.ca='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');q.cb='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');q.cc='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');q.shape=['circle','ring','square','diamond','triangle','star','hex','cross','arrow','capsule','spark','line'][Math.floor(Math.random()*12)];q.algo=['boids','pso','mopso','aco','abc','gwo','woa','fa','bfo','afs'][Math.floor(Math.random()*10)];sync();reset()};
+$('defaults').onclick=()=>{q={...D};sync();reset()};
+$('save').onclick=()=>{localStorage.setItem('swarmLabV2',JSON.stringify(q));$('save').textContent='Saved ✓';setTimeout(()=>$('save').textContent='Save Preset',1000)};
+try{Object.assign(q,JSON.parse(localStorage.getItem('swarmLabV2')||'{}'))}catch(e){}
+/* Robust mouse + touch interaction */
+function setPointer(e){
+  pointer.prevX=pointer.x;pointer.prevY=pointer.y;
+  const r=c.getBoundingClientRect();
+  pointer.x=(e.clientX-r.left)*(W/r.width);
+  pointer.y=(e.clientY-r.top)*(H/r.height);
+  pointer.vx=pointer.x-pointer.prevX;pointer.vy=pointer.y-pointer.prevY;
+  pointer.active=true;
+}
+c.style.touchAction='none';
+window.addEventListener('pointermove',e=>{ if(e.pointerType==='mouse' || e.pointerType==='touch' || e.pointerType==='pen') setPointer(e); });
+window.addEventListener('pointerdown',e=>{
+  if(e.target.closest && e.target.closest('.panel')) return;
+  setPointer(e);
+  pointer.down=true;
+  if(e.pointerId!=null && c.setPointerCapture){
+    try{c.setPointerCapture(e.pointerId)}catch(_){}
+  }
+});
+window.addEventListener('pointerup',e=>{
+  pointer.down=false;
+  if(e.pointerId!=null && c.releasePointerCapture){
+    try{c.releasePointerCapture(e.pointerId)}catch(_){}
+  }
+});
+window.addEventListener('pointercancel',()=>pointer.down=false);
+window.addEventListener('blur',()=>{pointer.down=false;});
+window.addEventListener('mouseleave',()=>{pointer.active=false;pointer.down=false;const ps=document.getElementById('pointerStatus');if(ps)ps.textContent='MOUSE: READY'});
+
+/* Mouse/touch interaction strength is now clearly visible */
+/* Hand Tracking & Expanded Features */
+let handTrackingEnabled=false, camera=null;
+const videoElement=$('input_video'), handBtn=$('handTrackBtn');
+function onResults(results) {
+  if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+    let newHands = [];
+    for(let i=0; i<results.multiHandLandmarks.length; i++){
+      const lm = results.multiHandLandmarks[i], wrist = lm[0], palm = lm[9];
+      let nx = (1-palm.x - 0.5) * 1.6 + 0.5;
+      let ny = (palm.y - 0.5) * 1.6 + 0.5;
+      let pt = activeHands[i] || {x:nx*W,y:ny*H,prevX:nx*W,prevY:ny*H,vx:0,vy:0,mode:'open',down:false,active:true,gestureFrames:0,lastGesture:'open',blast:0};
+      pt.prevX=pt.x; pt.prevY=pt.y;
+      pt.x += ((nx*W) - pt.x)*0.45; pt.y += ((ny*H) - pt.y)*0.45;
+      pt.vx=pt.x-pt.prevX; pt.vy=pt.y-pt.prevY;
+      const d=(i)=>Math.hypot(lm[i].x-wrist.x,lm[i].y-wrist.y,lm[i].z-wrist.z);
+      const mcp=(i)=>Math.hypot(lm[i-3].x-wrist.x,lm[i-3].y-wrist.y,lm[i-3].z-wrist.z);
+      const iExt=d(8)>mcp(8), mExt=d(12)>mcp(12), rExt=d(16)>mcp(16), pExt=d(20)>mcp(20);
+      const pinchD = Math.hypot(lm[8].x-lm[4].x,lm[8].y-lm[4].y,lm[8].z-lm[4].z);
+      
+      let state = 'open';
+      if(pinchD < 0.05) state = 'repel';
+      else if(!iExt && !mExt && !rExt && !pExt) state = 'grab';
+      else if(iExt && mExt && !rExt && !pExt) state = 'vortex';
+      
+      if(state === pt.lastGesture) pt.gestureFrames++;
+      else { pt.gestureFrames=0; pt.lastGesture=state; }
+      if(pt.gestureFrames > 2) {
+        if(pt.mode === 'grab' && state !== 'grab') pt.blast = 20;
+        pt.mode = state; pt.down = (state==='repel'); 
+      }
+      newHands.push(pt);
+    }
+    activeHands = newHands;
+    let ps=$('pointerStatus'); if(ps)ps.textContent=`HANDS: ${activeHands.length} DETECTED`;
+  } else {
+    activeHands = [];
+    let ps=$('pointerStatus'); if(ps)ps.textContent='HAND: NO DETECT';
+  }
+}
+if(handBtn) handBtn.onclick=async()=>{
+  if(handTrackingEnabled)return;
+  handBtn.textContent='Loading Camera...';
+  handTrackingEnabled=true;
+  try{
+    const hands=new Hands({locateFile:(file)=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+    hands.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:0.5,minTrackingConfidence:0.5});
+    hands.onResults(onResults);
+    camera=new Camera(videoElement,{onFrame:async()=>{await hands.send({image:videoElement})},width:640,height:480});
+    camera.start();
+    handBtn.textContent='🤚 Hands Active';
+    handBtn.style.background='#8b5cf633';
+  }catch(e){console.error(e);handBtn.textContent='Camera Error';handTrackingEnabled=false;}
+};
+$('audioBtn').onclick=async()=>{
+  if(audioCtx)return;
+  $('audioBtn').textContent='Loading Mic...';
+  try{
+    let stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser(); analyser.fftSize = 256;
+    audioData = new Uint8Array(analyser.frequencyBinCount);
+    let source = audioCtx.createMediaStreamSource(stream);
+    source.connect(analyser);
+    $('audioBtn').textContent='🎤 Audio Active';
+    $('audioBtn').style.background='#10b98133';
+  }catch(e){$('audioBtn').textContent='Mic Error';console.error(e)}
+};
+$('recordBtn').onclick=()=>{
+  if(mediaRecorder && mediaRecorder.state==='recording'){
+    mediaRecorder.stop();
+    $('recordBtn').textContent='🔴 Record Video';
+    $('recordBtn').style.background='';
+    return;
+  }
+  let stream = c.captureStream(30);
+  mediaRecorder = new MediaRecorder(stream, {mimeType: 'video/webm'});
+  recordedChunks = [];
+  mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
+  mediaRecorder.onstop = () => {
+    let blob = new Blob(recordedChunks, {type: 'video/webm'});
+    let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'swarm_recording.webm';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  };
+  mediaRecorder.start();
+  $('recordBtn').textContent='⏹ Stop Recording';
+  $('recordBtn').style.background='#ef444433';
+};
+
+sync();reset();requestAnimationFrame(loop);
+})();
+</script>
+
+<script id="fullscreen-fix-js">
+(function(){
+  const btn=document.getElementById('fullscreenBtn');
+  async function toggleFullscreen(){
+    try{
+      if(!document.fullscreenElement){
+        await document.documentElement.requestFullscreen();
+      }else{
+        await document.exitFullscreen();
+      }
+    }catch(e){ console.warn('Fullscreen unavailable:',e); }
+  }
+  if(btn) btn.addEventListener('click',toggleFullscreen);
+  document.getElementById('c').addEventListener('dblclick', toggleFullscreen);
+  document.addEventListener('fullscreenchange',()=>{
+    if(btn) btn.textContent=document.fullscreenElement?'×':'⛶';
+    setTimeout(()=>window.dispatchEvent(new Event('resize')),80);
+  });
+  window.addEventListener('orientationchange',()=>setTimeout(()=>window.dispatchEvent(new Event('resize')),150));
+  setTimeout(()=>window.dispatchEvent(new Event('resize')),100);
+})();
+</script>
+
+</body>
+</html>
