@@ -10,7 +10,7 @@
 .panel{position:absolute;z-index:10;right:14px;top:14px;width:min(390px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:hidden;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(18px);box-shadow:0 20px 70px #000c}
 .head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;cursor:pointer}.title{font-weight:800;letter-spacing:.12em;text-transform:uppercase}.sub{color:var(--muted);font-size:10px;margin-top:3px}.head b{color:var(--accent)}
 .tabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);background:#0006}.tabs button{padding:10px 3px;border:0;background:none;color:#748198;font-size:10px;text-transform:uppercase;cursor:pointer}.tabs button.active{color:var(--accent);border-bottom:2px solid var(--accent);background:#6ee7ff0b}
-.body{padding:12px 14px;overflow:auto;max-height:calc(100vh - 116px)}.tab{display:none;gap:10px}.tab.active{display:flex;flex-direction:column}.row{display:flex;flex-direction:column;gap:5px}.label{display:flex;justify-content:space-between;color:#c9d2df}.value{font-family:ui-monospace,monospace;color:var(--accent)}input[type=range]{width:100%;accent-color:var(--accent)}select,input[type=text]{width:100%;padding:8px 9px;background:#101725;border:1px solid var(--line);border-radius:7px;color:#eef5ff;outline:none}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{padding:9px;border:1px solid var(--line);border-radius:8px;background:#111827;color:#dbe6f3;cursor:pointer;font-weight:700;font-size:10px;text-transform:uppercase}.btn:hover{border-color:#6ee7ff88}.btn.primary{border-color:#6ee7ff;background:#6ee7ff18;color:#6ee7ff}.btn.danger{border-color:#fb7185;background:#fb718514;color:#fb7185}.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.color{padding:7px;background:#0005;border:1px solid var(--line);border-radius:7px;text-align:center;font-size:9px}.color input{width:100%;height:30px;border:0;background:none}.stats{position:absolute;left:14px;bottom:14px;z-index:5;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#0008;backdrop-filter:blur(10px);font:10px ui-monospace,monospace;color:#aab5c5}.stats b{color:var(--accent)}.collapsed .tabs,.collapsed .body{display:none}.legend{padding:9px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:10px}.hint{position:absolute;left:50%;top:18px;transform:translateX(-50%);z-index:4;color:#718096;font-size:10px;letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
+.body{padding:12px 14px;overflow:auto;max-height:calc(100vh - 116px)}.tab{display:none;gap:10px}.tab.active{display:flex;flex-direction:column}.row{display:flex;flex-direction:column;gap:5px}.label{display:flex;justify-content:space-between;color:#c9d2df}.value{font-family:ui-monospace,monospace;color:var(--accent)}input[type=range]{width:100%;accent-color:var(--accent)}select,input[type=text]{width:100%;padding:8px 9px;background:#101725;border:1px solid var(--line);border-radius:7px;color:#eef5ff;outline:none}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{padding:9px;border:1px solid var(--line);border-radius:8px;background:#111827;color:#dbe6f3;cursor:pointer;font-weight:700;font-size:10px;text-transform:uppercase}.btn:hover{border-color:#6ee7ff88}.btn.primary{border-color:#6ee7ff;background:#6ee7ff18;color:#6ee7ff}.btn.danger{border-color:#fb7185;background:#fb718514;color:#fb7185}.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.color{padding:7px;background:#0005;border:1px solid var(--line);border-radius:7px;text-align:center;font-size:9px}.color input{width:100%;height:30px;border:0;background:none}.stats{position:absolute;left:14px;bottom:14px;z-index:5;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#0008;backdrop-filter:blur(10px);font:10px ui-monospace,monospace;color:#aab5c5}.stats b{color:var(--accent)}.collapsed .tabs,.collapsed .body{display:none}.legend{line-height:1.4;padding:9px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:10px}.hint{transition:opacity 1s ease-out;position:absolute;left:50%;top:18px;transform:translateX(-50%);z-index:4;color:#718096;font-size:10px;letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
 @media(max-width:600px){.panel{right:8px;top:8px;width:calc(100vw - 16px)}.body{max-height:58vh}.hint{display:none}}
 :fullscreen .panel, :fullscreen .stats, :fullscreen .hint, :fullscreen #pointerStatus { display: none !important; }
 :-webkit-full-screen .panel, :-webkit-full-screen .stats, :-webkit-full-screen .hint, :-webkit-full-screen #pointerStatus { display: none !important; }
@@ -57,18 +57,18 @@ font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
         </select>
       </div>
       <div class="legend" id="desc">Collective motion using separation, alignment and cohesion.</div>
-      <div class="row"><div class="label"><span>Exploration</span><span class="value" id="vExplore">0.65</span></div><input id="explore" type="range" min="0" max="1" step=".01" value=".65"></div>
-      <div class="row"><div class="label"><span>Social / Attraction</span><span class="value" id="vSocial">0.70</span></div><input id="social" type="range" min="0" max="1.5" step=".01" value=".70"></div>
-      <div class="row"><div class="label"><span>Convergence</span><span class="value" id="vConv">0.45</span></div><input id="conv" type="range" min="0" max="1.5" step=".01" value=".45"></div>
+      <div class="row" title="How much agents wander randomly."><div class="label"><span>Exploration</span><span class="value" id="vExplore">0.65</span></div><input id="explore" type="range" min="0" max="1" step=".01" value=".65"></div>
+      <div class="row" title="How strongly agents align or interact with neighbors."><div class="label"><span>Social / Attraction</span><span class="value" id="vSocial">0.70</span></div><input id="social" type="range" min="0" max="1.5" step=".01" value=".70"></div>
+      <div class="row" title="How strongly agents move toward the center of the local group or the global best."><div class="label"><span>Convergence</span><span class="value" id="vConv">0.45</span></div><input id="conv" type="range" min="0" max="1.5" step=".01" value=".45"></div>
       <div class="grid"><button class="btn primary" id="pause">Pause</button><button class="btn" id="reset">Reset</button></div>
     </div>
 
     <div class="tab" id="population">
-      <div class="row"><div class="label"><span>Population</span><span class="value" id="vCount">700</span></div><input id="count" type="range" min="80" max="1800" step="20" value="700"></div>
-      <div class="row"><div class="label"><span>Particle Speed</span><span class="value" id="vSpeed">5.0</span></div><input id="speed" type="range" min="1" max="12" step=".1" value="5"></div>
-      <div class="row"><div class="label"><span>Neighborhood Radius</span><span class="value" id="vRadius">75</span></div><input id="radius" type="range" min="20" max="180" step="1" value="75"></div>
-      <div class="row"><div class="label"><span>Separation</span><span class="value" id="vSep">1.8</span></div><input id="sep" type="range" min="0" max="4" step=".05" value="1.8"></div>
-      <div class="row"><div class="label"><span>Trail</span><span class="value" id="vTrail">0.18</span></div><input id="trail" type="range" min=".03" max=".6" step=".01" value=".18"></div>
+      <div class="row" title="Number of active agents in the simulation."><div class="label"><span>Population</span><span class="value" id="vCount">700</span></div><input id="count" type="range" min="80" max="1800" step="20" value="700"></div>
+      <div class="row" title="Base speed of the agents."><div class="label"><span>Particle Speed</span><span class="value" id="vSpeed">5.0</span></div><input id="speed" type="range" min="1" max="12" step=".1" value="5"></div>
+      <div class="row" title="Distance within which agents perceive and react to each other."><div class="label"><span>Neighborhood Radius</span><span class="value" id="vRadius">75</span></div><input id="radius" type="range" min="20" max="180" step="1" value="75"></div>
+      <div class="row" title="How strongly agents avoid colliding with neighbors."><div class="label"><span>Separation</span><span class="value" id="vSep">1.8</span></div><input id="sep" type="range" min="0" max="4" step=".05" value="1.8"></div>
+      <div class="row" title="Length and persistence of particle trails on the screen."><div class="label"><span>Trail</span><span class="value" id="vTrail">0.18</span></div><input id="trail" type="range" min=".03" max=".6" step=".01" value=".18"></div>
     </div>
 
     <div class="tab" id="style">
@@ -84,24 +84,32 @@ font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
         <select id="colorMode"><option value="gradient">3-Color Gradient</option><option value="speed">Speed Heatmap</option><option value="rainbow">Rainbow</option><option value="state">Algorithm State</option><option value="mono">Monochrome</option></select>
       </div>
       <div class="colors"><div class="color">A<input type="color" id="ca" value="#00e5ff"></div><div class="color">B<input type="color" id="cb" value="#7c3aed"></div><div class="color">C<input type="color" id="cc" value="#ff3d81"></div></div>
-      <div class="row"><div class="label"><span>Particle Size</span><span class="value" id="vSize">1.4</span></div><input id="size" type="range" min=".4" max="3.5" step=".1" value="1.4"></div>
-      <div class="row"><div class="label"><span>Glow</span><span class="value" id="vGlow">28</span></div><input id="glow" type="range" min="0" max="80" step="1" value="28"></div>
-      <div class="row"><div class="label"><span>Glow Opacity</span><span class="value" id="vAlpha">0.65</span></div><input id="alpha" type="range" min="0" max="1" step=".01" value=".65"></div>
+      <div class="row" title="Base physical size of the particles."><div class="label"><span>Particle Size</span><span class="value" id="vSize">1.4</span></div><input id="size" type="range" min=".4" max="3.5" step=".1" value="1.4"></div>
+      <div class="row" title="Size of the light emission effect around each particle."><div class="label"><span>Glow</span><span class="value" id="vGlow">28</span></div><input id="glow" type="range" min="0" max="80" step="1" value="28"></div>
+      <div class="row" title="Intensity of the particle light emission."><div class="label"><span>Glow Opacity</span><span class="value" id="vAlpha">0.65</span></div><input id="alpha" type="range" min="0" max="1" step=".01" value=".65"></div>
     </div>
 
     <div class="tab" id="advanced">
+      <div class="row"><div class="label"><span>Presets</span></div>
+        <select id="presets">
+          <option value="default">Default Boids</option>
+          <option value="neon">Neon Chaos</option>
+          <option value="quantum">Quantum State</option>
+          <option value="ghost">Ghost Swarm</option>
+        </select>
+      </div>
       <div class="row"><div class="label"><span>Objective Landscape</span></div>
         <select id="landscape"><option value="multi">Multi-Well</option><option value="sphere">Sphere</option><option value="rastrigin">Rastrigin</option><option value="rosenbrock">Rosenbrock</option><option value="waves">Wave Field</option></select>
       </div>
-      <div class="row"><div class="label"><span>Objective Pull</span><span class="value" id="vObj">0.60</span></div><input id="obj" type="range" min="0" max="1.5" step=".01" value=".60"></div>
-      <div class="row"><div class="label"><span>Mouse Influence</span><span class="value" id="vMouse">0.70</span></div><input id="mouse" type="range" min="0" max="2" step=".01" value=".70"></div>
-      <div class="row"><div class="label"><span>Interaction Reach</span><span class="value" id="vReach">400</span></div><input id="reach" type="range" min="100" max="1500" step="10" value="400"></div>
-      <div class="row"><div class="label"><span>Depth / Perspective</span><span class="value" id="vDepth">0.55</span></div><input id="depth" type="range" min="0" max="1" step=".01" value=".55"></div>
+      <div class="row" title="Strength of attraction towards better fitness areas (for optimization algorithms)."><div class="label"><span>Objective Pull</span><span class="value" id="vObj">0.60</span></div><input id="obj" type="range" min="0" max="1.5" step=".01" value=".60"></div>
+      <div class="row" title="How strongly particles react to the mouse/touch."><div class="label"><span>Mouse Influence</span><span class="value" id="vMouse">0.70</span></div><input id="mouse" type="range" min="0" max="2" step=".01" value=".70"></div>
+      <div class="row" title="Distance at which the mouse affects the swarm."><div class="label"><span>Interaction Reach</span><span class="value" id="vReach">400</span></div><input id="reach" type="range" min="100" max="1500" step="10" value="400"></div>
+      <div class="row" title="Pseudo-3D effect based on depth scaling."><div class="label"><span>Depth / Perspective</span><span class="value" id="vDepth">0.55</span></div><input id="depth" type="range" min="0" max="1" step=".01" value=".55"></div>
       <div class="grid"><button class="btn primary" id="save">Save Preset</button><button class="btn danger" id="random">Randomize</button></div>
       <div class="grid"><button class="btn" id="clear">Clear Trails</button><button class="btn" id="defaults">Defaults</button></div>
-      <div class="legend">Tip: For PSO/GWO/WOA/ABC, the brighter particles represent stronger candidate solutions. The objective field is intentionally visual and interactive rather than a scientific benchmark.</div>
+      <div class="legend">Tip: For PSO/GWO/WOA/ABC, the brighter particles represent stronger candidate solutions. The objective field is intentionally visual and interactive rather than a scientific benchmark.<br><br><b>Shortcuts:</b><br>Space: Pause/Resume<br>R: Reset Swarm<br>C: Clear Trails<br>H: Toggle Panel</div>
       <div class="grid" style="margin-top:8px"><button class="btn" id="handTrackBtn" style="border-color:#8b5cf6; color:#8b5cf6">🤚 Hand Tracking</button><button class="btn" id="audioBtn" style="border-color:#10b981; color:#10b981">🎤 Audio React</button></div>
-      <div class="grid" style="margin-top:8px"><button class="btn" id="recordBtn" style="grid-column: 1 / -1; border-color:#ef4444; color:#ef4444">🔴 Record Video</button></div>
+      <div class="grid" style="margin-top:8px"><button class="btn" id="recordBtn" style="border-color:#ef4444; color:#ef4444">🔴 Record Video</button><button class="btn" id="screenshotBtn" style="border-color:#3b82f6; color:#3b82f6">📷 Screenshot</button></div>
     </div>
   </main>
 </section>
@@ -266,6 +274,22 @@ $('random').onclick=()=>{q.ca='#'+Math.floor(Math.random()*16777215).toString(16
 $('defaults').onclick=()=>{q={...D};sync();reset()};
 $('save').onclick=()=>{localStorage.setItem('swarmLabV2',JSON.stringify(q));$('save').textContent='Saved ✓';setTimeout(()=>$('save').textContent='Save Preset',1000)};
 try{Object.assign(q,JSON.parse(localStorage.getItem('swarmLabV2')||'{}'))}catch(e){}
+
+$('presets').onchange=e=>{
+  let v = e.target.value;
+  if(v==='default'){ q={...D}; }
+  else if(v==='neon'){ Object.assign(q, {algo:'pso', count:1000, speed:6, shape:'spark', colorMode:'rainbow', size:2.2, glow:50, trail:0.1, alpha:0.8, reach:600}); }
+  else if(v==='quantum'){ Object.assign(q, {algo:'mopso', count:800, speed:8, shape:'ring', colorMode:'speed', size:1.2, glow:20, trail:0.4, obj:1.2, reach:800, depth:0.8}); }
+  else if(v==='ghost'){ Object.assign(q, {algo:'woa', count:1200, speed:3, shape:'circle', colorMode:'mono', ca:'#ffffff', size:0.8, glow:10, trail:0.04, alpha:0.3, reach:300}); }
+  sync(); reset();
+};
+
+$('screenshotBtn').onclick=()=>{
+  let a = document.createElement('a');
+  a.href = document.getElementById('c').toDataURL('image/png');
+  a.download = 'swarm_capture.png';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+};
 /* Robust mouse + touch interaction */
 function setPointer(e){
   pointer.prevX=pointer.x;pointer.prevY=pointer.y;
@@ -274,6 +298,11 @@ function setPointer(e){
   pointer.y=(e.clientY-r.top)*(H/r.height);
   pointer.vx=pointer.x-pointer.prevX;pointer.vy=pointer.y-pointer.prevY;
   pointer.active=true;
+  if(!pointer.interacted){
+    pointer.interacted=true;
+    let hint=document.querySelector('.hint');
+    if(hint){hint.style.opacity='0';setTimeout(()=>hint.style.display='none',1000);}
+  }
 }
 c.style.touchAction='none';
 window.addEventListener('pointermove',e=>{ if(e.pointerType==='mouse' || e.pointerType==='touch' || e.pointerType==='pen') setPointer(e); });
@@ -294,6 +323,14 @@ window.addEventListener('pointerup',e=>{
 window.addEventListener('pointercancel',()=>pointer.down=false);
 window.addEventListener('blur',()=>{pointer.down=false;});
 window.addEventListener('mouseleave',()=>{pointer.active=false;pointer.down=false;const ps=document.getElementById('pointerStatus');if(ps)ps.textContent='MOUSE: READY'});
+
+window.addEventListener('keydown', e => {
+  if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if(e.code === 'Space') { e.preventDefault(); $('pause').click(); }
+  else if(e.key === 'r' || e.key === 'R') $('reset').click();
+  else if(e.key === 'c' || e.key === 'C') $('clear').click();
+  else if(e.key === 'h' || e.key === 'H') $('toggle').click();
+});
 
 /* Mouse/touch interaction strength is now clearly visible */
 /* Hand Tracking & Expanded Features */
