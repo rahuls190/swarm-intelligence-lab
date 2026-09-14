@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Swarm Intelligence Lab — V5 ULTRA</title>
+<title>Swarm Intelligence Lab — V5.1</title>
 <style>
 :root{--bg:#05070b;--panel:rgba(8,12,20,.88);--line:rgba(255,255,255,.12);--text:#e8eef7;--muted:#8794a8;--accent:#6ee7ff}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none}html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:12px/1.35 Inter,system-ui,-apple-system,Segoe UI,sans-serif}canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -34,7 +34,7 @@ font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
 
 <section class="panel" id="panel">
   <header class="head" id="toggle">
-    <div><div class="title">✦ Swarm Intelligence <b>LAB V5</b></div><div class="sub">WebGL2 engine · depth · pheromones · cinema</div></div>
+    <div><div class="title">✦ Swarm Intelligence <b>LAB V5.1</b></div><div class="sub">WebGL2 engine · depth · pheromones · cinema</div></div>
     <span id="chev">▲</span>
   </header>
   <nav class="tabs">
@@ -85,8 +85,8 @@ font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
     <div class="tab" id="population">
       <div class="row"><div class="label"><span>Population</span><span class="value" id="vCount">700</span></div><input id="count" type="range" min="80" max="6000" step="20" value="700"></div>
       <div class="row"><div class="label"><span>Particle Speed</span><span class="value" id="vSpeed">5.0</span></div><input id="speed" type="range" min="1" max="12" step=".1" value="5"></div>
-      <div class="row"><div class="label"><span>Neighborhood Radius</span><span class="value" id="vRadius">75</span></div><input id="radius" type="range" min="20" max="180" step="1" value="75"></div>
-      <div class="row"><div class="label"><span>Separation</span><span class="value" id="vSep">1.8</span></div><input id="sep" type="range" min="0" max="4" step=".05" value="1.8"></div>
+      <div class="row"><div class="label"><span>Neighborhood Radius</span><span class="value" id="vRadius">75</span></div><input id="radius" type="range" min="20" max="260" step="1" value="75"></div>
+      <div class="row"><div class="label"><span>Separation</span><span class="value" id="vSep">1.8</span></div><input id="sep" type="range" min="0" max="8" step=".05" value="1.8"></div>
       <div class="row"><div class="label"><span>Fade Trail</span><span class="value" id="vTrail">0.18</span></div><input id="trail" type="range" min=".03" max=".6" step=".01" value=".18"></div>
     </div>
 
@@ -158,6 +158,7 @@ font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
 
     <div class="tab" id="hands">
       <button class="btn" id="handTrackBtn" style="border-color:#8b5cf6; color:#8b5cf6">🤚 Hand Tracking</button>
+      <div class="legend" style="margin-top:6px">Click again to switch hands off.</div>
       <div class="grid">
         <div class="row"><div class="label"><span>Max Hands</span></div><select id="handMax"><option value="2">Two</option><option value="1">One</option></select></div>
         <div class="row"><div class="label"><span>Tracking Model</span></div><select id="handModel"><option value="full">Full (accurate)</option><option value="lite">Lite (fast)</option></select></div>
@@ -166,6 +167,7 @@ font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
       <div class="row"><div class="label"><span>Hand Travel</span><span class="value" id="vHandTravel">1.60</span></div><input id="handTravel" type="range" min="1" max="2.6" step=".05" value="1.6"></div>
       <div class="row"><div class="label"><span>Hand Smoothing</span><span class="value" id="vHandSmooth">0.50</span></div><input id="handSmooth" type="range" min="0" max="1" step=".01" value=".5"></div>
       <div class="row"><div class="label"><span>Gesture Hold (frames)</span><span class="value" id="vHandHold">3</span></div><input id="handHold" type="range" min="1" max="8" step="1" value="3"></div>
+      <div class="row"><div class="label"><span>Hand Opacity</span><span class="value" id="vHandOpacity">1.00</span></div><input id="handOpacity" type="range" min="0" max="1" step=".01" value="1"></div>
       <label class="chk"><input type="checkbox" id="handTwo" checked> Two-hand gestures</label>
       <label class="chk"><input type="checkbox" id="handSkeleton" checked> Show hand skeleton</label>
       <label class="chk"><input type="checkbox" id="handLabels" checked> Show gesture labels</label>
@@ -231,7 +233,7 @@ const D={algo:'boids',count:700,speed:5,radius:75,sep:1.8,trail:.18,explore:.65,
   coupling:.12,interval:1.6,jitter:0,ffMode:'sync',ffPrc:'constant',
   trailMode:'fade',view:'depth',backdrop:'nebula',stars:.6,wind:.35,predators:0,
   logo:true,logoSize:1,logoCollide:true,logoFollow:false,flow:false,cine:true,preset:'custom',
-  handStrength:1,handTravel:1.6,handSmooth:.5,handHold:3,handSkeleton:true,handPreview:true,handLabels:true,handMirror:true,handTwo:true,handMax:'2',handModel:'full'};
+  handStrength:1,handTravel:1.6,handSmooth:.5,handHold:3,handOpacity:1,handSkeleton:true,handPreview:true,handLabels:true,handMirror:true,handTwo:true,handMax:'2',handModel:'full'};
 let q={...D};
 
 const desc={boids:'Collective motion using separation, alignment and cohesion.',pso:'Canonical velocity update: inertia + personal-best + global-best attraction.',mopso:'Multi-objective PSO visualizes a Pareto-like set of competing solutions.',aco:'Ants deposit pheromone on a live diffusing trail field and climb its gradient.',abc:'Employed, onlooker and scout behavior balances exploitation and exploration.',gwo:'Alpha, beta and delta leaders triangulate the position of the whole pack.',woa:'Agents spiral and encircle promising solutions like whales.',fa:'Fireflies move toward brighter / better candidates.',ffsync:'Pulse-coupled oscillators: each agent flashes on its own clock and nudges its phase when it sees a neighbour flash.',bfo:'Bacteria chemotax toward favorable regions while exploring new areas.',afs:'Fish school, chase, follow and search for promising regions.',physarum:'Physarum polycephalum: agents sense pheromone ahead, reinforce and branch, building vein networks.'};
@@ -1213,7 +1215,7 @@ function stepPhysarum(i,simSpeed,ms){
 }
 function updatePhysics(simSpeed){
   const A=q.algo, R=q.radius, mf=.45, ms=q.speed*(1.3+q.explore*.7);
-  const objK=q.obj/.6; // Objective Pull scales every objective-seeking force (1 at the default 0.6; the slider used to do nothing)
+  const objBase=q.obj/.6; // Objective Pull scales every objective-seeking force (1 at the default 0.6; the slider used to do nothing)
   const depthView=q.view==='depth';
   const logoL=logo.collide?logoCamera():null; // logo camera terms, once per frame
   /* Keep the flock framed. Hard walls stop agents leaving, but a cohesive flock
@@ -1253,6 +1255,12 @@ function updatePhysics(simSpeed){
       else if(nAli<9){ ax+=velX[j]; ay+=velY[j]; nAli++; cx+=posX[j]; cy+=posY[j]; nCoh++; }
     });
     crowd[i]+=(nAll-crowd[i])*.12;
+    /* Every optimization algorithm below pulls toward a single best-found point with no distance cap, while
+       separation only reaches ~sqrt(rSepBase) (a couple dozen px). With hundreds of agents converging on the
+       same point that pull overwhelms separation completely, so instead of a cloud around the optimum the
+       whole swarm collapses into one dense speck. Easing the pull off as an agent's own neighbourhood already
+       fills up lets separation win locally, so the swarm settles into an orbiting cloud instead of a point. */
+    const objK=objBase/(1+crowd[i]/7);
     let fx=0,fy=0;
     if(nSep>0){ const m=Math.hypot(sx,sy); if(m>0){ let dx=(sx/m)*ms-vx, dy=(sy/m)*ms-vy; const dmag=Math.hypot(dx,dy); if(dmag>mf){dx=dx/dmag*mf;dy=dy/dmag*mf;} fx+=dx*q.explore*2.5; fy+=dy*q.explore*2.5; } }
     if(nAli>0){ ax/=nAli; ay/=nAli; const am=Math.hypot(ax,ay); if(am>0){ let dx=(ax/am)*ms-vx, dy=(ay/am)*ms-vy; const dmag=Math.hypot(dx,dy); if(dmag>mf){dx=dx/dmag*mf;dy=dy/dmag*mf;} fx+=dx*q.social*0.85; fy+=dy*q.social*0.85; } }
@@ -1443,7 +1451,7 @@ $('palette').onchange=e=>{ q.palette=e.target.value; const p=PALETTES[q.palette]
    could never be beaten on Rastrigin), so scoring starts from scratch. */
 $('landscape').onchange=e=>{ q.landscape=e.target.value; for(let i=0;i<MAX_N;i++){ fitA[i]=Infinity; bestX[i]=posX[i]; bestY[i]=posY[i]; } gBestFit=Infinity; pher.fill(0); };
 $('quality').onchange=e=>{ q.quality=e.target.value; syncUI(); };
-const ranges=['count','speed','radius','sep','trail','explore','social','conv','size','glow','alpha','obj','mouse','reach','depth','bloom','drift','center','coupling','interval','jitter','whiten','sat','hue','cycle','exposure','stars','wind','predators','logoSize','handStrength','handTravel','handSmooth','handHold'];
+const ranges=['count','speed','radius','sep','trail','explore','social','conv','size','glow','alpha','obj','mouse','reach','depth','bloom','drift','center','coupling','interval','jitter','whiten','sat','hue','cycle','exposure','stars','wind','predators','logoSize','handStrength','handTravel','handSmooth','handHold','handOpacity'];
 ranges.forEach(k=>$(k).oninput=e=>{ q[k]=+e.target.value; if(k==='count') syncCount(); if(k==='interval'||k==='jitter') reseedIntervals(); syncUI(); });
 $('ffMode').onchange=e=>q.ffMode=e.target.value;
 $('ffPrc').onchange=e=>q.ffPrc=e.target.value;
@@ -1474,7 +1482,7 @@ refreshColors();
 function syncUI(){
   syncCount();
   $('sCount').textContent=count; $('sAlgo').textContent=q.algo.toUpperCase(); $('sQuality').textContent=q.quality.toUpperCase();
-  const map={count:'Count',speed:'Speed',radius:'Radius',sep:'Sep',trail:'Trail',explore:'Explore',social:'Social',conv:'Conv',size:'Size',glow:'Glow',alpha:'Alpha',obj:'Obj',mouse:'Mouse',reach:'Reach',depth:'Depth',bloom:'Bloom',drift:'Drift',center:'Center',coupling:'Coupling',interval:'Interval',jitter:'Jitter',whiten:'Whiten',sat:'Sat',hue:'Hue',cycle:'Cycle',exposure:'Exposure',stars:'Stars',wind:'Wind',predators:'Predators',logoSize:'LogoSize',handStrength:'HandStrength',handTravel:'HandTravel',handSmooth:'HandSmooth',handHold:'HandHold'};
+  const map={count:'Count',speed:'Speed',radius:'Radius',sep:'Sep',trail:'Trail',explore:'Explore',social:'Social',conv:'Conv',size:'Size',glow:'Glow',alpha:'Alpha',obj:'Obj',mouse:'Mouse',reach:'Reach',depth:'Depth',bloom:'Bloom',drift:'Drift',center:'Center',coupling:'Coupling',interval:'Interval',jitter:'Jitter',whiten:'Whiten',sat:'Sat',hue:'Hue',cycle:'Cycle',exposure:'Exposure',stars:'Stars',wind:'Wind',predators:'Predators',logoSize:'LogoSize',handStrength:'HandStrength',handTravel:'HandTravel',handSmooth:'HandSmooth',handHold:'HandHold',handOpacity:'HandOpacity'};
   Object.entries(map).forEach(([k,n])=>{
     const e=$(k), v=$('v'+n);
     if(e) e.value=q[k];
@@ -1738,31 +1746,33 @@ function updateHandTags(){
     const G=handLook(h), txt=G.icon+' '+G.name;
     if(el.textContent!==txt){ el.textContent=txt; el.style.borderColor=`rgba(${G.col.map(v=>v*255|0)},.75)`; }
     if(el.hidden) el.hidden=false;
+    el.style.opacity=q.handOpacity;
     el.style.transform=`translate(${h.x|0}px,${(h.y|0)-54}px) translate(-50%,-50%)`;
   }
 }
 function updateHandPreview(){
   videoElement.classList.toggle('preview',handTrackingEnabled&&!!q.handPreview);
   videoElement.style.transform=q.handMirror===false?'none':''; // the preview follows the mirroring choice
+  videoElement.style.opacity=.85*q.handOpacity; // Hand Opacity also dims the camera preview, not just the skeleton
 }
 function buildHandSegments(){ // skeleton bones and joints coloured by gesture, plus the guide of a two-hand gesture
-  let o=0;
+  let o=0; const op=q.handOpacity;
   for(const h of activeHands){
     const G=handLook(h), s=h.screen, r=G.col[0], g=G.col[1], b=G.col[2];
     for(const [a,c] of HAND_BONES){
       segData[o]=s[a*2]; segData[o+1]=s[a*2+1]; segData[o+2]=s[c*2]; segData[o+3]=s[c*2+1];
-      segData[o+4]=r; segData[o+5]=g; segData[o+6]=b; segData[o+7]=.5; segData[o+8]=2.2; o+=SEG_STRIDE;
+      segData[o+4]=r; segData[o+5]=g; segData[o+6]=b; segData[o+7]=.5*op; segData[o+8]=2.2; o+=SEG_STRIDE;
     }
     for(let k=0;k<21;k++){
       const x=s[k*2], y=s[k*2+1], tip=k===4||k===8||k===12||k===16||k===20;
       segData[o]=x-2; segData[o+1]=y; segData[o+2]=x+2; segData[o+3]=y;
-      segData[o+4]=r; segData[o+5]=g; segData[o+6]=b; segData[o+7]=tip?.95:.7; segData[o+8]=tip?7:5; o+=SEG_STRIDE;
+      segData[o+4]=r; segData[o+5]=g; segData[o+6]=b; segData[o+7]=(tip?.95:.7)*op; segData[o+8]=tip?7:5; o+=SEG_STRIDE;
     }
   }
   const C=handCombo;
   if(C){
     const col=COMBOS[C.type].col;
-    const put=(x1,y1,x2,y2,a,w)=>{ segData[o]=x1; segData[o+1]=y1; segData[o+2]=x2; segData[o+3]=y2; segData[o+4]=col[0]; segData[o+5]=col[1]; segData[o+6]=col[2]; segData[o+7]=a; segData[o+8]=w; o+=SEG_STRIDE; };
+    const put=(x1,y1,x2,y2,a,w)=>{ segData[o]=x1; segData[o+1]=y1; segData[o+2]=x2; segData[o+3]=y2; segData[o+4]=col[0]; segData[o+5]=col[1]; segData[o+6]=col[2]; segData[o+7]=a*op; segData[o+8]=w; o+=SEG_STRIDE; };
     if(C.type==='galaxy'||C.type==='crush'){ // dashed ring the swarm is pulled onto
       const R=C.type==='galaxy'?Math.max(60,C.d*.5):Math.max(26,C.d*.3), n=48;
       for(let k=0;k<n;k+=2){ const a1=k/n*6.2832, a2=(k+1)/n*6.2832; put(C.mx+Math.cos(a1)*R,C.my+Math.sin(a1)*R,C.mx+Math.cos(a2)*R,C.my+Math.sin(a2)*R,.35,1.6); }
@@ -1786,7 +1796,7 @@ function stopHandTracking(label){
   const ps=$('pointerStatus'); if(ps) ps.textContent='MOUSE: READY';
 }
 if(handBtn) handBtn.onclick=async()=>{
-  if(handTrackingEnabled) return;
+  if(handTrackingEnabled){ stopHandTracking('🤚 Hand Tracking'); return; } // click again to switch hands off
   handBtn.textContent='Loading Camera...'; handTrackingEnabled=true;
   try{
     await loadMediaPipe();
