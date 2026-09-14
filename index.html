@@ -3,41 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Swarm Intelligence Lab — V4</title>
+<title>Swarm Intelligence Lab — V5 ULTRA</title>
 <style>
 :root{--bg:#05070b;--panel:rgba(8,12,20,.88);--line:rgba(255,255,255,.12);--text:#e8eef7;--muted:#8794a8;--accent:#6ee7ff}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none}html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:12px/1.35 Inter,system-ui,-apple-system,Segoe UI,sans-serif}canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.panel{position:absolute;z-index:10;right:14px;top:14px;width:min(390px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:hidden;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(18px);box-shadow:0 20px 70px #000c}
+.panel{position:absolute;z-index:10;right:14px;top:14px;width:min(400px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(18px);box-shadow:0 20px 70px #000c}
 .head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;cursor:pointer}.title{font-weight:800;letter-spacing:.12em;text-transform:uppercase}.sub{color:var(--muted);font-size:10px;margin-top:3px}.head b{color:var(--accent)}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);background:#0006}.tabs button{padding:10px 3px;border:0;background:none;color:#748198;font-size:10px;text-transform:uppercase;cursor:pointer}.tabs button.active{color:var(--accent);border-bottom:2px solid var(--accent);background:#6ee7ff0b}
-.body{padding:12px 14px;overflow:auto;max-height:calc(100vh - 116px)}.tab{display:none;gap:10px}.tab.active{display:flex;flex-direction:column}.row{display:flex;flex-direction:column;gap:5px}.label{display:flex;justify-content:space-between;color:#c9d2df}.value{font-family:ui-monospace,monospace;color:var(--accent)}input[type=range]{width:100%;accent-color:var(--accent)}select,input[type=text]{width:100%;padding:8px 9px;background:#101725;border:1px solid var(--line);border-radius:7px;color:#eef5ff;outline:none}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{padding:9px;border:1px solid var(--line);border-radius:8px;background:#111827;color:#dbe6f3;cursor:pointer;font-weight:700;font-size:10px;text-transform:uppercase}.btn:hover{border-color:#6ee7ff88}.btn.primary{border-color:#6ee7ff;background:#6ee7ff18;color:#6ee7ff}.btn.danger{border-color:#fb7185;background:#fb718514;color:#fb7185}.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.color{padding:7px;background:#0005;border:1px solid var(--line);border-radius:7px;text-align:center;font-size:9px}.color input{width:100%;height:30px;border:0;background:none}.stats{position:absolute;left:14px;bottom:14px;z-index:5;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#0008;backdrop-filter:blur(10px);font:10px ui-monospace,monospace;color:#aab5c5}.stats b{color:var(--accent)}.collapsed .tabs,.collapsed .body{display:none}.legend{padding:9px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:10px}.hint{position:absolute;left:50%;top:18px;transform:translateX(-50%);z-index:4;color:#718096;font-size:10px;letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
+.tabs{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--line);background:#0006}.tabs button{padding:10px 1px;border:0;background:none;color:#748198;font-size:9px;text-transform:uppercase;cursor:pointer}.tabs button.active{color:var(--accent);border-bottom:2px solid var(--accent);background:#6ee7ff0b}
+.body{padding:12px 14px;overflow:auto;flex:1 1 auto;min-height:0}.tab{display:none;gap:10px}.tab.active{display:flex;flex-direction:column}.row{display:flex;flex-direction:column;gap:5px}.label{display:flex;justify-content:space-between;color:#c9d2df}.value{font-family:ui-monospace,monospace;color:var(--accent)}input[type=range]{width:100%;accent-color:var(--accent)}select,input[type=text]{width:100%;padding:8px 9px;background:#101725;border:1px solid var(--line);border-radius:7px;color:#eef5ff;outline:none}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{padding:9px;border:1px solid var(--line);border-radius:8px;background:#111827;color:#dbe6f3;cursor:pointer;font-weight:700;font-size:10px;text-transform:uppercase}.btn:hover{border-color:#6ee7ff88}.btn.primary{border-color:#6ee7ff;background:#6ee7ff18;color:#6ee7ff}.btn.danger{border-color:#fb7185;background:#fb718514;color:#fb7185}.btn.on{border-color:#6ee7ff;background:#6ee7ff26;color:#6ee7ff}.chk{display:flex;align-items:center;gap:8px;color:#c9d2df;cursor:pointer}.chk input{accent-color:var(--accent);width:15px;height:15px}.colors{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.palbar{height:8px;border-radius:5px;border:1px solid var(--line)}.color{padding:7px;background:#0005;border:1px solid var(--line);border-radius:7px;text-align:center;font-size:9px}.color input{width:100%;height:30px;border:0;background:none}.hud{position:absolute;left:14px;bottom:14px;z-index:5;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none}#pointerStatus{padding:7px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(5,7,11,.55);backdrop-filter:blur(8px);font:10px ui-monospace,monospace;color:#8794a8}.stats{padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#0008;backdrop-filter:blur(10px);font:10px ui-monospace,monospace;color:#aab5c5}.stats b{color:var(--accent)}.collapsed .tabs,.collapsed .body{display:none}.legend{padding:9px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:10px}.hint{position:absolute;left:calc((100% - 414px)/2);top:18px;transform:translateX(-50%);white-space:nowrap;z-index:4;color:#718096;font-size:10px;letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
 @media(max-width:600px){.panel{right:8px;top:8px;width:calc(100vw - 16px)}.body{max-height:58vh}.hint{display:none}}
+@media(max-width:820px){.hint{display:none}}
+.handTag{position:fixed;left:0;top:0;z-index:7;pointer-events:none;padding:4px 10px;border-radius:999px;font:700 10px ui-monospace,monospace;letter-spacing:.08em;color:#eef6ff;background:rgba(5,7,11,.62);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(6px);white-space:nowrap;will-change:transform}
+#input_video.preview{display:block!important;position:fixed;right:18px;bottom:calc(70px + env(safe-area-inset-bottom, 0px));width:176px;height:132px;object-fit:cover;transform:scaleX(-1);border-radius:12px;border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 30px #000a;opacity:.85;z-index:8;pointer-events:none}
 :fullscreen .panel, :fullscreen .stats, :fullscreen .hint, :fullscreen #pointerStatus { display: none !important; }
 :-webkit-full-screen .panel, :-webkit-full-screen .stats, :-webkit-full-screen .hint, :-webkit-full-screen #pointerStatus { display: none !important; }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<!-- MediaPipe (hand tracking) is loaded on demand by the Hand Tracking button, so page load never waits on the CDN -->
 </head>
 <body>
 <button id="fullscreenBtn" title="Fullscreen" style="
-position:fixed;right:18px;top:18px;z-index:50;
+position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom, 0px));z-index:50;
 width:42px;height:42px;border:1px solid rgba(255,255,255,.16);
 border-radius:10px;background:rgba(5,7,11,.72);color:#fff;
 font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
 <video id="input_video" style="display:none;" autoplay playsinline></video>
 <canvas id="c"></canvas>
-<div class="hint">MOVE MOUSE / TOUCH TO ATTRACT • HOLD CLICK / TOUCH TO REPEL</div><div id="pointerStatus" style="position:absolute;left:18px;bottom:18px;z-index:4;padding:7px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(5,7,11,.55);backdrop-filter:blur(8px);font:10px ui-monospace,monospace;color:#8794a8;pointer-events:none">MOUSE: READY</div>
+<div class="hint">MOVE TO ATTRACT · HOLD TO REPEL · SPACE PAUSE · F FULLSCREEN</div>
+<div class="handTag" id="handTag0" hidden></div><div class="handTag" id="handTag1" hidden></div>
 
 <section class="panel" id="panel">
   <header class="head" id="toggle">
-    <div><div class="title">✦ Swarm Intelligence <b>LAB</b></div><div class="sub">Interactive algorithm visualizer · V4</div></div>
+    <div><div class="title">✦ Swarm Intelligence <b>LAB V5</b></div><div class="sub">WebGL2 engine · depth · pheromones · cinema</div></div>
     <span id="chev">▲</span>
   </header>
   <nav class="tabs">
-    <button class="active" data-tab="algorithm">Algorithm</button>
+    <button class="active" data-tab="algorithm">Algo</button>
     <button data-tab="population">Population</button>
-    <button data-tab="style">Shape & Color</button>
+    <button data-tab="style">Style</button>
+    <button data-tab="env">Scene</button>
+    <button data-tab="hands">Hands</button>
     <button data-tab="advanced">Advanced</button>
   </nav>
   <main class="body">
@@ -52,23 +57,37 @@ font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
           <option value="gwo">Grey Wolf Optimizer (GWO)</option>
           <option value="woa">Whale Optimization Algorithm (WOA)</option>
           <option value="fa">Firefly Algorithm</option>
+          <option value="ffsync">Firefly Synchronization (Pulse-Coupled)</option>
           <option value="bfo">Bacterial Foraging Optimization</option>
           <option value="afs">Artificial Fish Swarm</option>
+          <option value="physarum">Slime Mold (Physarum)</option>
         </select>
       </div>
       <div class="legend" id="desc">Collective motion using separation, alignment and cohesion.</div>
       <div class="row"><div class="label"><span>Exploration</span><span class="value" id="vExplore">0.65</span></div><input id="explore" type="range" min="0" max="1" step=".01" value=".65"></div>
       <div class="row"><div class="label"><span>Social / Attraction</span><span class="value" id="vSocial">0.70</span></div><input id="social" type="range" min="0" max="1.5" step=".01" value=".70"></div>
       <div class="row"><div class="label"><span>Convergence</span><span class="value" id="vConv">0.45</span></div><input id="conv" type="range" min="0" max="1.5" step=".01" value=".45"></div>
+      <div id="ffControls" style="display:none;flex-direction:column;gap:10px">
+        <div class="row"><div class="label"><span>Coupling Strength</span><span class="value" id="vCoupling">0.12</span></div><input id="coupling" type="range" min="0" max="0.5" step=".005" value=".12"></div>
+        <div class="row"><div class="label"><span>Flash Interval (s)</span><span class="value" id="vInterval">1.60</span></div><input id="interval" type="range" min=".4" max="4" step=".05" value="1.6"></div>
+        <div class="row"><div class="label"><span>Interval Jitter</span><span class="value" id="vJitter">0.00</span></div><input id="jitter" type="range" min="0" max=".5" step=".01" value="0"></div>
+        <div class="row"><div class="label"><span>Coupling Mode</span></div>
+          <select id="ffMode"><option value="sync">Synchronize</option><option value="desync">Desynchronize (TDMA)</option></select>
+        </div>
+        <div class="row"><div class="label"><span>Phase Response Curve</span></div>
+          <select id="ffPrc"><option value="constant">Constant Jump (Mirollo–Strogatz)</option><option value="sine">Sinusoidal</option></select>
+        </div>
+        <div class="legend">Each agent runs an internal clock and flashes at the end of its cycle. Seeing a neighbour flash nudges its own phase. Order <b id="ffOrder">0.00</b> measures coherence: 0 = scattered, 1 = perfect unison.</div>
+      </div>
       <div class="grid"><button class="btn primary" id="pause">Pause</button><button class="btn" id="reset">Reset</button></div>
     </div>
 
     <div class="tab" id="population">
-      <div class="row"><div class="label"><span>Population</span><span class="value" id="vCount">700</span></div><input id="count" type="range" min="80" max="1800" step="20" value="700"></div>
+      <div class="row"><div class="label"><span>Population</span><span class="value" id="vCount">700</span></div><input id="count" type="range" min="80" max="6000" step="20" value="700"></div>
       <div class="row"><div class="label"><span>Particle Speed</span><span class="value" id="vSpeed">5.0</span></div><input id="speed" type="range" min="1" max="12" step=".1" value="5"></div>
       <div class="row"><div class="label"><span>Neighborhood Radius</span><span class="value" id="vRadius">75</span></div><input id="radius" type="range" min="20" max="180" step="1" value="75"></div>
       <div class="row"><div class="label"><span>Separation</span><span class="value" id="vSep">1.8</span></div><input id="sep" type="range" min="0" max="4" step=".05" value="1.8"></div>
-      <div class="row"><div class="label"><span>Trail</span><span class="value" id="vTrail">0.18</span></div><input id="trail" type="range" min=".03" max=".6" step=".01" value=".18"></div>
+      <div class="row"><div class="label"><span>Fade Trail</span><span class="value" id="vTrail">0.18</span></div><input id="trail" type="range" min=".03" max=".6" step=".01" value=".18"></div>
     </div>
 
     <div class="tab" id="style">
@@ -78,313 +97,2006 @@ font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
           <option value="diamond">Diamond</option><option value="triangle">Triangle</option><option value="star">Star</option>
           <option value="hex">Hexagon</option><option value="cross">Cross</option><option value="arrow">Arrow</option>
           <option value="capsule">Capsule</option><option value="spark">4-Point Spark</option><option value="line">Needle / Line</option>
+          <option value="starling">Starling (bird)</option><option value="lantern">Lantern</option>
+          <option value="drone">Drone</option><option value="fiber">Fiber</option>
         </select>
       </div>
       <div class="row"><div class="label"><span>Color Mode</span></div>
-        <select id="colorMode"><option value="gradient">3-Color Gradient</option><option value="speed">Speed Heatmap</option><option value="rainbow">Rainbow</option><option value="state">Algorithm State</option><option value="mono">Monochrome</option></select>
+        <select id="colorMode">
+          <optgroup label="Palette">
+            <option value="gradient">3-Color Gradient</option><option value="heading">Heading (Direction)</option><option value="depth">Depth Layers</option>
+            <option value="density">Crowding / Density</option><option value="fitness">Fitness (Best = Brightest)</option><option value="pointer">Pointer Proximity</option>
+            <option value="wave">Palette Wave</option><option value="confetti">Confetti</option><option value="mono">Monochrome</option>
+          </optgroup>
+          <optgroup label="Fixed">
+            <option value="speed">Speed Heatmap</option><option value="rainbow">Rainbow</option><option value="state">Algorithm State</option>
+          </optgroup>
+        </select>
       </div>
-      <div class="colors"><div class="color">A<input type="color" id="ca" value="#00e5ff"></div><div class="color">B<input type="color" id="cb" value="#7c3aed"></div><div class="color">C<input type="color" id="cc" value="#ff3d81"></div></div>
+      <div class="legend" id="colorDesc">Palette sweeps diagonally across the screen.</div>
+      <div class="row"><div class="label"><span>Palette</span></div>
+        <select id="palette">
+          <option value="custom">Custom</option><option value="aurora">Aurora</option><option value="sunset">Sunset</option><option value="ocean">Ocean</option>
+          <option value="fire">Fire</option><option value="ice">Ice</option><option value="neon">Neon</option><option value="cyberpunk">Cyberpunk</option>
+          <option value="synthwave">Synthwave</option><option value="forest">Forest</option><option value="candy">Candy</option><option value="gold">Gold</option><option value="silver">Silver</option>
+        </select>
+        <div class="palbar" id="palPreview"></div>
+      </div>
+      <div class="colors"><div class="color">A<input type="color" id="ca" value="#00e5ff"></div><div class="color">B<input type="color" id="cb" value="#7c3aed"></div><div class="color">C<input type="color" id="cc" value="#ff3d81"></div><div class="color">BG<input type="color" id="bg" value="#05070b"></div></div>
+      <div class="row"><div class="label"><span>White Core</span><span class="value" id="vWhiten">0.40</span></div><input id="whiten" type="range" min="0" max="1" step=".01" value=".4"></div>
+      <div class="row"><div class="label"><span>Saturation</span><span class="value" id="vSat">1.00</span></div><input id="sat" type="range" min="0" max="2" step=".01" value="1"></div>
+      <div class="row"><div class="label"><span>Hue Shift</span><span class="value" id="vHue">0</span></div><input id="hue" type="range" min="0" max="360" step="1" value="0"></div>
+      <div class="row"><div class="label"><span>Hue Cycle</span><span class="value" id="vCycle">0.00</span></div><input id="cycle" type="range" min="0" max="1" step=".01" value="0"></div>
       <div class="row"><div class="label"><span>Particle Size</span><span class="value" id="vSize">1.4</span></div><input id="size" type="range" min=".4" max="3.5" step=".1" value="1.4"></div>
-      <div class="row"><div class="label"><span>Glow</span><span class="value" id="vGlow">28</span></div><input id="glow" type="range" min="0" max="80" step="1" value="28"></div>
-      <div class="row"><div class="label"><span>Glow Opacity</span><span class="value" id="vAlpha">0.65</span></div><input id="alpha" type="range" min="0" max="1" step=".01" value=".65"></div>
+      <div class="row"><div class="label"><span>Glow</span><span class="value" id="vGlow">20</span></div><input id="glow" type="range" min="0" max="80" step="1" value="20"></div>
+      <div class="row"><div class="label"><span>Glow Opacity</span><span class="value" id="vAlpha">0.55</span></div><input id="alpha" type="range" min="0" max="1" step=".01" value=".55"></div>
+      <div class="row"><div class="label"><span>Brightness</span><span class="value" id="vExposure">1.10</span></div><input id="exposure" type="range" min=".4" max="2.5" step=".01" value="1.1"></div>
+    </div>
+
+    <div class="tab" id="env">
+      <div class="row"><div class="label"><span>Trail Mode</span></div>
+        <select id="trailMode"><option value="fade">Fade (motion blur)</option><option value="ribbon">Ribbons (comets)</option><option value="pheromone">Pheromone Field</option></select>
+      </div>
+      <div class="row"><div class="label"><span>View</span></div>
+        <select id="view"><option value="depth">Depth (pseudo-3D)</option><option value="flat">Flat 2D</option></select>
+      </div>
+      <div class="row"><div class="label"><span>Backdrop</span></div>
+        <select id="backdrop"><option value="nebula">Nebula</option><option value="solid">Solid Colour (BG)</option></select>
+      </div>
+      <div class="row"><div class="label"><span>Starfield Density</span><span class="value" id="vStars">0.60</span></div><input id="stars" type="range" min="0" max="1" step=".01" value=".6"></div>
+      <div class="row"><div class="label"><span>Wind</span><span class="value" id="vWind">0.35</span></div><input id="wind" type="range" min="0" max="1.5" step=".01" value=".35"></div>
+      <div class="row"><div class="label"><span>Predators</span><span class="value" id="vPredators">0</span></div><input id="predators" type="range" min="0" max="4" step="1" value="0"></div>
+      <div class="grid"><button class="btn" id="obsBtn">Obstacles: OFF</button><button class="btn" id="obsClear">Clear Obstacles</button></div>
+      <div class="grid"><button class="btn on" id="logoBtn">Logo 3D: ON</button></div>
+      <div class="row"><div class="label"><span>Logo 3D Size</span><span class="value" id="vLogoSize">1.00</span></div><input id="logoSize" type="range" min=".4" max="2" step=".05" value="1"></div>
+      <label class="chk"><input type="checkbox" id="logoCollide" checked> Swarm flows around the logo</label>
+      <label class="chk"><input type="checkbox" id="logoFollow"> Logo turns toward the pointer</label>
+      <div class="legend">With Obstacles ON, click empty canvas to place up to 12 obstacles; agents flow around them. Predators hunt the swarm and trigger evasion waves.</div>
+      <label class="chk"><input type="checkbox" id="flow"> Show flow-field overlay</label>
+      <label class="chk"><input type="checkbox" id="cine" checked> Cinematic FX (vignette · grain · aberration)</label>
+    </div>
+
+    <div class="tab" id="hands">
+      <button class="btn" id="handTrackBtn" style="border-color:#8b5cf6; color:#8b5cf6">🤚 Hand Tracking</button>
+      <div class="grid">
+        <div class="row"><div class="label"><span>Max Hands</span></div><select id="handMax"><option value="2">Two</option><option value="1">One</option></select></div>
+        <div class="row"><div class="label"><span>Tracking Model</span></div><select id="handModel"><option value="full">Full (accurate)</option><option value="lite">Lite (fast)</option></select></div>
+      </div>
+      <div class="row"><div class="label"><span>Hand Strength</span><span class="value" id="vHandStrength">1.00</span></div><input id="handStrength" type="range" min=".2" max="2.5" step=".05" value="1"></div>
+      <div class="row"><div class="label"><span>Hand Travel</span><span class="value" id="vHandTravel">1.60</span></div><input id="handTravel" type="range" min="1" max="2.6" step=".05" value="1.6"></div>
+      <div class="row"><div class="label"><span>Hand Smoothing</span><span class="value" id="vHandSmooth">0.50</span></div><input id="handSmooth" type="range" min="0" max="1" step=".01" value=".5"></div>
+      <div class="row"><div class="label"><span>Gesture Hold (frames)</span><span class="value" id="vHandHold">3</span></div><input id="handHold" type="range" min="1" max="8" step="1" value="3"></div>
+      <label class="chk"><input type="checkbox" id="handTwo" checked> Two-hand gestures</label>
+      <label class="chk"><input type="checkbox" id="handSkeleton" checked> Show hand skeleton</label>
+      <label class="chk"><input type="checkbox" id="handLabels" checked> Show gesture labels</label>
+      <label class="chk"><input type="checkbox" id="handPreview" checked> Show camera preview</label>
+      <label class="chk"><input type="checkbox" id="handMirror" checked> Mirror camera (selfie view)</label>
+      <div class="legend"><b style="color:#c9d2df">One hand</b><br>✋ Open palm: swarm follows · swipe fast to sweep it<br>✊ Fist: grab and compress · open it to blast<br>☝️ Point: draw with the swarm at your fingertip<br>✌️ Peace: vortex (each hand spins its own way)<br>🤏 Pinch: push the swarm away<br>🤘 Rock: slow motion while held<br>👍 Thumbs up: next colour palette<br>Bring a hand closer to the camera for a wider reach.</div>
+      <div class="legend"><b style="color:#c9d2df">Two hands</b><br>🙌 Both open: stretch a bridge between them<br>👏 Clap: shockwave<br>✊✊ Both fists: crush into a ball · pull apart to grow it · open to explode<br>✌️✌️ Both peace: galaxy ring sized by the gap between your hands · tilt them to reverse the spin<br>☝️☝️ Both point: a taut string between your fingertips<br>✋✊ Open + fist: a stream flows from the open hand into the fist<br>🤏🤏 Both pinch: resize the logo (or particles when the logo is off)<br>🤘🤘 Both rock: stop time<br>👍👍 Both thumbs up: next preset</div>
     </div>
 
     <div class="tab" id="advanced">
+      <div class="row"><div class="label"><span>Presets</span></div>
+        <select id="preset">
+          <option value="custom">— Custom —</option>
+          <option value="murmuration">🐦 Starling Murmuration</option>
+          <option value="slime">🧫 Slime Mold Network</option>
+          <option value="firefly">✨ Firefly Night</option>
+          <option value="nebula">🐜 Nebula Ant Colony</option>
+          <option value="deeppso">🌌 Deep-Space PSO</option>
+          <option value="quantum">🐺 Quantum Wolf Pack</option>
+        </select>
+      </div>
       <div class="row"><div class="label"><span>Objective Landscape</span></div>
         <select id="landscape"><option value="multi">Multi-Well</option><option value="sphere">Sphere</option><option value="rastrigin">Rastrigin</option><option value="rosenbrock">Rosenbrock</option><option value="waves">Wave Field</option></select>
       </div>
       <div class="row"><div class="label"><span>Objective Pull</span><span class="value" id="vObj">0.60</span></div><input id="obj" type="range" min="0" max="1.5" step=".01" value=".60"></div>
       <div class="row"><div class="label"><span>Mouse Influence</span><span class="value" id="vMouse">0.70</span></div><input id="mouse" type="range" min="0" max="2" step=".01" value=".70"></div>
       <div class="row"><div class="label"><span>Interaction Reach</span><span class="value" id="vReach">400</span></div><input id="reach" type="range" min="100" max="1500" step="10" value="400"></div>
-      <div class="row"><div class="label"><span>Depth / Perspective</span><span class="value" id="vDepth">0.55</span></div><input id="depth" type="range" min="0" max="1" step=".01" value=".55"></div>
+      <div class="row"><div class="label"><span>Depth / Parallax</span><span class="value" id="vDepth">0.55</span></div><input id="depth" type="range" min="0" max="1" step=".01" value=".55"></div>
+      <div class="row"><div class="label"><span>Bloom Intensity</span><span class="value" id="vBloom">0.35</span></div><input id="bloom" type="range" min="0" max="1.5" step=".01" value=".35"></div>
+      <div class="row"><div class="label"><span>Keep Centred</span><span class="value" id="vCenter">0.50</span></div><input id="center" type="range" min="0" max="2" step=".01" value=".5"></div>
+      <div class="row"><div class="label"><span>Idle Drift</span><span class="value" id="vDrift">0.35</span></div><input id="drift" type="range" min="0" max="1" step=".01" value=".35"></div>
+      <div class="row"><div class="label"><span>Render Quality</span></div>
+        <select id="quality"><option value="auto">Auto (Adaptive)</option><option value="ultra">Ultra</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+      </div>
       <div class="grid"><button class="btn primary" id="save">Save Preset</button><button class="btn danger" id="random">Randomize</button></div>
       <div class="grid"><button class="btn" id="clear">Clear Trails</button><button class="btn" id="defaults">Defaults</button></div>
-      <div class="legend">Tip: For PSO/GWO/WOA/ABC, the brighter particles represent stronger candidate solutions. The objective field is intentionally visual and interactive rather than a scientific benchmark.</div>
-      <div class="grid" style="margin-top:8px"><button class="btn" id="handTrackBtn" style="border-color:#8b5cf6; color:#8b5cf6">🤚 Hand Tracking</button><button class="btn" id="audioBtn" style="border-color:#10b981; color:#10b981">🎤 Audio React</button></div>
+      <div class="legend">Shortcuts: SPACE pause · R reset · C clear trails · F fullscreen. Physarum and ACO use a real evaporating pheromone field the agents sense. Set Color Mode to Fitness to make the best candidates glow brightest. Rendering runs on the GPU (WebGL2) with bloom, so thousands of agents stay smooth.</div>
+      <div class="grid" style="margin-top:8px"><button class="btn" id="audioBtn" style="grid-column: 1 / -1; border-color:#10b981; color:#10b981">🎤 Audio React</button></div>
       <div class="grid" style="margin-top:8px"><button class="btn" id="recordBtn" style="grid-column: 1 / -1; border-color:#ef4444; color:#ef4444">🔴 Record Video</button></div>
     </div>
   </main>
 </section>
 
-<div class="stats">ALGO <b id="sAlgo">BOIDS</b> · AGENTS <b id="sCount">0</b> · FPS <b id="fps">0</b><br>BEST FITNESS <b id="best">—</b> · <span id="state">RUNNING</span></div>
+<div class="hud"><div id="pointerStatus">MOUSE: READY</div><div class="stats">ALGO <b id="sAlgo">BOIDS</b> · AGENTS <b id="sCount">0</b> · FPS <b id="fps">0</b> · <b id="sQuality">AUTO</b><br>BEST FITNESS <b id="best">—</b> · <span id="state">RUNNING</span></div></div>
 
 <script>
 (()=> {
-const c=document.getElementById('c'),x=c.getContext('2d'); let W,H,dpr=1,paused=false,t=0,frames=0,last=performance.now(),fpsAccum=0;
-const D={algo:'boids',count:700,speed:5,radius:75,sep:1.8,trail:.18,explore:.65,social:.70,conv:.45,shape:'circle',colorMode:'gradient',ca:'#00e5ff',cb:'#7c3aed',cc:'#ff3d81',size:1.4,glow:28,alpha:.65,landscape:'multi',obj:.60,mouse:.70,reach:400,depth:.55};
-let q={...D}, p=[], pointer={x:innerWidth/2,y:innerHeight/2,prevX:innerWidth/2,prevY:innerHeight/2,vx:0,vy:0,down:false,active:false,mode:'open',blast:0}, activeHands=[], best=0, grid={}, gridSize=75;
-let audioCtx, analyser, audioData, mediaRecorder, recordedChunks=[];
-const desc={boids:'Collective motion using separation, alignment and cohesion.',pso:'Particles share personal-best and global-best information.',mopso:'Multi-objective PSO visualizes a Pareto-like set of competing solutions.',aco:'Agents reinforce attractive routes and converge toward strong paths.',abc:'Employed, onlooker and scout behavior balances exploitation and exploration.',gwo:'Alpha, beta and delta leaders guide the rest of the pack.',woa:'Agents spiral and encircle promising solutions like whales.',fa:'Fireflies move toward brighter / better candidates.',bfo:'Bacteria chemotax toward favorable regions while exploring new areas.',afs:'Fish school, chase, follow and search for promising regions.'};
+'use strict';
 const $=id=>document.getElementById(id);
-function resize(){W=innerWidth;H=innerHeight;dpr=Math.min(devicePixelRatio||1,2);c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';x.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',resize);resize();
-function rgb(h){h=h.replace('#','');let n=parseInt(h,16);return[n>>16&255,n>>8&255,n&255]} function mix(a,b,k){return a.map((v,i)=>v+(b[i]-v)*k)} function col(a){return `rgb(${a.map(v=>Math.max(0,Math.min(255,v|0))).join(',')})`}
-function objective(X,Y){let nx=(X-W/2)/(Math.min(W,H)*.45),ny=(Y-H/2)/(Math.min(W,H)*.45);let v;
-if(q.landscape==='sphere')v=nx*nx+ny*ny; else if(q.landscape==='rastrigin')v=20+nx*nx+ny*ny-10*(Math.cos(18*nx)+Math.cos(18*ny)); else if(q.landscape==='rosenbrock')v=(1-nx)**2+100*(ny-nx*nx)**2; else if(q.landscape==='waves')v=Math.sin(nx*5+t*.4)*Math.cos(ny*5-t*.3)+.35*(nx*nx+ny*ny); else v=Math.sin(nx*4)**2+Math.cos(ny*5)**2+.18*(nx*nx+ny*ny);
-return v}
-function buildGrid(){grid={};gridSize=Math.max(q.radius,20);for(let i=0;i<p.length;i++){let a=p[i],cx=(a.x/gridSize)|0,cy=(a.y/gridSize)|0,key=cx+','+cy;if(!grid[key])grid[key]=[];grid[key].push(a)}}
-function getNeighbors(a){let cx=(a.x/gridSize)|0,cy=(a.y/gridSize)|0,result=[];for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){let key=(cx+dx)+','+(cy+dy);if(grid[key])for(let o of grid[key])if(o!==a)result.push(o)}return result}
-function curlNoise(px,py,time){let s=.003;return(Math.sin(px*s+time*.8)*Math.cos(py*s*.9+time*.6)+Math.cos(px*s*1.2-time*.5)*Math.sin(py*s*1.1+time*.7))*Math.PI}
-const gCv=document.createElement("canvas"),gCx=gCv.getContext("2d");gCv.width=gCv.height=128;
-(function(){let h=64,g=gCx.createRadialGradient(h,h,0,h,h,h);g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(.15,"rgba(255,255,255,.9)");g.addColorStop(.35,"rgba(255,255,255,.45)");g.addColorStop(.65,"rgba(255,255,255,.15)");g.addColorStop(1,"rgba(255,255,255,0)");gCx.fillStyle=g;gCx.beginPath();gCx.arc(h,h,h,0,Math.PI*2);gCx.fill()})();
-const gCa=new Map();function getGlow(r,g,b){let k=`${r=Math.round(r/12)*12}_${g=Math.round(g/12)*12}_${b=Math.round(b/12)*12}`;if(gCa.has(k))return gCa.get(k);let c=document.createElement("canvas"),x=c.getContext("2d");c.width=c.height=128;x.fillStyle=`rgb(${r},${g},${b})`;x.fillRect(0,0,128,128);x.globalCompositeOperation="destination-in";x.drawImage(gCv,0,0);gCa.set(k,c);return c}
-class Agent{
-constructor(){this.reset()}
-reset(){this.x=Math.random()*W;this.y=Math.random()*H;let a=Math.random()*6.28,s=q.speed*(.5+Math.random());this.vx=Math.cos(a)*s;this.vy=Math.sin(a)*s;this.bestX=this.x;this.bestY=this.y;this.fit=Infinity;this.phase=Math.random();this.life=Math.random();this.z=.65+Math.random()*.7}
-update(){
-let A=q.algo, R=q.radius, mf=.45, ms=q.speed*(1.3+q.explore*.7);
-// --- Neighbor forces (separation / alignment / cohesion) ---
-let sx=0,sy=0,nSep=0, ax=0,ay=0,nAli=0, cx=0,cy=0,nCoh=0;
-let rSep2=(q.sep*12*this.z)**2, rNb2=(R*this.z)**2;
-let nb=getNeighbors(this);
-for(let j=0;j<nb.length;j++){let o=nb[j];let dx=o.x-this.x,dy=o.y-this.y,d2=dx*dx+dy*dy;
-if(d2>rNb2||d2===0)continue;
-if(d2<rSep2){sx-=dx/d2;sy-=dy/d2;nSep++}
-else if(nAli<9){ax+=o.vx;ay+=o.vy;nAli++;cx+=o.x;cy+=o.y;nCoh++}}
-let fx=0,fy=0;
-// 1. Separation (Reynolds Steering)
-if(nSep>0){let m=Math.hypot(sx,sy);if(m>0){
-let dx=(sx/m)*ms-this.vx,dy=(sy/m)*ms-this.vy,dmag=Math.hypot(dx,dy);
-if(dmag>mf){dx=(dx/dmag)*mf;dy=(dy/dmag)*mf;}
-fx+=dx*q.explore*2.5;fy+=dy*q.explore*2.5;}}
-// 2. Alignment (Reynolds Steering)
-if(nAli>0){ax/=nAli;ay/=nAli;let am=Math.hypot(ax,ay);if(am>0){
-let dx=(ax/am)*ms-this.vx,dy=(ay/am)*ms-this.vy,dmag=Math.hypot(dx,dy);
-if(dmag>mf){dx=(dx/dmag)*mf;dy=(dy/dmag)*mf;}
-fx+=dx*q.social*0.85;fy+=dy*q.social*0.85;}}
-// 3. Cohesion (Reynolds Steering)
-if(nCoh>0){cx=(cx/nCoh)-this.x;cy=(cy/nCoh)-this.y;let cm=Math.hypot(cx,cy);if(cm>0){
-let dx=(cx/cm)*ms-this.vx,dy=(cy/cm)*ms-this.vy,dmag=Math.hypot(dx,dy);
-if(dmag>mf){dx=(dx/dmag)*mf;dy=(dy/dmag)*mf;}
-fx+=dx*q.conv*0.6;fy+=dy*q.conv*0.6;}}
-// --- Algorithm-specific forces ---
-if(A!=='boids'){
-let od=objective(this.x,this.y),improved=od<this.fit;if(improved){this.fit=od;this.bestX=this.x;this.bestY=this.y}
-let gx=W/2,gy=H/2;
-let bestA=p.reduce((m,z)=>z.fit<m.fit?z:m,this);if(bestA){gx=bestA.bestX;gy=bestA.bestY}
-let k=q.social*(A==='gwo'?.8:A==='woa'?1.1:A==='fa'?1.25:1);
-if(A==='aco'||A==='abc')k*=.75;if(A==='bfo')k*=.55;if(A==='afs')k*=.9;
-fx+=(this.bestX-this.x)*q.conv*.004+(gx-this.x)*k*.0015;
-fy+=(this.bestY-this.y)*q.conv*.004+(gy-this.y)*k*.0015;
-if(A==='woa'){let ang=t*.8+this.phase*6.28,rad=Math.hypot(gx-this.x,gy-this.y);fx+=Math.cos(ang)*rad*.0015;fy+=Math.sin(ang)*rad*.0015}
-if(A==='fa'){let br=Math.max(0,1/(1+od));fx+=(gx-this.x)*br*.004;fy+=(gy-this.y)*br*.004}
-if(A==='gwo'){fx+=(gx-this.x)*.003*(.5+.5*Math.sin(t+this.phase));fy+=(gy-this.y)*.003*(.5+.5*Math.cos(t+this.phase))}
-if(A==='mopso'){fx+=(Math.sin(this.phase*20+t)-.5)*.4;fy+=(Math.cos(this.phase*17-t)-.5)*.4}
-if(A==='aco'){fx+=Math.sin((this.x+this.y)*.015+t)*.6;fy+=Math.cos((this.x-this.y)*.015-t)*.6}
+const c=$('c');
+const MAX_N=6000;
+const PC=8; // pheromone cell size in CSS px (fine enough for Physarum vein networks)
+const SHAPES=['circle','ring','square','diamond','triangle','star','hex','cross','arrow','capsule','spark','line','starling','lantern','drone','fiber','predator'];
+const PICKABLE_SHAPES=SHAPES.slice(0,16); // 'predator' is only used to draw predators
+const SHAPE_IDX=Object.fromEntries(SHAPES.map((s,i)=>[s,i]));
+const SHAPE_SCALE={fiber:1.25}; // baked smaller so it fits its atlas cell; scaled back up when drawn
+
+let W=innerWidth,H=innerHeight,dpr=1,paused=false,t=0,frames=0,last=performance.now(),fpsAccum=0,fps=60,fpsSmooth=60;
+
+const D={algo:'boids',count:700,speed:5,radius:75,sep:1.8,trail:.18,explore:.65,social:.70,conv:.45,
+  shape:'circle',colorMode:'gradient',palette:'aurora',ca:'#00e5ff',cb:'#7c3aed',cc:'#ff3d81',bg:'#05070b',whiten:.4,sat:1,hue:0,cycle:0,exposure:1.1,size:1.4,glow:20,alpha:.55,
+  landscape:'multi',obj:.60,mouse:.70,reach:400,depth:.55,bloom:.35,quality:'auto',drift:.35,center:.5,
+  coupling:.12,interval:1.6,jitter:0,ffMode:'sync',ffPrc:'constant',
+  trailMode:'fade',view:'depth',backdrop:'nebula',stars:.6,wind:.35,predators:0,
+  logo:true,logoSize:1,logoCollide:true,logoFollow:false,flow:false,cine:true,preset:'custom',
+  handStrength:1,handTravel:1.6,handSmooth:.5,handHold:3,handSkeleton:true,handPreview:true,handLabels:true,handMirror:true,handTwo:true,handMax:'2',handModel:'full'};
+let q={...D};
+
+const desc={boids:'Collective motion using separation, alignment and cohesion.',pso:'Canonical velocity update: inertia + personal-best + global-best attraction.',mopso:'Multi-objective PSO visualizes a Pareto-like set of competing solutions.',aco:'Ants deposit pheromone on a live diffusing trail field and climb its gradient.',abc:'Employed, onlooker and scout behavior balances exploitation and exploration.',gwo:'Alpha, beta and delta leaders triangulate the position of the whole pack.',woa:'Agents spiral and encircle promising solutions like whales.',fa:'Fireflies move toward brighter / better candidates.',ffsync:'Pulse-coupled oscillators: each agent flashes on its own clock and nudges its phase when it sees a neighbour flash.',bfo:'Bacteria chemotax toward favorable regions while exploring new areas.',afs:'Fish school, chase, follow and search for promising regions.',physarum:'Physarum polycephalum: agents sense pheromone ahead, reinforce and branch, building vein networks.'};
+
+/* ---------- pointer / interaction state ---------- */
+let pointer={x:innerWidth/2,y:innerHeight/2,prevX:innerWidth/2,prevY:innerHeight/2,vx:0,vy:0,down:false,active:false,mode:'open',blast:0};
+let activeHands=[];                            // tracked hands (see Hand tracking); each also acts as an interactor
+/* two-hand gesture state: the active combo (bridge, crush, galaxy, string, stream, zoom, timestop, presets),
+   a pending shockwave (clap, crush release) and the bookkeeping for transitions */
+let handCombo=null, comboType=null, comboSince=0, comboLast={mx:0,my:0}, comboQuietUntil=0;
+let handBurst=null, handPairDist=0, lastClap=0, presetsArmed=true, zoomStartD=0, zoomStartVal=1, lastZoomSync=0;
+let audioCtx,analyser,audioData,mediaRecorder,recordedChunks=[];
+
+/* ================= WebGL setup ================= */
+const gl=c.getContext('webgl2',{alpha:false,antialias:false,preserveDrawingBuffer:true,powerPreference:'high-performance'});
+if(!gl){
+  document.body.innerHTML='<div style="color:#eef5ff;padding:48px;max-width:560px;font-family:system-ui,sans-serif;line-height:1.5">This experience requires <b>WebGL2</b>, which your browser or device does not currently support. Try an up-to-date version of Chrome, Edge, or Firefox.</div>';
+  throw new Error('WebGL2 unavailable');
 }
-// 4. Pointer interaction — multi-gesture
-let bx=0,by=0;
-let interactors = [];
-if(pointer.active) interactors.push(pointer);
-if(activeHands.length > 0) interactors.push(...activeHands);
-if(interactors.length === 0) interactors.push(pointer);
-for(let pt of interactors){
-let mx=pt.x-this.x,my=pt.y-this.y,md=Math.hypot(mx,my);
-if(md>0){
-if(pt.blast>0&&md<q.reach*1.5){let bp=(pt.blast/20)*50;bx-=(mx/md)*bp;by-=(my/md)*bp}
-if(pt.mode==='grab'){
-if(md<q.reach*1.25){let pull=1.8*ms*(1-md/(q.reach*1.25));fx+=(mx/md)*pull;fy+=(my/md)*pull}
-}else if(pt.mode==='vortex'){
-if(md<q.reach){let v=(1-md/q.reach)*ms*1.6;fx+=-(my/md)*v;fy+=(mx/md)*v}
-}else if(pt.mode==='repel'||pt.down){
-if(md<q.reach*0.85){let rep=(1-md/(q.reach*0.85))*12*q.mouse;fx-=(mx/md)*rep*ms;fy-=(my/md)*rep*ms}
-}else{
-let pull=q.mouse*0.5*(1.0+Math.pow(md/q.reach,1.6));
-let dx=(mx/md)*ms-this.vx,dy=(my/md)*ms-this.vy,dmag=Math.hypot(dx,dy);
-if(dmag>mf){dx=(dx/dmag)*mf;dy=(dy/dmag)*mf;}
-fx+=dx*pull;fy+=dy*pull;
-let swirl=q.mouse*1.15;
-let tx=(-my/md)*ms-this.vx,ty=(mx/md)*ms-this.vy,tmag=Math.hypot(tx,ty);
-if(tmag>mf){tx=(tx/tmag)*mf;ty=(ty/tmag)*mf;}
-fx+=tx*swirl;fy+=ty*swirl;
-}}}
-fx+=bx; fy+=by;
-// 5. Curl noise turbulence
-let audioLvl=0; if(audioData){analyser.getByteFrequencyData(audioData); audioLvl=audioData[(this.phase*audioData.length)|0]/255;}
-let cn=curlNoise(this.x,this.y,t);
-fx+=Math.cos(cn)*q.explore*mf*(1.6 + audioLvl*4);
-fy+=Math.sin(cn)*q.explore*mf*(1.6 + audioLvl*4);
-// 6. Boundary leashing
-let pad=70;
-if(this.x<pad)fx+=mf*2.5*((pad-this.x)/pad);
-if(this.x>W-pad)fx-=mf*2.5*((this.x-(W-pad))/pad);
-if(this.y<pad)fy+=mf*2.5*((pad-this.y)/pad);
-if(this.y>H-pad)fy-=mf*2.5*((this.y-(H-pad))/pad);
-// --- Velocity integration ---
-this.vx+=fx;this.vy+=fy;
-let spd=Math.hypot(this.vx,this.vy);
-if(spd>ms){this.vx=(this.vx/spd)*ms;this.vy=(this.vy/spd)*ms}
-else{let minSpd=ms*.5;if(spd<minSpd&&spd>0){this.vx=(this.vx/spd)*minSpd;this.vy=(this.vy/spd)*minSpd}}
-this.x+=this.vx+bx;this.y+=this.vy+by;
-if(this.x<-30)this.x=W+30;if(this.x>W+30)this.x=-30;if(this.y<-30)this.y=H+30;if(this.y>H+30)this.y=-30;
+gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+/* GPU context loss (driver reset, too many WebGL tabs): stop drawing, and once the browser hands the
+   context back, reload with the current settings instead of staying black. */
+let contextLost=false;
+c.addEventListener('webglcontextlost',e=>{ e.preventDefault(); contextLost=true; const s=$('state'); if(s) s.textContent='GPU CONTEXT LOST'; });
+c.addEventListener('webglcontextrestored',()=>{ try{ sessionStorage.setItem('swarmLabV5:restore',JSON.stringify(q)); }catch(_){} location.reload(); });
+
+function compile(type,src){
+  const sh=gl.createShader(type); gl.shaderSource(sh,src); gl.compileShader(sh);
+  if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)){ const info=gl.getShaderInfoLog(sh); gl.deleteShader(sh); throw new Error('Shader compile error: '+info); }
+  return sh;
 }
-color(){let A=rgb(q.ca),B=rgb(q.cb),C=rgb(q.cc),k=(this.x/W*.55+this.y/H*.45+this.phase*.2)%1;if(k<0)k+=1;
-if(q.colorMode==='speed'){let s=Math.min(1,Math.hypot(this.vx,this.vy)/(q.speed*1.5));return [Math.round(255*s),Math.round(90+150*(1-s)),255-Math.round(150*s)]}
-if(q.colorMode==='rainbow'){let h=(k*360+t*25)%360;return hsv(h,1,1)}
-if(q.colorMode==='mono')return mix(A,[255,255,255],.45);
-if(q.colorMode==='state'){let aa=q.algo==='boids'?A:q.algo==='pso'||q.algo==='mopso'?B:q.algo==='gwo'||q.algo==='woa'?C:[120,255,150];return aa}
-return k<.5?mix(A,B,k*2):mix(B,C,(k-.5)*2)}
-drawGlow(cc){if(!q.glow)return;let gd=q.glow*this.z*(q.size*.85);if(audioData)gd*=1+(audioData[(this.phase*audioData.length)|0]/255)*1.5;let sp=getGlow(cc[0],cc[1],cc[2]);x.save();x.globalAlpha=q.alpha*.65*this.z;x.drawImage(sp,this.x-gd*.5,this.y-gd*.5,gd,gd);x.restore()}
-drawBody(cc,pr){let spd=Math.hypot(this.vx,this.vy);let s=q.size*this.z;if(audioData)s*=1+(audioData[(this.phase*audioData.length)|0]/255)*1.5;let ang=Math.atan2(this.vy,this.vx);x.save();x.translate(this.x,this.y);x.scale(1,1-pr*.45);x.rotate(ang);x.fillStyle=`rgb(${Math.round(cc[0]+(255-cc[0])*.6)},${Math.round(cc[1]+(255-cc[1])*.6)},${Math.round(cc[2]+(255-cc[2])*.6)})`;shape(q.shape,s,spd);x.restore()}
+function program(vsSrc,fsSrc){
+  const vs=compile(gl.VERTEX_SHADER,vsSrc), fs=compile(gl.FRAGMENT_SHADER,fsSrc);
+  const p=gl.createProgram(); gl.attachShader(p,vs); gl.attachShader(p,fs); gl.linkProgram(p);
+  if(!gl.getProgramParameter(p,gl.LINK_STATUS)){ const info=gl.getProgramInfoLog(p); throw new Error('Program link error: '+info); }
+  return p;
 }
-function hsv(h,s,v){let f=(n,k=(n+h/60)%6)=>v-v*s*Math.max(Math.min(k,4-k,1),0);return [f(5)*255,f(3)*255,f(1)*255]}
-function shape(sh,s,v=0){x.beginPath();if(sh==='lantern'){x.roundRect(-4.8*s-v,-1.8*s,9.6*s+v,3.6*s,1.4*s)}else if(sh==='starling'){x.moveTo(8*s,0);x.lineTo(-6*s-v,-3.5*s);x.lineTo(-3*s-v,0);x.lineTo(-6*s-v,3.5*s)}else if(sh==='drone'){x.roundRect(-v-2.8*s,-2.8*s,v+5.6*s,5.6*s,2.8*s)}else if(sh==='fiber'){x.rect(-10*s-v,-s,20*s+v,2*s)}else if(sh==='circle'){x.roundRect(-v-3*s,-3*s,v+6*s,6*s,3*s)}else if(sh==='ring'){x.roundRect(-v-4*s,-4*s,v+8*s,8*s,4*s);x.strokeStyle=x.fillStyle;x.lineWidth=s;x.stroke();return}else if(sh==='square'){x.rect(-3*s-v,-3*s,6*s+v,6*s)}else if(sh==='diamond'){x.moveTo(5*s,0);x.lineTo(0,3*s);x.lineTo(-5*s-v,0);x.lineTo(0,-3*s)}else if(sh==='triangle'){x.moveTo(5*s,0);x.lineTo(-4*s-v,3.5*s);x.lineTo(-4*s-v,-3.5*s)}else if(sh==='star'||sh==='spark'){for(let i=0;i<(sh==='star'?10:8);i++){let r=i%2?2*s:5*s,a=i*Math.PI/5-Math.PI/2,dx=Math.cos(a)*r,dy=Math.sin(a)*r;if(dx<0)dx-=v;x.lineTo(dx,dy)}}else if(sh==='hex'){for(let i=0;i<6;i++){let a=i*Math.PI/3,dx=Math.cos(a)*4*s;if(dx<0)dx-=v;x.lineTo(dx,Math.sin(a)*4*s)}}else if(sh==='cross'){x.rect(-s,-5*s,2*s,10*s);x.rect(-5*s-v,-s,10*s+v,2*s)}else if(sh==='arrow'){x.moveTo(6*s,0);x.lineTo(-3*s-v,4*s);x.lineTo(-1*s-v,0);x.lineTo(-3*s-v,-4*s)}else if(sh==='capsule'){x.roundRect(-5*s-v,-2*s,10*s+v,4*s,2*s)}else{x.rect(-6*s-v,-.8*s,12*s+v,1.6*s)}x.closePath();x.fill()}
-function sync(){while(p.length<q.count)p.push(new Agent());if(p.length>q.count)p.length=q.count;$('sCount').textContent=p.length;$('sAlgo').textContent=q.algo.toUpperCase();Object.entries({count:'Count',speed:'Speed',radius:'Radius',sep:'Sep',trail:'Trail',explore:'Explore',social:'Social',conv:'Conv',size:'Size',glow:'Glow',alpha:'Alpha',obj:'Obj',mouse:'Mouse',reach:'Reach',depth:'Depth'}).forEach(([k,n])=>{let e=$(k),v=$('v'+n);if(e)e.value=q[k];if(v)v.textContent=typeof q[k]==='number'?q[k].toFixed(k==='count'||k==='radius'||k==='glow'||k==='reach'?0:2):q[k]});$('algo').value=q.algo;$('shape').value=q.shape;$('colorMode').value=q.colorMode;$('landscape').value=q.landscape;$('ca').value=q.ca;$('cb').value=q.cb;$('cc').value=q.cc;$('desc').textContent=desc[q.algo]}
-function reset(){p=[];sync()}
-function loop(now){let dt=now-last;last=now;frames++;fpsAccum+=dt;if(fpsAccum>=1000){$('fps').textContent=Math.round(frames*1000/fpsAccum);frames=0;fpsAccum=0}
-if(!paused){t+=.014;
-// Auto-wander pointer when mouse isn't active
-if(!pointer.active){pointer.x=W/2+Math.cos(t*.7)*(W*.32);pointer.y=H/2+Math.sin(t*.95)*(H*.25)}
-pointer.vx*=.85;pointer.vy*=.85;
-x.globalCompositeOperation='source-over';x.fillStyle=`rgba(1,2,4,${q.trail})`;x.fillRect(0,0,W,H);buildGrid();for(let a of p)a.update();
-p.sort((a,b)=>a.z-b.z);let ccs=p.map(a=>a.color());
-x.globalCompositeOperation='lighter';for(let i=0;i<p.length;i++)p[i].drawGlow(ccs[i]);
-x.globalCompositeOperation='source-over';let pr=(q.depth||.5)*.8;for(let i=0;i<p.length;i++)p[i].drawBody(ccs[i],pr);
-let actInt = pointer.active ? [pointer, ...activeHands] : activeHands;
-for(let pt of actInt){
-  if(pt.blast>0) pt.blast--;
-  x.save();x.globalCompositeOperation='lighter';
-  let targetSize = pt.mode === 'grab' ? 24 : pt.mode === 'vortex' ? 80 : pt.mode === 'repel' ? 120 : 45;
-  pt.visSize = (pt.visSize || 45) + (targetSize - (pt.visSize || 45)) * 0.15;
-  let mc = pt.mode === 'grab' ? [255,40,120] : pt.mode === 'vortex' ? [40,200,255] : pt.mode === 'repel' ? [255,200,40] : [150,160,180];
-  pt.visC = pt.visC || [150,160,180];
-  pt.visC[0] += (mc[0]-pt.visC[0])*.1; pt.visC[1] += (mc[1]-pt.visC[1])*.1; pt.visC[2] += (mc[2]-pt.visC[2])*.1;
-  let sp = getGlow(pt.visC[0], pt.visC[1], pt.visC[2]), vs = pt.visSize;
-  if(pt.mode==='vortex'){x.translate(pt.x,pt.y);x.rotate(t*4);x.drawImage(sp,-vs/2,-vs/2,vs,vs)}
-  else{x.drawImage(sp,pt.x-vs/2,pt.y-vs/2,vs,vs)}
-  x.restore();
+function uniforms(p,names){ const o={}; for(const n of names) o[n]=gl.getUniformLocation(p,n); return o; }
+function makeTex(w,h,internalFmt,format,type,filter){
+  const tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texImage2D(gl.TEXTURE_2D,0,internalFmt,w,h,0,format,type,null);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,filter); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,filter);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  return tex;
 }
-best=Infinity;for(let i=0;i<p.length;i++){let f=p[i].fit;if(Number.isFinite(f)&&f<best)best=f}$('best').textContent=Number.isFinite(best)?best.toFixed(3):'—'}requestAnimationFrame(loop)}
-for(let b of document.querySelectorAll('.tabs button'))b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(z=>z.classList.remove('active'));document.querySelectorAll('.tab').forEach(z=>z.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active')};
-$('toggle').onclick=()=>{$('panel').classList.toggle('collapsed');$('chev').textContent=$('panel').classList.contains('collapsed')?'▼':'▲'};
-const ranges=['count','speed','radius','sep','trail','explore','social','conv','size','glow','alpha','obj','mouse','reach','depth'];
-ranges.forEach(k=>$(k).oninput=e=>{q[k]=+e.target.value;sync()});
-$('algo').onchange=e=>{q.algo=e.target.value;reset();sync()};$('shape').onchange=e=>q.shape=e.target.value;$('colorMode').onchange=e=>{q.colorMode=e.target.value;gCa.clear()};
-['ca','cb','cc'].forEach(k=>$(k).oninput=e=>{q[k]=e.target.value;gCa.clear()});$('landscape').onchange=e=>q.landscape=e.target.value;
-$('pause').onclick=()=>{paused=!paused;$('pause').textContent=paused?'Resume':'Pause';$('state').textContent=paused?'PAUSED':'RUNNING'};
-$('reset').onclick=reset;$('clear').onclick=()=>{x.fillStyle='#05070b';x.fillRect(0,0,W,H)};
-$('random').onclick=()=>{q.ca='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');q.cb='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');q.cc='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');q.shape=['circle','ring','square','diamond','triangle','star','hex','cross','arrow','capsule','spark','line'][Math.floor(Math.random()*12)];q.algo=['boids','pso','mopso','aco','abc','gwo','woa','fa','bfo','afs'][Math.floor(Math.random()*10)];sync();reset()};
-$('defaults').onclick=()=>{q={...D};sync();reset()};
-$('save').onclick=()=>{localStorage.setItem('swarmLabV2',JSON.stringify(q));$('save').textContent='Saved ✓';setTimeout(()=>$('save').textContent='Save Preset',1000)};
-try{Object.assign(q,JSON.parse(localStorage.getItem('swarmLabV2')||'{}'))}catch(e){}
-/* Robust mouse + touch interaction */
+/* Prefer a true floating-point HDR pipeline so overlapping bright particles roll off
+   with a filmic curve instead of hard-clipping to flat white. Falls back gracefully
+   on devices without EXT_color_buffer_float. */
+const FLOAT_HDR=!!gl.getExtension('EXT_color_buffer_float');
+const FBO_INTERNAL=FLOAT_HDR?gl.RGBA16F:gl.RGBA8;
+const FBO_TYPE=FLOAT_HDR?gl.HALF_FLOAT:gl.UNSIGNED_BYTE;
+function makeFBO(w,h,filter){
+  const tex=makeTex(w,h,FBO_INTERNAL,gl.RGBA,FBO_TYPE,filter||gl.LINEAR);
+  const fb=gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER,fb);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+  return {fb,tex,w,h};
+}
+
+/* Full-screen quad geometry, reused as the per-instance sprite quad too */
+const quadBuf=gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,quadBuf);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1, 1,-1, -1,1, 1,1]),gl.STATIC_DRAW);
+
+/* ---------- Particle shaders (glow + body share the same instance data) ---------- */
+const VS_PARTICLE=`#version 300 es
+layout(location=0) in vec2 a_corner;
+layout(location=1) in vec4 a_data0; // x,y,vx,vy
+layout(location=2) in vec4 a_data1; // r,g,b,z
+layout(location=3) in vec2 a_data2; // sizeMul, unused
+uniform vec2 u_resolution;
+uniform vec2 u_camera;
+uniform vec2 u_center;
+uniform float u_depthStrength;
+uniform float u_sizeMul;
+uniform float u_isGlow;
+uniform float u_pr;
+uniform float u_maxSpeed;
+uniform float u_flap;   // 1 = starling: flap the wings (squash the sprite across its heading)
+uniform float u_time;
+uniform float u_flat;   // 1 = Flat 2D view: every agent on one depth plane
+uniform vec2 u_zRange;  // only draw agents with u_zRange.x <= z < u_zRange.y (depth split around the logo)
+out vec2 v_uv;
+out vec3 v_color;
+out float v_z;
+out float v_flash;
+void main(){
+  vec2 pos=a_data0.xy, vel=a_data0.zw;
+  vec3 color=a_data1.rgb; float zRaw=a_data1.w;
+  if(zRaw<u_zRange.x||zRaw>=u_zRange.y){ gl_Position=vec4(2.0,2.0,2.0,1.0); v_uv=vec2(0.0); v_color=vec3(0.0); v_z=0.0; v_flash=0.0; return; }
+  float z=mix(zRaw,1.0,u_flat);
+  float sizeMul=a_data2.x;
+  float flash=a_data2.y;
+  float speed=length(vel);
+  float ang= speed>0.0001 ? atan(vel.y,vel.x) : 0.0;
+  float cs=cos(ang), sn=sin(ang);
+  mat2 rot=mat2(cs,sn,-sn,cs);
+  float depthScale=mix(0.55,1.35,clamp(z,0.0,1.0));
+  vec2 scale=vec2(u_sizeMul*sizeMul*depthScale);
+  if(u_isGlow>0.5){ scale*=(1.0+flash*2.6); }
+  if(u_isGlow<0.5){
+    float stretch=1.0+clamp(speed/max(u_maxSpeed,0.001),0.0,1.0)*0.55;
+    scale.x*=stretch;
+    scale.y*=(1.0-u_pr*0.45);
+    if(u_flap>0.5) scale.y*=0.7+0.3*sin(u_time*10.0+(pos.x+pos.y)*0.05); // neighbours flap in travelling waves
+  }
+  vec2 local=a_corner*scale;
+  local=rot*local;
+  // camera offset normalised to -1..1, so u_depthStrength is the max shift in pixels
+  vec2 parallax=((u_camera-u_center)/(0.5*u_resolution))*u_depthStrength*(z-0.5)*(1.0-u_flat);
+  vec2 worldPos=pos+local+parallax;
+  vec2 clip=(worldPos/u_resolution)*2.0-1.0;
+  clip.y=-clip.y;
+  gl_Position=vec4(clip,0.0,1.0);
+  v_uv=a_corner*0.5+0.5;
+  v_color=color;
+  v_z=z;
+  v_flash=flash;
+}`;
+/* Colour grading shared by body and glow: hue rotation about the grey axis, then saturation. */
+const GLSL_GRADE=`uniform float u_sat; uniform float u_hue;
+vec3 grade(vec3 c){
+  const vec3 k=vec3(0.57735027);
+  float ch=cos(u_hue), sh=sin(u_hue);
+  c=c*ch+cross(k,c)*sh+k*dot(k,c)*(1.0-ch);
+  float l=dot(c,vec3(0.299,0.587,0.114));
+  return max(mix(vec3(l),c,u_sat),0.0);
+}`;
+const FS_BODY=`#version 300 es
+precision highp float;
+in vec2 v_uv; in vec3 v_color; in float v_z; in float v_flash;
+uniform sampler2D u_atlas; uniform float u_shape; uniform vec2 u_atlasGrid; uniform float u_whiten;
+${GLSL_GRADE}
+out vec4 outColor;
+void main(){
+  float cols=u_atlasGrid.x, rows=u_atlasGrid.y;
+  float idx=floor(u_shape+0.5);
+  float cx=mod(idx,cols); float cy=floor(idx/cols);
+  vec2 cellUV=(vec2(cx,cy)+v_uv)/vec2(cols,rows);
+  vec4 tex=texture(u_atlas,cellUV);
+  float depthFade=mix(0.55,1.0,clamp(v_z,0.0,1.0));
+  if(tex.a<0.04) discard;
+  vec3 col=mix(grade(v_color), vec3(1.0), u_whiten)*depthFade;
+  col=mix(col, col*3.5+vec3(1.0,0.92,0.6)*v_flash*2.0, v_flash);
+  outColor=vec4(col,tex.a);
+}`;
+const FS_GLOW=`#version 300 es
+precision highp float;
+in vec2 v_uv; in vec3 v_color; in float v_z; in float v_flash;
+uniform float u_alpha;
+${GLSL_GRADE}
+out vec4 outColor;
+void main(){
+  vec2 p=v_uv*2.0-1.0;
+  float d=length(p);
+  float a=smoothstep(1.0,0.0,d);
+  a=pow(a,1.7);
+  float depthFade=mix(0.35,1.0,clamp(v_z,0.0,1.0));
+  vec3 tint=mix(grade(v_color), vec3(1.0,0.93,0.62), v_flash*0.75);
+  float gain=1.0+v_flash*5.0;
+  vec3 col=tint*a*u_alpha*depthFade*gain;
+  outColor=vec4(col,a*u_alpha*depthFade*(1.0+v_flash*1.5));
+}`;
+const progBody=program(VS_PARTICLE,FS_BODY);
+const uBody=uniforms(progBody,['u_resolution','u_camera','u_center','u_depthStrength','u_sizeMul','u_isGlow','u_pr','u_maxSpeed','u_atlas','u_shape','u_atlasGrid','u_whiten','u_sat','u_hue','u_flap','u_time','u_flat','u_zRange']);
+const progGlow=program(VS_PARTICLE,FS_GLOW);
+const uGlow=uniforms(progGlow,['u_resolution','u_camera','u_center','u_depthStrength','u_sizeMul','u_isGlow','u_pr','u_maxSpeed','u_alpha','u_sat','u_hue','u_flap','u_time','u_flat','u_zRange']);
+
+/* Instance buffer: 10 floats per particle: x,y,vx,vy, r,g,b,z, sizeMul, pad */
+const STRIDE=10;
+const instData=new Float32Array(MAX_N*STRIDE);
+const instBuf=gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,instBuf);
+gl.bufferData(gl.ARRAY_BUFFER,instData.byteLength,gl.DYNAMIC_DRAW);
+
+function bindParticleVAOAttribs(buf){
+  gl.bindBuffer(gl.ARRAY_BUFFER,quadBuf);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0); gl.vertexAttribDivisor(0,0);
+  gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  const bpe=4, stride=STRIDE*bpe;
+  gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1,4,gl.FLOAT,false,stride,0); gl.vertexAttribDivisor(1,1);
+  gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2,4,gl.FLOAT,false,stride,16); gl.vertexAttribDivisor(2,1);
+  gl.enableVertexAttribArray(3); gl.vertexAttribPointer(3,2,gl.FLOAT,false,stride,32); gl.vertexAttribDivisor(3,1);
+}
+const vaoParticles=gl.createVertexArray();
+gl.bindVertexArray(vaoParticles); bindParticleVAOAttribs(instBuf); gl.bindVertexArray(null);
+/* A small second instance buffer for one-off sprites (pointer blobs, predators, obstacles, logo halo),
+   so the particle buffer never has to be overwritten and re-uploaded mid-frame. */
+const EXTRA_CAP=64, extraData=new Float32Array(EXTRA_CAP*STRIDE), extraBuf=gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,extraBuf); gl.bufferData(gl.ARRAY_BUFFER,extraData.byteLength,gl.DYNAMIC_DRAW);
+const vaoExtra=gl.createVertexArray();
+gl.bindVertexArray(vaoExtra); bindParticleVAOAttribs(extraBuf); gl.bindVertexArray(null);
+function putExtra(k,x,y,r,g,b,z,size,flash){ const o=k*STRIDE; extraData[o]=x; extraData[o+1]=y; extraData[o+2]=0; extraData[o+3]=0; extraData[o+4]=r; extraData[o+5]=g; extraData[o+6]=b; extraData[o+7]=z; extraData[o+8]=size; extraData[o+9]=flash||0; }
+function putExtraVel(k,vx,vy){ const o=k*STRIDE; extraData[o+2]=vx; extraData[o+3]=vy; }
+
+/* ---------- Line segments (ribbon trails, flow-field overlay): instanced quads along each segment ---------- */
+const progSeg=program(`#version 300 es
+layout(location=0) in vec2 a_corner;
+layout(location=1) in vec4 a_seg;   // x1,y1,x2,y2 in css px
+layout(location=2) in vec4 a_col;   // r,g,b,alpha
+layout(location=3) in float a_width;
+uniform vec2 u_resolution;
+out vec4 v_col; out float v_across;
+void main(){
+  vec2 p1=a_seg.xy, p2=a_seg.zw, d=p2-p1; float len=length(d);
+  vec2 dir=len>1e-4?d/len:vec2(1.0,0.0), nrm=vec2(-dir.y,dir.x);
+  float hw=max(a_width*0.5,0.5)+0.75; // half width plus an anti-aliasing fringe
+  vec2 p=mix(p1,p2,a_corner.x*0.5+0.5)+dir*a_corner.x*hw*0.5+nrm*a_corner.y*hw;
+  vec2 clip=(p/u_resolution)*2.0-1.0; clip.y=-clip.y;
+  gl_Position=vec4(clip,0.0,1.0);
+  v_col=a_col; v_across=a_corner.y*hw/max(a_width*0.5,0.5);
+}`,`#version 300 es
+precision highp float; in vec4 v_col; in float v_across; out vec4 outColor;
+void main(){ float a=v_col.a*smoothstep(1.35,0.6,abs(v_across)); outColor=vec4(v_col.rgb*a,a); }`);
+const uSeg=uniforms(progSeg,['u_resolution']);
+const TL=12, SEG_STRIDE=9, RIBBON_CAP=3000;
+const segData=new Float32Array(RIBBON_CAP*(TL-1)*SEG_STRIDE), segBuf=gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,segBuf); gl.bufferData(gl.ARRAY_BUFFER,segData.byteLength,gl.DYNAMIC_DRAW);
+const vaoSeg=gl.createVertexArray();
+gl.bindVertexArray(vaoSeg);
+gl.bindBuffer(gl.ARRAY_BUFFER,quadBuf); gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0); gl.vertexAttribDivisor(0,0);
+gl.bindBuffer(gl.ARRAY_BUFFER,segBuf);
+gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1,4,gl.FLOAT,false,SEG_STRIDE*4,0); gl.vertexAttribDivisor(1,1);
+gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2,4,gl.FLOAT,false,SEG_STRIDE*4,16); gl.vertexAttribDivisor(2,1);
+gl.enableVertexAttribArray(3); gl.vertexAttribPointer(3,1,gl.FLOAT,false,SEG_STRIDE*4,32); gl.vertexAttribDivisor(3,1);
+gl.bindVertexArray(null);
+function drawSegments(n){
+  if(n<=0) return;
+  gl.useProgram(progSeg); gl.uniform2f(uSeg.u_resolution,W,H);
+  gl.bindBuffer(gl.ARRAY_BUFFER,segBuf); gl.bufferSubData(gl.ARRAY_BUFFER,0,segData.subarray(0,n*SEG_STRIDE));
+  gl.bindVertexArray(vaoSeg); gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,n); gl.bindVertexArray(null);
+}
+/* Ribbon (comet) trails: a ring buffer of each agent's last TL positions, all agents advancing together. */
+const histX=new Float32Array(MAX_N*TL), histY=new Float32Array(MAX_N*TL);
+let histHead=0, histValid=0; // histValid = frames of usable history since the last reset
+function clearRibbons(){ histValid=0; }
+function pushRibbonHistory(){
+  if(q.trailMode!=='ribbon'||qTier>2){ histValid=0; return; }
+  histHead=(histHead+1)%TL;
+  for(let i=0;i<count;i++){ const k=i*TL+histHead; histX[k]=posX[i]; histY[k]=posY[i]; }
+  if(histValid<TL) histValid++;
+}
+function buildRibbonSegments(){
+  const n=Math.min(count,RIBBON_CAP), segs=histValid-1;
+  if(segs<1) return 0;
+  let o=0;
+  for(let i=0;i<n;i++){
+    const b=i*STRIDE, r=instData[b+4], g=instData[b+5], bl=instData[b+6], wBase=Math.max(.4,q.size*Math.min(zArr[i],1.35)*1.5);
+    for(let s=0;s<segs;s++){
+      const k1=i*TL+(histHead-s+TL)%TL, k2=i*TL+(histHead-s-1+TL)%TL, f=1-s/TL;
+      segData[o]=histX[k1]; segData[o+1]=histY[k1]; segData[o+2]=histX[k2]; segData[o+3]=histY[k2];
+      segData[o+4]=r; segData[o+5]=g; segData[o+6]=bl; segData[o+7]=f*.32; segData[o+8]=wBase*f;
+      o+=SEG_STRIDE;
+    }
+  }
+  return o/SEG_STRIDE;
+}
+function buildFlowSegments(){
+  let o=0; const st=64, max=segData.length-SEG_STRIDE;
+  for(let gy=st;gy<H;gy+=st) for(let gx=st;gx<W&&o<max;gx+=st){
+    const cn=curlNoise(gx,gy,t);
+    segData[o]=gx; segData[o+1]=gy; segData[o+2]=gx+Math.cos(cn)*14; segData[o+3]=gy+Math.sin(cn)*14;
+    segData[o+4]=.43; segData[o+5]=.906; segData[o+6]=1; segData[o+7]=.16; segData[o+8]=1;
+    o+=SEG_STRIDE;
+  }
+  return o/SEG_STRIDE;
+}
+
+/* ---------- Fullscreen-quad helper programs (trail fade, pheromone, bright-pass, blur, composite) ---------- */
+const VS_FS_QUAD=`#version 300 es
+layout(location=0) in vec2 a_corner;
+out vec2 v_uv;
+void main(){ v_uv=a_corner*0.5+0.5; gl_Position=vec4(a_corner,0.0,1.0); }`;
+
+/* Trail fade = fade toward the backdrop (solid BG colour or the nebula texture) plus a procedural
+   twinkling starfield. Because trails fade INTO the backdrop, trails and background coexist; the
+   ULTRA canvas build redrew an opaque background every frame, which silently disabled Fade Trail. */
+const progFade=program(VS_FS_QUAD,`#version 300 es
+precision highp float; in vec2 v_uv; out vec4 outColor;
+uniform sampler2D u_bgTex; uniform float u_useTex; uniform vec3 u_color; uniform float u_alpha;
+uniform float u_stars; uniform float u_time; uniform vec2 u_res; uniform vec2 u_starShift;
+float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+vec3 starLayer(vec2 px,float cell,float prob,float radius,float gain){
+  vec2 id=floor(px/cell), f=px/cell-id;
+  float h=hash(id);
+  if(h>prob) return vec3(0.0);
+  vec2 sp=vec2(hash(id+1.37),hash(id+7.13))*0.8+0.1;
+  float d=length((f-sp)*cell);
+  float tw=0.25+0.75*(0.5+0.5*sin(u_time*(1.0+3.0*hash(id+3.71))+h*61.0));
+  return vec3(0.81,0.9,1.0)*smoothstep(radius,0.0,d)*tw*gain;
+}
+void main(){
+  vec2 st=vec2(v_uv.x,1.0-v_uv.y); // screen space, top row first
+  vec3 col=u_useTex>0.5?texture(u_bgTex,st).rgb:u_color;
+  if(u_stars>0.001){
+    vec2 px=st*u_res;
+    col+=starLayer(px+u_starShift,92.0,u_stars*0.36,1.4,0.95);
+    col+=starLayer(px+u_starShift*0.45,53.0,u_stars*0.55,1.0,0.6);
+  }
+  outColor=vec4(col,u_alpha);
+}`);
+const uFade=uniforms(progFade,['u_bgTex','u_useTex','u_color','u_alpha','u_stars','u_time','u_res','u_starShift']);
+
+/* The pheromone field is stored top row first (screen space) but fullscreen quads sample v=0 at the
+   bottom, so v is flipped; without it the heatmap was drawn upside-down relative to the ants. */
+const progPher=program(VS_FS_QUAD,`#version 300 es
+precision highp float; in vec2 v_uv; out vec4 outColor;
+uniform sampler2D u_pher; uniform vec3 u_colA; uniform vec3 u_colC; uniform float u_intensity;
+void main(){
+  float v=min(1.0,texture(u_pher,vec2(v_uv.x,1.0-v_uv.y)).r*2.0); // texel*PH_MAX/3: saturates at a concentration of 3
+  float a=v*v;                                                     // steep curve: veins stay crisp, the diffuse halo stays dim
+  vec3 col=mix(u_colA,u_colC,v);                                   // faint trails take palette A, strong veins C
+  outColor=vec4(col*a*u_intensity, a*u_intensity*0.9);
+}`);
+const uPher=uniforms(progPher,['u_pher','u_colA','u_colC','u_intensity']);
+
+const progBright=program(VS_FS_QUAD,`#version 300 es
+precision highp float; in vec2 v_uv; out vec4 outColor; uniform sampler2D u_src; uniform float u_threshold;
+void main(){ vec3 c=texture(u_src,v_uv).rgb; float lum=dot(c,vec3(0.299,0.587,0.114)); float k=smoothstep(u_threshold-0.12,u_threshold+0.35,lum); outColor=vec4(c*k,1.0); }`);
+const uBright=uniforms(progBright,['u_src','u_threshold']);
+
+const progBlur=program(VS_FS_QUAD,`#version 300 es
+precision highp float; in vec2 v_uv; out vec4 outColor; uniform sampler2D u_src; uniform vec2 u_dir; uniform vec2 u_texel;
+void main(){
+  vec3 sum=texture(u_src,v_uv).rgb*0.227027;
+  vec2 o1=u_dir*u_texel*1.3846153846, o2=u_dir*u_texel*3.2307692308;
+  sum+=texture(u_src,v_uv+o1).rgb*0.3162162162; sum+=texture(u_src,v_uv-o1).rgb*0.3162162162;
+  sum+=texture(u_src,v_uv+o2).rgb*0.0702702703; sum+=texture(u_src,v_uv-o2).rgb*0.0702702703;
+  outColor=vec4(sum,1.0);
+}`);
+const uBlur=uniforms(progBlur,['u_src','u_dir','u_texel']);
+
+const progComposite=program(VS_FS_QUAD,`#version 300 es
+precision highp float; in vec2 v_uv; out vec4 outColor;
+uniform sampler2D u_scene; uniform sampler2D u_bloom; uniform float u_bloomStrength; uniform float u_exposure;
+uniform float u_cine; uniform float u_fine; uniform float u_time; uniform vec2 u_res;
+/* Soft-knee tone map: identity up to 0.6, then highlights roll off smoothly toward 1. The old
+   Reinhard curve (x/(x+1)) mapped a full-white particle to ~0.5, which is why everything looked dim and grey. */
+vec3 softKnee(vec3 x){ const float k=0.6; return min(x,vec3(k))+(1.0-k)*(1.0-exp(-max(x-k,0.0)/(1.0-k))); }
+/* Mostly hue-preserving: compress the brightest channel through the knee and scale the others with it, so
+   dense clusters stay cyan / gold instead of clipping to flat white; a little per-channel roll-off keeps highlights hot. */
+vec3 toneMap(vec3 c){
+  float l=max(max(c.r,c.g),c.b);
+  if(l<=0.6) return c;
+  float lm=0.6+0.4*(1.0-exp(-(l-0.6)/0.4));
+  return mix(c*(lm/l),softKnee(c),0.3);
+}
+float hash(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
+void main(){
+  vec2 uv=v_uv;
+  vec3 sceneCol;
+  if(u_cine>0.5&&u_fine>0.5){ // radial chromatic aberration: only toward the edges, so the logo and centre stay crisp
+    vec2 off=(uv-0.5)*0.0035*smoothstep(0.35,1.0,length(uv-0.5)*2.0);
+    sceneCol=vec3(texture(u_scene,uv+off).r,texture(u_scene,uv).g,texture(u_scene,uv-off).b);
+  } else sceneCol=texture(u_scene,uv).rgb;
+  vec3 col=toneMap((sceneCol+texture(u_bloom,uv).rgb*u_bloomStrength)*u_exposure);
+  if(u_cine>0.5){
+    float R=length(u_res)*0.62, d=length((uv-0.5)*u_res);
+    col*=1.0-0.55*clamp((d-0.35*R)/(0.65*R),0.0,1.0);                                    // vignette
+    if(u_fine>0.5) col+=(hash(floor(uv*u_res)+fract(u_time*7.13)*vec2(311.0,173.0))-0.5)*0.022*(1.0-0.7*min(1.0,max(max(col.r,col.g),col.b))); // film grain, fainter on bright detail
+  }
+  outColor=vec4(max(col,0.0),1.0);
+}`);
+const uComposite=uniforms(progComposite,['u_scene','u_bloom','u_bloomStrength','u_exposure','u_cine','u_fine','u_time','u_res']);
+
+const vaoQuad=gl.createVertexArray();
+gl.bindVertexArray(vaoQuad); gl.bindBuffer(gl.ARRAY_BUFFER,quadBuf); gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0); gl.bindVertexArray(null);
+function drawFSQuad(){ gl.bindVertexArray(vaoQuad); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); gl.bindVertexArray(null); }
+
+/* ---------- Shape atlas (baked once from 2D canvas, sampled by GPU) ---------- */
+function pathShape(bx,sh,s){
+  bx.beginPath();
+  if(sh==='circle'){bx.roundRect(-3*s,-3*s,6*s,6*s,3*s)}
+  else if(sh==='ring'){bx.roundRect(-4*s,-4*s,8*s,8*s,4*s)}
+  else if(sh==='square'){bx.rect(-3*s,-3*s,6*s,6*s)}
+  else if(sh==='diamond'){bx.moveTo(5*s,0);bx.lineTo(0,3*s);bx.lineTo(-5*s,0);bx.lineTo(0,-3*s)}
+  else if(sh==='triangle'){bx.moveTo(5*s,0);bx.lineTo(-4*s,3.5*s);bx.lineTo(-4*s,-3.5*s)}
+  else if(sh==='star'){for(let i=0;i<10;i++){let r=i%2?2*s:5*s,a=i*Math.PI/5-Math.PI/2;bx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}}
+  else if(sh==='hex'){for(let i=0;i<6;i++){let a=i*Math.PI/3;bx.lineTo(Math.cos(a)*4*s,Math.sin(a)*4*s)}}
+  else if(sh==='cross'){bx.rect(-s,-5*s,2*s,10*s);bx.rect(-5*s,-s,10*s,2*s)}
+  else if(sh==='arrow'){bx.moveTo(6*s,0);bx.lineTo(-3*s,4*s);bx.lineTo(-1*s,0);bx.lineTo(-3*s,-4*s)}
+  else if(sh==='capsule'){bx.roundRect(-5*s,-2*s,10*s,4*s,2*s)}
+  else if(sh==='spark'){for(let i=0;i<8;i++){let r=i%2?1.6*s:5*s,a=i*Math.PI/4-Math.PI/2;bx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}}
+  else if(sh==='starling'){bx.moveTo(8*s,0);bx.lineTo(-6*s,-3.5*s);bx.lineTo(-3*s,0);bx.lineTo(-6*s,3.5*s)}
+  else if(sh==='lantern'){bx.roundRect(-4.8*s,-1.8*s,9.6*s,3.6*s,1.4*s)}
+  else if(sh==='drone'){bx.roundRect(-2.8*s,-2.8*s,5.6*s,5.6*s,2.8*s);bx.moveTo(7*s,0);bx.arc(5.6*s,0,1.4*s,0,Math.PI*2)}
+  else if(sh==='fiber'){bx.rect(-8*s,-.8*s,16*s,1.6*s)}
+  else if(sh==='predator'){bx.moveTo(7*s,0);bx.lineTo(-5*s,-4*s);bx.lineTo(-2.5*s,0);bx.lineTo(-5*s,4*s)}
+  else {bx.rect(-6*s,-.8*s,12*s,1.6*s)}
+  bx.closePath();
+}
+const ATLAS_S=7.2;
+function bakeAtlas(){
+  const cols=5, rows=4, cell=128;
+  const cv=document.createElement('canvas'); cv.width=cols*cell; cv.height=rows*cell;
+  const bx=cv.getContext('2d');
+  SHAPES.forEach((sh,i)=>{
+    const col=i%cols, row=(i/cols)|0;
+    bx.save(); bx.translate(col*cell+cell/2,row*cell+cell/2);
+    const s=ATLAS_S;
+    pathShape(bx,sh,s);
+    if(sh==='ring'){ bx.strokeStyle='#fff'; bx.lineWidth=s*1.15; bx.stroke(); }
+    else { bx.fillStyle='#fff'; bx.fill(); }
+    bx.restore();
+  });
+  return {canvas:cv,cols,rows};
+}
+const atlasData=bakeAtlas();
+const atlasTex=gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D,atlasTex);
+/* Upload unflipped: row 0 of the atlas must stay row 0 so shape indices line up. */
+gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,atlasData.canvas);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+
+/* ---------- Obstacles: dark discs with a cyan rim (same instance layout as particles) ---------- */
+const progDisc=program(VS_PARTICLE,`#version 300 es
+precision highp float;
+in vec2 v_uv; in vec3 v_color; in float v_z; in float v_flash;
+out vec4 outColor;
+void main(){
+  float d=length(v_uv*2.0-1.0);
+  if(d>1.0) discard;
+  float fill=d<0.8?0.95:mix(0.9,0.0,(d-0.8)/0.2);
+  vec3 base=mix(vec3(10.0,14.0,24.0),vec3(8.0,12.0,20.0),smoothstep(0.0,0.8,d))/255.0;
+  float rim=smoothstep(0.04,0.0,abs(d-0.975))*0.28;
+  outColor=vec4(base+vec3(0.43,0.906,1.0)*rim,clamp(fill+rim,0.0,1.0));
+}`);
+const uDisc=uniforms(progDisc,['u_resolution','u_camera','u_center','u_depthStrength','u_sizeMul','u_isGlow','u_pr','u_maxSpeed','u_sat','u_hue','u_flap','u_time','u_flat','u_zRange']);
+
+/* ---------- 3D logo: extruded brushed-silver badge with real perspective ----------
+   Drawn over a soft dark backing: stacked layers (back to front) form the solid extruded edge, then the
+   shaded front face. The quad is projected through a perspective camera, so turning it foreshortens properly. */
+const progLogo=program(`#version 300 es
+layout(location=0) in vec2 a_corner;
+uniform vec2 u_resolution; uniform vec2 u_center; uniform vec2 u_half; uniform vec2 u_pad;
+uniform float u_yaw; uniform float u_pitch; uniform float u_focal; uniform float u_layerZ;
+out vec2 v_uv; out vec2 v_q;
+void main(){
+  vec2 local=a_corner*(u_half+u_pad);
+  v_uv=local/u_half*0.5+0.5;   // 0..1 across the logo itself
+  v_q=local/u_half;            // -1..1 across the logo, beyond that in the padding
+  vec3 p=vec3(local,u_layerZ); // x right, y down, z away from the viewer
+  float cp=cos(u_pitch), sp=sin(u_pitch), cy=cos(u_yaw), sy=sin(u_yaw);
+  p=vec3(p.x,p.y*cp-p.z*sp,p.y*sp+p.z*cp);    // pitch about x
+  p=vec3(p.x*cy+p.z*sy,p.y,-p.x*sy+p.z*cy);   // then yaw about y
+  float w=(u_focal+p.z)/u_focal;              // divide by w on the GPU: true perspective with perspective-correct UVs
+  vec2 clip=(u_center*w+p.xy)/u_resolution*2.0-w;
+  gl_Position=vec4(clip.x,-clip.y,0.0,w);
+}`,`#version 300 es
+precision highp float; in vec2 v_uv; in vec2 v_q; out vec4 outColor;
+uniform sampler2D u_logo; uniform float u_mode; uniform vec3 u_sideCol; uniform vec2 u_texel; uniform float u_time;
+float maskAt(vec2 uv){ return (uv.x<0.0||uv.y<0.0||uv.x>1.0||uv.y>1.0)?0.0:smoothstep(0.2,0.8,texture(u_logo,uv).a); }
+void main(){
+  if(u_mode<0.5){ // soft dark backing, so the letters read against bright particles
+    float d=length(v_q*vec2(0.74,0.42));
+    outColor=vec4(0.0,0.0,0.0,0.46*(1.0-smoothstep(0.3,1.0,d)));
+    return;
+  }
+  float m=maskAt(v_uv);
+  if(m<0.01) discard;
+  if(u_mode<1.5){ outColor=vec4(u_sideCol,m); return; } // one layer of the extruded edge
+  // front face: brushed silver lit from the upper left, with a bevel highlight / shadow on the letter edges
+  vec3 col=mix(vec3(1.22,1.26,1.32),vec3(0.62,0.68,0.78),smoothstep(0.0,1.0,v_uv.y));
+  float lit=clamp(m-maskAt(v_uv-u_texel*1.6),0.0,1.0), shade=clamp(m-maskAt(v_uv+u_texel*1.6),0.0,1.0);
+  col+=lit*0.55; col*=1.0-shade*0.35;
+  float sweep=mod(u_time*0.16,2.2)-0.4; // a slow, faint glint crosses the face every ~16s
+  col+=vec3(0.9,0.95,1.0)*0.35*exp(-pow((v_uv.x*0.9-v_uv.y*0.3-sweep)/0.05,2.0));
+  outColor=vec4(col,m);
+}`);
+const uLogo=uniforms(progLogo,['u_resolution','u_center','u_half','u_pad','u_yaw','u_pitch','u_focal','u_layerZ','u_logo','u_mode','u_sideCol','u_texel','u_time']);
+const LOGO_SRC="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABcgAAAEbCAYAAADu0mfpAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAHEmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgMTAuMC1jMDAwIDI1LkcuZDIwZTQ2NiwgMjAyNS8xMi8wOC0yMDo1MDoyMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0RXZ0PSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VFdmVudCMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI3LjggKFdpbmRvd3MpIiB4bXA6Q3JlYXRlRGF0ZT0iMjAyNi0wNy0wMlQxMTowMjo0NSswNDowMCIgeG1wOk1vZGlmeURhdGU9IjIwMjYtMDctMDVUMTQ6NTc6NDkrMDQ6MDAiIHhtcDpNZXRhZGF0YURhdGU9IjIwMjYtMDctMDVUMTQ6NTc6NDkrMDQ6MDAiIGRjOmZvcm1hdD0iaW1hZ2UvcG5nIiBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIiBwaG90b3Nob3A6SGlzdG9yeT0iMjAyNi0wNy0wNVQxNDo1NToyNSswNDowMCYjeDk7RmlsZSB2aXNvLWxvZ28tQnl5WEFDT1oucG5nIG9wZW5lZCYjeEE7MjAyNi0wNy0wNVQxNDo1NjoyNCswNDowMCYjeDk7RmlsZSBGOlxEb3dubG9hZHNcdmlzby1sb2dvLWJsYWNrIC5wbmcgc2F2ZWQmI3hBOzIwMjYtMDctMDVUMTQ6NTc6MTUrMDQ6MDAmI3g5O0ZpbGUgRjpcRG93bmxvYWRzXHZpc28tbG9nby13aGl0ZS5wbmcgc2F2ZWQmI3hBOzIwMjYtMDctMDVUMTQ6NTc6NDkrMDQ6MDAmI3g5O0ZpbGUgRjpcRG93bmxvYWRzXHZpc28tbG9nby1ibGFjayAucG5nIHNhdmVkJiN4QTsiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NzFhMjk2NDUtMGUwMi1jMjQ4LWFiYTItZjJjMTJkNzE4NzUwIiB4bXBNTTpEb2N1bWVudElEPSJhZG9iZTpkb2NpZDpwaG90b3Nob3A6ZjJhOTFjMzAtN2U0Yy0xNzQ5LWEwNzQtNmI2MTdiMTg5ZTBjIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6YjcxNjA0ZjgtYzkyOS1iMjQxLWJiZjQtNDJlZmM2MDVhODc2Ij4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDpiNzE2MDRmOC1jOTI5LWIyNDEtYmJmNC00MmVmYzYwNWE4NzYiIHN0RXZ0OndoZW49IjIwMjYtMDctMDJUMTE6MDI6NDUrMDQ6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyNy44IChXaW5kb3dzKSIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6NzFhMjk2NDUtMGUwMi1jMjQ4LWFiYTItZjJjMTJkNzE4NzUwIiBzdEV2dDp3aGVuPSIyMDI2LTA3LTA1VDE0OjU3OjQ5KzA0OjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgMjcuOCAoV2luZG93cykiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPC9yZGY6U2VxPiA8L3htcE1N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";
+const LOGO_Z=1.0; // depth of the logo: agents below LOGO_Z-.28 pass behind it, the rest are kept off it
+/* Nearly front-on: a full three-quarter turn hid the letters behind their own depth and read as "crooked".
+   This still tips just enough to catch light on the top and left edge of the extrusion (the front-face
+   shading and bevel highlight are pose-independent, so the badge reads as solid even this close to flat). */
+const LOGO_YAW=-.09, LOGO_PITCH=.045;
+const logo={ready:false,on:false,collide:false,tex:gl.createTexture(),mask:null,mw:0,mh:0,cx:0,cy:0,dw:0,dh:0,depth:0,yaw:LOGO_YAW,pitch:LOGO_PITCH};
+(()=>{
+  const img=new Image();
+  img.onload=()=>{
+    gl.bindTexture(gl.TEXTURE_2D,logo.tex);
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT,4);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
+    gl.generateMipmap(gl.TEXTURE_2D); // drawn well below native size, so mipmaps keep the letters clean
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    const off=document.createElement('canvas'), sc=280/img.width; // 280px-wide alpha mask for collisions
+    off.width=Math.max(2,Math.round(img.width*sc)); off.height=Math.max(2,Math.round(img.height*sc));
+    const ox=off.getContext('2d'); ox.drawImage(img,0,0,off.width,off.height);
+    const px=ox.getImageData(0,0,off.width,off.height).data;
+    const mw=off.width, mh=off.height, n=mw*mh;
+    logo.mw=mw; logo.mh=mh; logo.mask=new Uint8Array(n);
+    for(let i=0;i<n;i++) logo.mask[i]=px[i*4+3]>60?1:0;
+    /* Escape field: BFS distance from open space (the image border counts as open), then each covered cell
+       points down that distance gradient, i.e. the shortest way out of the letter. */
+    const dist=new Float32Array(n), queue=new Int32Array(n); let qh=0, qt=0;
+    for(let i=0;i<n;i++){ if(!logo.mask[i]){ dist[i]=0; queue[qt++]=i; } else dist[i]=1e9; }
+    for(let i=0;i<n;i++){ const x=i%mw, y=(i/mw)|0; if(logo.mask[i]&&(x===0||y===0||x===mw-1||y===mh-1)){ dist[i]=1; queue[qt++]=i; } }
+    while(qh<qt){
+      const i=queue[qh++], x=i%mw, y=(i/mw)|0, nd=dist[i]+1;
+      if(x>0&&dist[i-1]>nd){ dist[i-1]=nd; queue[qt++]=i-1; }
+      if(x<mw-1&&dist[i+1]>nd){ dist[i+1]=nd; queue[qt++]=i+1; }
+      if(y>0&&dist[i-mw]>nd){ dist[i-mw]=nd; queue[qt++]=i-mw; }
+      if(y<mh-1&&dist[i+mw]>nd){ dist[i+mw]=nd; queue[qt++]=i+mw; }
+    }
+    logo.dist=dist; logo.escX=new Float32Array(n); logo.escY=new Float32Array(n);
+    for(let y=0;y<mh;y++) for(let x=0;x<mw;x++){
+      const i=y*mw+x; if(!logo.mask[i]) continue;
+      const gx=(x<mw-1?dist[i+1]:0)-(x>0?dist[i-1]:0), gy=(y<mh-1?dist[i+mw]:0)-(y>0?dist[i-mw]:0), m=Math.hypot(gx,gy);
+      if(m>0){ logo.escX[i]=-gx/m; logo.escY[i]=-gy/m; } else { logo.escX[i]=0; logo.escY[i]=-1; }
+    }
+    logo.ready=true; needsRedraw=true;
+  };
+  img.src=LOGO_SRC;
+})();
+
+/* ---------- Pheromone field (ACO, Physarum, Pheromone Field trail mode) ----------
+   One cell per PC css px, reallocated on resize. Values are capped at PH_MAX; the GPU copy is R8. */
+const PH_MAX=6;
+let phCols=2, phRows=2, pher=new Float32Array(4), pherNext=new Float32Array(4), pherPixels=new Uint8Array(4);
+const pherTex=gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D,pherTex);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+function pherResize(){
+  const nc=Math.max(2,Math.ceil(W/PC)), nr=Math.max(2,Math.ceil(H/PC));
+  if(nc===phCols&&nr===phRows) return; // e.g. a quality switch: keep the existing trails
+  phCols=nc; phRows=nr;
+  pher=new Float32Array(phCols*phRows); pherNext=new Float32Array(phCols*phRows); pherPixels=new Uint8Array(phCols*phRows);
+  gl.bindTexture(gl.TEXTURE_2D,pherTex);
+  gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.R8,phCols,phRows,0,gl.RED,gl.UNSIGNED_BYTE,pherPixels);
+}
+function depositPheromone(px,py,amount){
+  const cx=(px/PC)|0, cy=(py/PC)|0;
+  if(cx<0||cy<0||cx>=phCols||cy>=phRows) return;
+  const k=cy*phCols+cx, v=pher[k]+amount; pher[k]=v>PH_MAX?PH_MAX:v;
+}
+function pherSample(px,py){
+  const cx=(px/PC)|0, cy=(py/PC)|0;
+  return (cx<0||cy<0||cx>=phCols||cy>=phRows)?0:pher[cy*phCols+cx];
+}
+function pheromoneGradient(px,py){
+  // central difference across two cells either side: smoother than adjacent cells on the fine grid
+  const cx=Math.min(phCols-3,Math.max(2,(px/PC)|0)), cy=Math.min(phRows-3,Math.max(2,(py/PC)|0));
+  const l=pher[cy*phCols+cx-2], r=pher[cy*phCols+cx+2], u=pher[(cy-2)*phCols+cx], d=pher[(cy+2)*phCols+cx];
+  return [r-l,d-u];
+}
+function stepPheromone(simSpeed){
+  /* Evaporate and diffuse (5-point stencil). Both scale with frame time, so trails spread and
+     fade at the same speed on 60Hz and 144Hz displays. */
+  const keep=Math.pow(0.962,simSpeed), spread=Math.min(1,0.5*simSpeed);
+  for(let y=0;y<phRows;y++){
+    const row=y*phCols, up=(y>0?y-1:y)*phCols, dn=(y<phRows-1?y+1:y)*phCols;
+    for(let x=0;x<phCols;x++){
+      const v0=pher[row+x], l=x>0?x-1:x, r=x<phCols-1?x+1:x;
+      const avg=(pher[row+l]+pher[row+r]+pher[up+x]+pher[dn+x])*0.25;
+      pherNext[row+x]=(v0+(avg-v0)*spread)*keep;
+    }
+  }
+  const swap=pher; pher=pherNext; pherNext=swap;
+  const toByte=255/PH_MAX;
+  for(let i=0;i<pher.length;i++){ const b=pher[i]*toByte; pherPixels[i]=b>255?255:b; }
+  gl.bindTexture(gl.TEXTURE_2D,pherTex);
+  gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);
+  gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,phCols,phRows,gl.RED,gl.UNSIGNED_BYTE,pherPixels);
+}
+const pheromoneActive=()=>q.algo==='aco'||q.algo==='physarum'||q.trailMode==='pheromone';
+
+/* ---------- Backdrop: nebula texture, rebuilt on resize and palette / BG changes ---------- */
+const nebCv=document.createElement('canvas'), nebCx=nebCv.getContext('2d');
+const nebTex=gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D,nebTex);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+let nebulaDirty=true, nebulaBuiltAt=0, qTier=1;
+function buildNebula(){
+  const w=Math.max(2,Math.round(W*.5)), h=Math.max(2,Math.round(H*.5)); // soft blobs: half resolution is plenty
+  nebCv.width=w; nebCv.height=h;
+  const base=bgCol.map(v=>v*255), top=base.map((v,i)=>Math.min(255,v+[2,4,11][i])), bot=base.map(v=>v*.6);
+  const g=nebCx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,`rgb(${top.map(v=>v|0)})`); g.addColorStop(.5,`rgb(${base.map(v=>v|0)})`); g.addColorStop(1,`rgb(${bot.map(v=>v|0)})`);
+  nebCx.fillStyle=g; nebCx.fillRect(0,0,w,h);
+  let seed=1337; const rnd=()=>(seed=seed*16807%2147483647)/2147483647; // same layout on every rebuild
+  const pal=[colC,colA,colB];
+  for(let i=0;i<16;i++){
+    const m=pal[i%3], k=.05+rnd()*.07, col=m.map((v,j)=>(v*255+([8,10,20][j]-v*255)*(1-k*.9))|0);
+    const r=(180+rnd()*Math.min(W,H)*.55)*.5, x0=rnd()*w, y0=rnd()*h;
+    const rg=nebCx.createRadialGradient(x0,y0,0,x0,y0,r);
+    rg.addColorStop(0,`rgba(${col},${k*1.6})`); rg.addColorStop(1,'rgba(0,0,0,0)');
+    nebCx.fillStyle=rg; nebCx.fillRect(x0-r,y0-r,r*2,r*2);
+  }
+  gl.bindTexture(gl.TEXTURE_2D,nebTex);
+  gl.pixelStorei(gl.UNPACK_ALIGNMENT,4);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,nebCv);
+  nebulaDirty=false; nebulaBuiltAt=performance.now();
+}
+function setBackdropUniforms(alpha){
+  if(nebulaDirty && (nebulaBuiltAt===0 || performance.now()-nebulaBuiltAt>250)) buildNebula(); // throttled while dragging a colour
+  gl.useProgram(progFade);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,nebTex); gl.uniform1i(uFade.u_bgTex,0);
+  gl.uniform1f(uFade.u_useTex,q.backdrop==='nebula'?1:0);
+  gl.uniform3f(uFade.u_color,bgCol[0],bgCol[1],bgCol[2]);
+  gl.uniform1f(uFade.u_alpha,alpha);
+  gl.uniform1f(uFade.u_stars,qTier>=3?q.stars*.5:q.stars);
+  gl.uniform1f(uFade.u_time,t);
+  gl.uniform2f(uFade.u_res,W,H);
+  gl.uniform2f(uFade.u_starShift,-(pointer.x-W/2)*.012,-(pointer.y-H/2)*.012);
+}
+function paintBackdrop(){
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fboScene.fb); gl.viewport(0,0,fboScene.w,fboScene.h);
+  gl.disable(gl.BLEND); setBackdropUniforms(1); drawFSQuad();
+}
+
+/* ---------- Framebuffers (recreated on resize / quality change) ---------- */
+let fboScene=null, fboBright=null, fboBlurA=null, fboBlurB=null;
+let bloomDiv=2, dynamicDpr=Math.min(window.devicePixelRatio||1,2); // starts at the High tier
+let needsRedraw=false; // while paused: draw one frame after a resize or a settings change
+function bgClearFBO(fbo,r,g,b,a){ gl.bindFramebuffer(gl.FRAMEBUFFER,fbo.fb); gl.viewport(0,0,fbo.w,fbo.h); gl.clearColor(r,g,b,a); gl.clear(gl.COLOR_BUFFER_BIT); }
+function freeFBO(f){ if(f){ gl.deleteFramebuffer(f.fb); gl.deleteTexture(f.tex); } }
+function setupFBOs(){
+  // release the previous targets first; every resize / quality switch used to leak all four
+  freeFBO(fboScene); freeFBO(fboBright); freeFBO(fboBlurA); freeFBO(fboBlurB);
+  const bw=Math.max(2,Math.floor(c.width/bloomDiv)), bh=Math.max(2,Math.floor(c.height/bloomDiv));
+  fboScene=makeFBO(c.width,c.height,gl.LINEAR);
+  fboBright=makeFBO(bw,bh,gl.LINEAR);
+  fboBlurA=makeFBO(bw,bh,gl.LINEAR);
+  fboBlurB=makeFBO(bw,bh,gl.LINEAR);
+  nebulaDirty=true; nebulaBuiltAt=0; // new size: rebuild the nebula before painting it
+  paintBackdrop();
+}
+
+function resize(){
+  W=innerWidth; H=innerHeight;
+  c.width=Math.max(2,Math.round(W*dynamicDpr)); c.height=Math.max(2,Math.round(H*dynamicDpr));
+  c.style.width=W+'px'; c.style.height=H+'px';
+  pherResize();
+  // pull any agents that are now outside the new viewport back inside
+  for(let i=0;i<count;i++){
+    if(posX[i]>W-3) posX[i]=W-3; if(posX[i]<3) posX[i]=3;
+    if(posY[i]>H-3) posY[i]=H-3; if(posY[i]<3) posY[i]=3;
+  }
+  setupFBOs();
+  needsRedraw=true;
+}
+addEventListener('resize',resize);
+
+/* ================= Physics (SoA, allocation-free per frame) ================= */
+const posX=new Float32Array(MAX_N), posY=new Float32Array(MAX_N);
+const velX=new Float32Array(MAX_N), velY=new Float32Array(MAX_N);
+const bestX=new Float32Array(MAX_N), bestY=new Float32Array(MAX_N), fitA=new Float32Array(MAX_N);
+const zArr=new Float32Array(MAX_N), phaseArr=new Float32Array(MAX_N), angArr=new Float32Array(MAX_N); // angArr: Physarum heading
+/* Pulse-coupled oscillator state (Firefly Synchronization mode) */
+const ffPhase=new Float32Array(MAX_N);      // internal clock, normalized 0..1
+const ffInterval=new Float32Array(MAX_N);   // cycle length in seconds
+const ffFlash=new Float32Array(MAX_N);      // visible flash intensity, decays after firing
+const ffFired=new Uint8Array(MAX_N);        // fired on this frame?
+const ffNudge=new Float32Array(MAX_N);      // accumulated phase correction this frame
+let ffOrder=0;
+/* Per-agent colour inputs: smoothed neighbour count, distance to nearest interactor, current objective value */
+const crowd=new Float32Array(MAX_N), ptrDist=new Float32Array(MAX_N), curFit=new Float32Array(MAX_N);
+let fitMin=0, fitMax=1;
+let count=0;
+
+function initAgent(i){
+  posX[i]=Math.random()*W; posY[i]=Math.random()*H;
+  const a=Math.random()*6.283, s=q.speed*(0.5+Math.random());
+  velX[i]=Math.cos(a)*s; velY[i]=Math.sin(a)*s; angArr[i]=a;
+  bestX[i]=posX[i]; bestY[i]=posY[i]; fitA[i]=Infinity;
+  zArr[i]=0.65+Math.random()*0.7; phaseArr[i]=Math.random();
+  ffPhase[i]=Math.random();
+  ffInterval[i]=q.interval*(1+(Math.random()*2-1)*q.jitter);
+  ffFlash[i]=0; ffFired[i]=0; ffNudge[i]=0;
+}
+function reseedIntervals(){
+  for(let i=0;i<MAX_N;i++) ffInterval[i]=q.interval*(1+(Math.random()*2-1)*q.jitter);
+}
+function reset(){ for(let i=0;i<MAX_N;i++) initAgent(i); pher.fill(0); clearRibbons(); }
+function syncCount(){
+  const target=Math.min(MAX_N, q.count|0);
+  if(target>count){ for(let i=count;i<target;i++) initAgent(i); clearRibbons(); } // new agents have no trail history yet
+  count=target;
+}
+function clearTrails(){ paintBackdrop(); pher.fill(0); clearRibbons(); needsRedraw=true; }
+
+/* Spatial hash: counting sort, rebuilt fresh each frame with reused buffers */
+let gridCols=1,gridRows=1,cellSize=75;
+let cellStart=new Int32Array(2), cellCursor=new Int32Array(2), sortedIdx=new Int32Array(MAX_N), particleCell=new Int32Array(MAX_N);
+function rebuildGrid(){
+  cellSize=Math.max(q.radius,20);
+  gridCols=Math.max(1,Math.ceil(W/cellSize)+2);
+  gridRows=Math.max(1,Math.ceil(H/cellSize)+2);
+  const numCells=gridCols*gridRows;
+  if(cellStart.length<numCells+1){ cellStart=new Int32Array(numCells+1); cellCursor=new Int32Array(numCells+1); }
+  cellStart.fill(0,0,numCells+1);
+  for(let i=0;i<count;i++){
+    let cx=Math.min(gridCols-1,Math.max(0,((posX[i]/cellSize)|0)+1));
+    let cy=Math.min(gridRows-1,Math.max(0,((posY[i]/cellSize)|0)+1));
+    const cell=cy*gridCols+cx;
+    particleCell[i]=cell;
+    cellStart[cell+1]++;
+  }
+  for(let c2=0;c2<numCells;c2++) cellStart[c2+1]+=cellStart[c2];
+  cellCursor.set(cellStart.subarray(0,numCells+1));
+  for(let i=0;i<count;i++){ const cell=particleCell[i]; sortedIdx[cellCursor[cell]++]=i; }
+}
+function forEachNeighbor(i,cb){
+  let cx=Math.min(gridCols-1,Math.max(0,((posX[i]/cellSize)|0)+1));
+  let cy=Math.min(gridRows-1,Math.max(0,((posY[i]/cellSize)|0)+1));
+  for(let dy=-1;dy<=1;dy++){
+    const ny=cy+dy; if(ny<0||ny>=gridRows) continue;
+    for(let dx=-1;dx<=1;dx++){
+      const nx=cx+dx; if(nx<0||nx>=gridCols) continue;
+      const cell=ny*gridCols+nx, s=cellStart[cell], e=cellStart[cell+1];
+      for(let k=s;k<e;k++){ const j=sortedIdx[k]; if(j!==i) cb(j); }
+    }
+  }
+}
+
+function objective(X,Y){
+  const nx=(X-W/2)/(Math.min(W,H)*0.45), ny=(Y-H/2)/(Math.min(W,H)*0.45);
+  if(q.landscape==='sphere') return nx*nx+ny*ny;
+  if(q.landscape==='rastrigin') return 20+nx*nx+ny*ny-10*(Math.cos(18*nx)+Math.cos(18*ny));
+  if(q.landscape==='rosenbrock') return (1-nx)**2+100*(ny-nx*nx)**2;
+  if(q.landscape==='waves') return Math.sin(nx*5+t*.4)*Math.cos(ny*5-t*.3)+.35*(nx*nx+ny*ny);
+  return Math.sin(nx*4)**2+Math.cos(ny*5)**2+.18*(nx*nx+ny*ny);
+}
+/* Two-octave curl noise. The base frequency must be high enough that the field
+   varies WITHIN the viewport - at very low frequency every agent receives nearly
+   the same force vector, which translates the whole swarm as a rigid body instead
+   of stirring it internally. */
+function curlNoise(px,py,time){
+  const s=.011;
+  const a=(Math.sin(px*s+time*.8)*Math.cos(py*s*.9+time*.6)+Math.cos(px*s*1.2-time*.5)*Math.sin(py*s*1.1+time*.7));
+  const s2=s*2.7;
+  const b=(Math.sin(px*s2-time*1.1)*Math.cos(py*s2*1.1+time*.9))*0.5;
+  return (a+b)*Math.PI;
+}
+
+let gBestX=0,gBestY=0,gBestFit=Infinity;
+let leaders=[{x:0,y:0,fit:Infinity},{x:0,y:0,fit:Infinity},{x:0,y:0,fit:Infinity}];
+
+function evaluateFitness(simSpeed){
+  gBestFit=Infinity; leaders[0].fit=leaders[1].fit=leaders[2].fit=Infinity;
+  let fMin=Infinity, fMax=-Infinity;
+  const moving=q.landscape==='waves'; // time-varying field: re-score stored bests or they go stale
+  for(let i=0;i<count;i++){
+    const od=objective(posX[i],posY[i]);
+    curFit[i]=od; if(od<fMin) fMin=od; if(od>fMax) fMax=od;
+    if(moving && fitA[i]!==Infinity) fitA[i]=objective(bestX[i],bestY[i]);
+    if(od<fitA[i]){ fitA[i]=od; bestX[i]=posX[i]; bestY[i]=posY[i]; }
+    if(fitA[i]<gBestFit){ gBestFit=fitA[i]; gBestX=bestX[i]; gBestY=bestY[i]; }
+    if(q.algo==='gwo'){
+      const f=fitA[i];
+      if(f<leaders[0].fit){ leaders[2]=leaders[1]; leaders[1]=leaders[0]; leaders[0]={x:bestX[i],y:bestY[i],fit:f}; }
+      else if(f<leaders[1].fit){ leaders[2]=leaders[1]; leaders[1]={x:bestX[i],y:bestY[i],fit:f}; }
+      else if(f<leaders[2].fit){ leaders[2]={x:bestX[i],y:bestY[i],fit:f}; }
+    }
+    // deposit relative to the swarm's best (negative Wave Field scores used to divide by ~0), per unit time
+    if(q.algo==='aco'){ depositPheromone(posX[i],posY[i], 0.15*simSpeed/(1+Math.max(0,fitA[i]-fitMin))); }
+  }
+  fitMin=fMin; fitMax=fMax;
+}
+
+/* ---- Firefly Synchronization: pulse-coupled oscillators ----
+   Each agent runs a clock. On completing a cycle it fires. Every agent that
+   sees a neighbour fire shifts its own phase by a phase-response curve.
+   Constant jump reproduces the classic Mirollo-Strogatz result; the sinusoidal
+   curve pulls smoothly toward the firing neighbour's phase. Flipping the sign
+   drives the swarm apart into evenly spaced phases instead. */
+function stepFireflies(dtSeconds){
+  const coupling=q.coupling, sign=(q.ffMode==='desync')?-1:1, sinePRC=(q.ffPrc==='sine');
+  const R2=q.radius*q.radius;
+  let anyFired=false;
+  for(let i=0;i<count;i++){
+    ffNudge[i]=0;
+    ffFired[i]=0;
+    ffFlash[i]*=Math.pow(0.045,dtSeconds); // fast visual decay after firing
+    const iv=ffInterval[i]>0.05?ffInterval[i]:0.05;
+    ffPhase[i]+=dtSeconds/iv;
+    if(ffPhase[i]>=1){ ffPhase[i]-=1; ffFired[i]=1; ffFlash[i]=1; anyFired=true; }
+  }
+  if(anyFired && coupling>0){
+    /* Resolve the cascade: an agent pushed past threshold fires at once, and its
+       pulse can carry further neighbours over too. Iterating until the wave dies
+       out is what makes constant-jump coupling converge (Mirollo-Strogatz);
+       resolving only one step leaves the population stuck at uniform phase. */
+    let wave=new Uint8Array(ffFired.subarray(0,count)); // who is firing right now
+    for(let round=0; round<6; round++){
+      let newFirings=0;
+      for(let i=0;i<count;i++){
+        if(ffFired[i]) continue;          // already fired this frame, refractory
+        const px=posX[i], py=posY[i], ph=ffPhase[i];
+        let acc=0;
+        forEachNeighbor(i,(j)=>{
+          if(!wave[j]) return;
+          const dx=posX[j]-px, dy=posY[j]-py;
+          if(dx*dx+dy*dy>R2) return;
+          acc += sinePRC ? -Math.sin(ph*6.283185307) : 1;
+        });
+        if(acc===0) continue;
+        let delta=acc*coupling*sign;
+        if(delta>0.6) delta=0.6; else if(delta<-0.6) delta=-0.6;
+        let np=ph+delta;
+        if(np>=1){ np-=1; ffFired[i]=1; ffFlash[i]=1; newFirings++; }
+        else if(np<0){ np+=1; }
+        ffPhase[i]=np;
+      }
+      if(!newFirings) break;
+      // next round propagates only from the agents that just joined the flash
+      const next=new Uint8Array(count);
+      for(let i=0;i<count;i++) if(ffFired[i]&&!wave[i]) next[i]=1;
+      wave=next;
+    }
+  }
+  // Kuramoto order parameter: coherence of the population, 0 scattered .. 1 unison
+  let sx=0,sy=0;
+  for(let i=0;i<count;i++){ const a=ffPhase[i]*6.283185307; sx+=Math.cos(a); sy+=Math.sin(a); }
+  ffOrder=count?Math.hypot(sx,sy)/count:0;
+}
+
+/* colors */
+function hexToRgb01(h){ h=h.replace('#',''); const n=parseInt(h,16); return [((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255]; }
+function hsv01(h,s,v){ const f=(n,k=(n+h/60)%6)=>v-v*s*Math.max(Math.min(k,4-k,1),0); return [f(5),f(3),f(1)]; }
+let colA=[0,0,0],colB=[0,0,0],colC=[0,0,0],bgCol=[5/255,7/255,11/255];
+const PALETTES={
+  aurora:['#00e5ff','#7c3aed','#ff3d81'], sunset:['#ffd166','#ef476f','#7b2cbf'], ocean:['#7afcff','#00a6fb','#5b5bff'],
+  fire:['#fff3b0','#ff7b00','#e5001f'], ice:['#ffffff','#9be7ff','#4d8dff'], neon:['#39ff14','#00e5ff','#ff00e6'],
+  cyberpunk:['#fcee0a','#00f0ff','#ff003c'], synthwave:['#ff71ce','#01cdfe','#b967ff'], forest:['#e9ff70','#52d681','#1f9e89'],
+  candy:['#ffafcc','#a2d2ff','#cdb4db'], gold:['#fff1a8','#ffc300','#ff7a00'], silver:['#ffffff','#b8c4d6','#6b7a90']
+};
+const COLOR_DESC={gradient:'Palette sweeps diagonally across the screen.',heading:'Colour follows direction of travel, so agents flying together share a colour.',depth:'Far layers take colour A, near layers colour C.',density:'Isolated agents are A; tightly packed ones turn C.',fitness:'Poor objective values are dim A; the best candidates glow bright C.',pointer:'Agents near the pointer or a hand glow C, distant ones fade to A.',wave:'Bands of the palette roll through the swarm over time.',confetti:'Each agent keeps one of the three palette colours.',mono:'Colour A only, softened toward white.',speed:'Slow agents are cyan; fast agents turn red.',rainbow:'Full-spectrum hue sweep, independent of the palette.',state:'One colour per algorithm family.'};
+function rgb01ToHex(c){ return '#'+c.map(v=>Math.round(Math.min(1,Math.max(0,v))*255).toString(16).padStart(2,'0')).join(''); }
+function matchPalette(){ const cur=[q.ca,q.cb,q.cc].map(s=>String(s).toLowerCase()); for(const [n,p] of Object.entries(PALETTES)) if(p.every((h,i)=>h===cur[i])) return n; return 'custom'; }
+/* Random but harmonious: one base hue with an analogous, triadic, split-complementary or complementary spread */
+function harmonyPalette(){
+  const h=Math.random()*360, spreads=[[0,30,60],[0,120,240],[0,150,210],[0,180,30],[-40,0,40]];
+  const s=spreads[(Math.random()*spreads.length)|0];
+  return s.map(o=>rgb01ToHex(hsv01(((h+o)%360+360)%360, .55+Math.random()*.45, .85+Math.random()*.15)));
+}
+function refreshColors(){
+  colA=hexToRgb01(q.ca); colB=hexToRgb01(q.cb); colC=hexToRgb01(q.cc); bgCol=hexToRgb01(q.bg||'#05070b');
+  nebulaDirty=true; // nebula blobs are tinted by the palette
+  const pv=$('palPreview'); if(pv) pv.style.background=`linear-gradient(90deg,${q.ca},${q.cb},${q.cc})`;
+}
+refreshColors();
+
+/* Palette lookups: a 3-stop ramp A→B→C, and a closed wheel A→B→C→A for cyclic values such as heading */
+function ramp(k,out){
+  if(!(k>0)) k=0; else if(k>1) k=1;
+  const lo=k<.5, a=lo?colA:colB, b=lo?colB:colC, u=lo?k*2:(k-.5)*2;
+  out[0]=a[0]+(b[0]-a[0])*u; out[1]=a[1]+(b[1]-a[1])*u; out[2]=a[2]+(b[2]-a[2])*u;
+}
+function wheel(k,out){
+  k-=Math.floor(k); const s=k*3, seg=s|0, u=s-seg;
+  const a=seg===0?colA:seg===1?colB:colC, b=seg===0?colB:seg===1?colC:colA;
+  out[0]=a[0]+(b[0]-a[0])*u; out[1]=a[1]+(b[1]-a[1])*u; out[2]=a[2]+(b[2]-a[2])*u;
+}
+
+const STATE_OTHER=[0.47,1,0.59];
+function computeColor(i,out){
+  const M=q.colorMode;
+  if(M==='heading'){ wheel(Math.atan2(velY[i],velX[i])/6.283185307+.5,out); return; }
+  if(M==='depth'){ ramp((zArr[i]-.65)/.7,out); return; }
+  if(M==='density'){ ramp(1-Math.exp(-crowd[i]/8),out); return; }
+  if(M==='pointer'){ ramp(1-ptrDist[i]/q.reach,out); return; }
+  if(M==='fitness'){
+    const span=fitMax-fitMin, g=span>1e-9?1-Math.log1p(Math.max(0,curFit[i]-fitMin))/Math.log1p(span):.5;
+    ramp(g,out); const b=.45+.9*g*g; out[0]*=b; out[1]*=b; out[2]*=b; return;
+  }
+  if(M==='wave'){ wheel((posX[i]/W)*.6+(posY[i]/H)*.35-t*.3+phaseArr[i]*.05,out); return; }
+  if(M==='confetti'){ const p=phaseArr[i]<1/3?colA:phaseArr[i]<2/3?colB:colC; out[0]=p[0]; out[1]=p[1]; out[2]=p[2]; return; }
+  let k=((posX[i]/W)*.55+(posY[i]/H)*.45+phaseArr[i]*.2)%1; if(k<0)k+=1;
+  if(M==='speed'){
+    const s=Math.min(1,Math.hypot(velX[i],velY[i])/(q.speed*1.5));
+    out[0]=s; out[1]=(90+150*(1-s))/255; out[2]=1-0.6*s; return;
+  }
+  if(M==='rainbow'){ const h=(k*360+t*25)%360; const c2=hsv01(h,1,1); out[0]=c2[0];out[1]=c2[1];out[2]=c2[2]; return; }
+  if(M==='mono'){ out[0]=colA[0]+(1-colA[0])*.45; out[1]=colA[1]+(1-colA[1])*.45; out[2]=colA[2]+(1-colA[2])*.45; return; }
+  if(M==='state'){
+    const A=q.algo;
+    const src=A==='boids'?colA:(A==='pso'||A==='mopso')?colB:(A==='gwo'||A==='woa')?colC:STATE_OTHER;
+    out[0]=src[0];out[1]=src[1];out[2]=src[2]; return;
+  }
+  ramp((posX[i]/W)*.47+(posY[i]/H)*.38+phaseArr[i]*.15,out); // spans 0..1 without wrapping, so no hard C→A seam
+}
+
+const tmpCol=[0,0,0];
+/* ---------- Environment: obstacles and predators ---------- */
+const obstacles=[]; let obsPlace=false; // obstacles: {x,y,r}; obsPlace = next canvas click places one
+const preds=[];                          // predators: {x,y,vx,vy,ph}
+function syncPreds(){
+  const n=Math.max(0,Math.min(4,q.predators|0));
+  while(preds.length<n) preds.push({x:Math.random()*W,y:Math.random()*H,vx:0,vy:0,ph:Math.random()*6.28});
+  preds.length=n;
+}
+function stepPredators(simSpeed){
+  const ms=q.speed*1.35;
+  for(const pr of preds){
+    let tgt=-1, bd=1e12;
+    for(let i=0;i<count;i+=3){ const dx=posX[i]-pr.x, dy=posY[i]-pr.y, d2=dx*dx+dy*dy; if(d2<bd){ bd=d2; tgt=i; } } // chase the nearest (sampled) agent
+    let fx=0, fy=0;
+    if(tgt>=0){ const dx=posX[tgt]-pr.x, dy=posY[tgt]-pr.y, d=Math.hypot(dx,dy)||1; fx=(dx/d)*ms-pr.vx; fy=(dy/d)*ms-pr.vy; }
+    const cn=curlNoise(pr.x,pr.y,t*1.3); fx+=Math.cos(cn)*.5; fy+=Math.sin(cn)*.5;
+    pr.vx+=fx*.1*simSpeed; pr.vy+=fy*.1*simSpeed;
+    const s=Math.hypot(pr.vx,pr.vy); if(s>ms){ pr.vx=pr.vx/s*ms; pr.vy=pr.vy/s*ms; }
+    pr.x+=pr.vx*simSpeed; pr.y+=pr.vy*simSpeed;
+    if(pr.x<3||pr.x>W-3){ pr.x=Math.min(W-3,Math.max(3,pr.x)); pr.vx=-pr.vx; }
+    if(pr.y<3||pr.y>H-3){ pr.y=Math.min(H-3,Math.max(3,pr.y)); pr.vy=-pr.vy; }
+  }
+}
+/* Logo pose for this frame: fixed in the centre at a three-quarter angle, never bobbing. With "Logo turns
+   toward the pointer" it eases toward the pointer instead, and eases back when that is switched off. */
+function updateLogo(simSpeed){
+  logo.on=!!(q.logo&&logo.ready);
+  logo.collide=logo.on&&!!q.logoCollide;
+  if(!logo.on) return;
+  logo.dw=Math.min(W*.36,H*1.05)*(q.logoSize||1); logo.dh=logo.dw*logo.mh/logo.mw; logo.depth=logo.dw*.065; // deeper smears the small tagline letters
+  logo.cx=W/2; logo.cy=H/2;
+  let ty=LOGO_YAW, tp=LOGO_PITCH;
+  if(q.logoFollow){ ty-=((pointer.x-W/2)/W)*.6; tp+=((pointer.y-H/2)/H)*.3; }
+  const k=Math.min(1,.08*(simSpeed||1));
+  logo.yaw+=(ty-logo.yaw)*k; logo.pitch+=(tp-logo.pitch)*k;
+}
+/* Keep agents that are drawn in front of the logo off its letters. Screen points are mapped back onto the logo
+   plane through the same perspective camera the shader uses (a 2x2 solve), so collisions match what is drawn.
+   The old check only looked ~5px around the agent for open space, so agents deep inside a thick letter got no
+   push at all and sat on the logo. Now the precomputed escape field gives every covered cell a way out, a
+   look-ahead point deflects agents before they enter, and velocity heading into the letter is cancelled. */
+function logoCell(px,py,L){ // mask cell index under a screen point, or -1
+  const u=px-logo.cx, v=py-logo.cy;
+  const A11=-u*L.sy-L.f*L.cy, A12=u*L.sp*L.cy-L.f*L.sp*L.sy, A21=-v*L.sy, A22=v*L.sp*L.cy-L.f*L.cp, det=A11*A22-A12*A21;
+  if(Math.abs(det)<1e-6) return -1;
+  const a=(-u*L.f*A22+A12*v*L.f)/det, b=(-A11*v*L.f+u*L.f*A21)/det, hw=logo.dw/2, hh=logo.dh/2;
+  if(a<=-hw||a>=hw||b<=-hh||b>=hh) return -1;
+  const i=(((b+hh)/logo.dh*logo.mh)|0)*logo.mw+(((a+hw)/logo.dw*logo.mw)|0);
+  return logo.mask[i]?i:-1;
+}
+function logoCamera(){ return {f:Math.max(W,H)*.9,cy:Math.cos(logo.yaw),sy:Math.sin(logo.yaw),cp:Math.cos(logo.pitch),sp:Math.sin(logo.pitch)}; }
+function logoEscape(i,L){ // escape direction of a mask cell, as a unit vector on screen
+  const ex=logo.escX[i], ey=logo.escY[i];
+  let nx=ex*L.cy+ey*L.sp*L.sy, ny=ey*L.cp; const m=Math.hypot(nx,ny)||1;
+  return [nx/m,ny/m];
+}
+function logoForce(px,py,z,vx,vy,mf,L){
+  if(z<LOGO_Z-.28) return null; // this agent passes behind the logo
+  let i=logoCell(px,py,L), inside=i>=0;
+  if(!inside){ i=logoCell(px+vx*2.5,py+vy*2.5,L); if(i<0) return null; } // about to enter: deflect early
+  const [nx,ny]=logoEscape(i,L);
+  const push=inside?3.6+Math.min(6,logo.dist[i]*.8):2.2;  // deeper inside = firmer push
+  const vn=vx*nx+vy*ny, cancel=vn<0?-vn/mf:0;              // remove the velocity pointing into the letter
+  return [nx*(push+cancel),ny*(push+cancel)];
+}
+/* Physarum (slime mold): three forward sensors read the pheromone field, the agent turns toward the
+   strongest reading, moves on and deposits, so busy routes self-reinforce into branching veins. */
+function stepPhysarum(i,simSpeed,ms){
+  const px=posX[i], py=posY[i], z=zArr[i], k=Math.min(2,simSpeed);
+  let ang=angArr[i];
+  const SD=13+z*5, SA=.62, RA=.5;
+  const ahead=pherSample(px+Math.cos(ang)*SD,py+Math.sin(ang)*SD);
+  const left=pherSample(px+Math.cos(ang-SA)*SD,py+Math.sin(ang-SA)*SD);
+  const right=pherSample(px+Math.cos(ang+SA)*SD,py+Math.sin(ang+SA)*SD);
+  const jit=(Math.random()-.5)*.25;
+  if(ahead>=left&&ahead>=right) ang+=jit*k; else if(left>right) ang-=(RA+jit)*k; else ang+=(RA+jit)*k;
+  const spd=ms*.9, ease=Math.min(1,.3*simSpeed);
+  let nvx=velX[i]+(Math.cos(ang)*spd-velX[i])*ease, nvy=velY[i]+(Math.sin(ang)*spd-velY[i])*ease;
+  let nx=px+nvx*simSpeed, ny=py+nvy*simSpeed;
+  const edge=3; // bounce like every other agent, reflecting the heading too
+  if(nx<edge||nx>W-edge){ nx=nx<edge?edge:W-edge; nvx=-nvx; ang=Math.PI-ang; }
+  if(ny<edge||ny>H-edge){ ny=ny<edge?edge:H-edge; nvy=-nvy; ang=-ang; }
+  angArr[i]=ang; velX[i]=nvx; velY[i]=nvy; posX[i]=nx; posY[i]=ny;
+  depositPheromone(nx,ny,.4*simSpeed); // sensing is relative, so a smaller deposit keeps the network shape but stops the field saturating
+  writeInstance(i);
+}
+function updatePhysics(simSpeed){
+  const A=q.algo, R=q.radius, mf=.45, ms=q.speed*(1.3+q.explore*.7);
+  const objK=q.obj/.6; // Objective Pull scales every objective-seeking force (1 at the default 0.6; the slider used to do nothing)
+  const depthView=q.view==='depth';
+  const logoL=logo.collide?logoCamera():null; // logo camera terms, once per frame
+  /* Keep the flock framed. Hard walls stop agents leaving, but a cohesive flock
+     will happily migrate and sit jammed in a corner, which looks the same to the
+     eye. A weak restoring force on the swarm's centroid re-centres the group as a
+     whole without disturbing the internal flocking structure. */
+  let cenX=0, cenY=0;
+  for(let i=0;i<count;i++){ cenX+=posX[i]; cenY+=posY[i]; }
+  if(count){ cenX/=count; cenY/=count; }
+  const md2=Math.max(W,H);
+  let recX=((W/2-cenX)/md2)*q.center*ms*0.9;
+  let recY=((H/2-cenY)/md2)*q.center*ms*0.9;
+  const rSepBase=(q.sep*12)**2, rNbBase=R*R;
+  const interactors=[];
+  if(pointer.active) interactors.push(pointer);
+  for(const h of activeHands) interactors.push(h);
+  /* With no touch/mouse/hand, an idle attractor drives the swarm. Its strength is
+     Idle Drift controls how far that attractor wanders; at 0 it stays centred and
+     the swarm holds position instead of being swept around the screen. */
+  if(interactors.length===0) interactors.push(pointer);
+
+  const a_gwo=2*(0.35+0.65*(1-q.conv));
+
+  for(let i=0;i<count;i++){
+    if(depthView){ const zn=zArr[i]+Math.sin(t*.7+phaseArr[i]*9)*.0013*simSpeed; zArr[i]=zn<.3?.3:zn>1.75?1.75:zn; } // agents drift through depth layers
+    if(A==='physarum'){ stepPhysarum(i,simSpeed,ms); continue; }
+    const z=zArr[i];
+    // perception scales with depth but is capped at the grid cell size, so the 3x3 cell search covers all of it
+    const zc=z<1?z:1, rSep2=rSepBase*zc*zc, rNb2=rNbBase*zc*zc;
+    let sx=0,sy=0,nSep=0, ax=0,ay=0,nAli=0, cx=0,cy=0,nCoh=0, nAll=0;
+    const px=posX[i], py=posY[i], vx=velX[i], vy=velY[i];
+    forEachNeighbor(i,(j)=>{
+      const dx=posX[j]-px, dy=posY[j]-py, d2=dx*dx+dy*dy;
+      if(d2>rNb2||d2===0) return;
+      nAll++;
+      if(d2<rSep2){ sx-=dx/d2; sy-=dy/d2; nSep++; }
+      else if(nAli<9){ ax+=velX[j]; ay+=velY[j]; nAli++; cx+=posX[j]; cy+=posY[j]; nCoh++; }
+    });
+    crowd[i]+=(nAll-crowd[i])*.12;
+    let fx=0,fy=0;
+    if(nSep>0){ const m=Math.hypot(sx,sy); if(m>0){ let dx=(sx/m)*ms-vx, dy=(sy/m)*ms-vy; const dmag=Math.hypot(dx,dy); if(dmag>mf){dx=dx/dmag*mf;dy=dy/dmag*mf;} fx+=dx*q.explore*2.5; fy+=dy*q.explore*2.5; } }
+    if(nAli>0){ ax/=nAli; ay/=nAli; const am=Math.hypot(ax,ay); if(am>0){ let dx=(ax/am)*ms-vx, dy=(ay/am)*ms-vy; const dmag=Math.hypot(dx,dy); if(dmag>mf){dx=dx/dmag*mf;dy=dy/dmag*mf;} fx+=dx*q.social*0.85; fy+=dy*q.social*0.85; } }
+    if(nCoh>0){ let ccx=(cx/nCoh)-px, ccy=(cy/nCoh)-py; const cm=Math.hypot(ccx,ccy); if(cm>0){ let dx=(ccx/cm)*ms-vx, dy=(ccy/cm)*ms-vy; const dmag=Math.hypot(dx,dy); if(dmag>mf){dx=dx/dmag*mf;dy=dy/dmag*mf;} fx+=dx*q.conv*0.6; fy+=dy*q.conv*0.6; } }
+
+    if(A==='pso'){
+      const w=0.92-q.conv*0.4, c1=q.explore*2.2, c2=q.social*2.2;
+      const r1=Math.random(), r2=Math.random();
+      let nvx=w*vx+(c1*r1*(bestX[i]-px)+c2*r2*(gBestX-px))*0.02*objK;
+      let nvy=w*vy+(c1*r1*(bestY[i]-py)+c2*r2*(gBestY-py))*0.02*objK;
+      fx+=(nvx-vx); fy+=(nvy-vy);
+    } else if(A==='gwo'){
+      let sxg=0,syg=0,nL=0;
+      for(const L of leaders){
+        if(!Number.isFinite(L.fit)) continue;
+        const r1=Math.random(), r2=Math.random();
+        const Acoef=2*a_gwo*r1-a_gwo, Ccoef=2*r2;
+        const Dx=Math.abs(Ccoef*L.x-px), Dy=Math.abs(Ccoef*L.y-py);
+        sxg+=(L.x-Acoef*Dx); syg+=(L.y-Acoef*Dy); nL++;
+      }
+      if(nL){ sxg/=nL; syg/=nL; fx+=(sxg-px)*0.006*q.social*objK; fy+=(syg-py)*0.006*q.social*objK; }
+    } else if(A==='aco'){
+      // climb the pheromone gradient as a capped steering force: a raw gradient force feeds back on the
+      // ants' own deposits and collapses the colony into a few dense balls
+      const g=pheromoneGradient(px,py), gm=Math.hypot(g[0],g[1]);
+      if(gm>1e-3){ const gs=Math.min(1,gm/2)*mf*q.social*1.6*objK; fx+=g[0]/gm*gs; fy+=g[1]/gm*gs; }
+      fx+=(gBestX-px)*q.conv*.0015*objK; fy+=(gBestY-py)*q.conv*.0015*objK;
+    } else if(A!=='boids' && A!=='ffsync'){
+      const od=fitA[i];
+      let k=q.social*(A==='woa'?1.1:A==='fa'?1.25:1);
+      if(A==='abc') k*=.75; if(A==='bfo') k*=.55; if(A==='afs') k*=.9;
+      fx+=((bestX[i]-px)*q.conv*.004+(gBestX-px)*k*.0015)*objK;
+      fy+=((bestY[i]-py)*q.conv*.004+(gBestY-py)*k*.0015)*objK;
+      if(A==='woa'){ const ang=t*.8+phaseArr[i]*6.28, rad=Math.hypot(gBestX-px,gBestY-py); fx+=Math.cos(ang)*rad*.0015*objK; fy+=Math.sin(ang)*rad*.0015*objK; }
+      if(A==='fa'){ const br=1/(1+Math.max(0,od-fitMin)); fx+=(gBestX-px)*br*.004*objK; fy+=(gBestY-py)*br*.004*objK; }
+      if(A==='mopso'){ fx+=Math.sin(phaseArr[i]*20+t)*.4; fy+=Math.cos(phaseArr[i]*17-t)*.4; } // zero-mean (a -.5 offset used to push the swarm up-left)
+    }
+
+    // obstacles: push out and slide around them
+    for(let o=0;o<obstacles.length;o++){
+      const ob=obstacles[o], dx=px-ob.x, dy=py-ob.y, d=Math.hypot(dx,dy), rr=ob.r+34;
+      if(d<rr&&d>0){ const s=1-d/rr; fx+=((dx/d)*3.2-(dy/d)*1.6)*mf*s; fy+=((dy/d)*3.2+(dx/d)*1.6)*mf*s; }
+    }
+    // predators: evasion wave within 160px
+    for(let p2=0;p2<preds.length;p2++){
+      const pr=preds[p2], dx=px-pr.x, dy=py-pr.y, d2=dx*dx+dy*dy;
+      if(d2<25600&&d2>0){ const d=Math.sqrt(d2), s=1-d/160; fx+=(dx/d)*mf*7*s; fy+=(dy/d)*mf*7*s; }
+    }
+    // 3D logo: agents on the logo's depth slab are pushed out of its silhouette
+    if(logoL){ const lf=logoForce(px,py,z,vx,vy,mf,logoL); if(lf){ fx+=lf[0]*mf; fy+=lf[1]*mf; } }
+
+    let bx=0,by=0,mdMin=Infinity;
+    for(const pt of interactors){
+      const hand=!!pt.isHand, gain=hand?q.handStrength:1, reach=q.reach*(hand?pt.reachMul:1);
+      const mx=pt.x-px, my=pt.y-py, md=Math.hypot(mx,my);
+      if(md<mdMin) mdMin=md;
+      if(md<=0) continue;
+      if(pt.blast>0 && md<reach*1.5){ const bp=(pt.blast/20)*50*gain; bx-=(mx/md)*bp; by-=(my/md)*bp; }
+      if(hand&&handCombo&&(pt===handCombo.a||pt===handCombo.b)) continue; // a two-hand gesture drives these hands (below)
+      if(pt.mode==='grab'){
+        if(md<reach*1.25){ const pull=1.8*ms*(1-md/(reach*1.25))*gain; fx+=(mx/md)*pull; fy+=(my/md)*pull; }
+      } else if(pt.mode==='point'){ // draw: a tight knot that follows the fingertip, circulating so it doesn't collapse to a dot
+        const R2=reach*.7;
+        if(md<R2){ const s=1-md/R2, pull=2.2*ms*s*gain, spin=ms*.35*s*gain; fx+=(mx/md)*pull-(my/md)*spin; fy+=(my/md)*pull+(mx/md)*spin; }
+      } else if(pt.mode==='vortex'){
+        if(md<reach){ const v=(1-md/reach)*ms*1.6*gain*(pt.spin||1); fx+=-(my/md)*v; fy+=(mx/md)*v; }
+      } else if(pt.mode==='repel'||pt.down){
+        if(md<reach*0.85){ const rep=(1-md/(reach*0.85))*12*q.mouse*gain; fx-=(mx/md)*rep*ms; fy-=(my/md)*rep*ms; }
+      } else {
+        /* Attract. Strongest inside Interaction Reach, fading to a light tug beyond it,
+           with only a gentle swirl close to the pointer. Applying a distance-growing pull
+           and a full-strength swirl to every agent overpowered alignment and cohesion and
+           locked the whole population into one orbit, so no flocking was visible. */
+        const near=md<reach?1-md/reach:0;
+        const pull=q.mouse*(0.25+0.75*near)*gain;
+        let dx=(mx/md)*ms-vx, dy=(my/md)*ms-vy; const dmag=Math.hypot(dx,dy);
+        if(dmag>mf){dx=dx/dmag*mf;dy=dy/dmag*mf;}
+        fx+=dx*pull; fy+=dy*pull;
+        const swirl=q.mouse*0.35*near*near*gain;
+        if(swirl>0){
+          let tx=(-my/md)*ms-vx, ty=(mx/md)*ms-vy; const tmag=Math.hypot(tx,ty);
+          if(tmag>mf){tx=tx/tmag*mf;ty=ty/tmag*mf;}
+          fx+=tx*swirl; fy+=ty*swirl;
+        }
+      }
+      if(hand&&pt.mode!=='grab'&&pt.mode!=='point'){ // swipe: a fast-moving hand drags nearby agents along its path
+        const hs=Math.hypot(pt.vx,pt.vy), R2=reach*.55;
+        if(hs>5&&md<R2){ const s=Math.min(2.5,hs/14)*(1-md/R2)*mf*ms*.85*gain; fx+=pt.vx/hs*s; fy+=pt.vy/hs*s; }
+      }
+    }
+    if(handCombo){ const cf=comboForce(handCombo,i,px,py,vx,vy,ms,mf); fx+=cf[0]; fy+=cf[1]; }
+    if(handBurst){ // clap or crush release: a shockwave from where it happened
+      const dx=handBurst.x-px, dy=handBurst.y-py, d=Math.hypot(dx,dy)||1, R=q.reach*1.8;
+      if(d<R){ const bp=(handBurst.f/24)*60*handBurst.k*q.handStrength*(1-d/R); bx-=dx/d*bp; by-=dy/d*bp; }
+    }
+    ptrDist[i]=mdMin;
+    fx+=bx; fy+=by;
+
+    let audioLvl=0;
+    if(audioData){ audioLvl=audioData[(phaseArr[i]*audioData.length)|0]/255; }
+    const cn=curlNoise(px,py,t);
+    fx+=Math.cos(cn)*q.explore*mf*(1.6+audioLvl*4);
+    fy+=Math.sin(cn)*q.explore*mf*(1.6+audioLvl*4);
+    if(q.wind>0){ fx+=Math.sin(py*.0018+t*.33)*mf*q.wind*1.1; fy+=Math.cos(px*.0016-t*.27)*mf*q.wind*.8; } // slow large-scale wind
+
+    /* Containment. The margin scales with the smaller screen dimension so a narrow
+       phone viewport gets a proportionate cushion rather than a fixed 70px one.
+       The force ramps quadratically so agents are turned firmly but smoothly. */
+    const pad=Math.max(36,Math.min(W,H)*0.14);
+    if(px<pad){ const k=(pad-px)/pad; fx+=mf*5.0*k*k; }
+    if(px>W-pad){ const k=(px-(W-pad))/pad; fx-=mf*5.0*k*k; }
+    if(py<pad){ const k=(pad-py)/pad; fy+=mf*5.0*k*k; }
+    if(py>H-pad){ const k=(py-(H-pad))/pad; fy-=mf*5.0*k*k; }
+
+    fx+=recX; fy+=recY;
+    const invMass=1.3/(.7+z*.6); // nearer (higher z) agents are heavier; normalised so z=1 keeps the tuned response
+    let nvx=vx+fx*simSpeed*invMass, nvy=vy+fy*simSpeed*invMass;
+    const spd=Math.hypot(nvx,nvy);
+    if(spd>ms){ nvx=nvx/spd*ms; nvy=nvy/spd*ms; }
+    else { const minSpd=ms*.5; if(spd<minSpd&&spd>0){ nvx=nvx/spd*minSpd; nvy=nvy/spd*minSpd; } }
+    let nx=px+(nvx+bx)*simSpeed, ny=py+(nvy+by)*simSpeed;
+    /* Hard wall with damped reflection. Wrapping the field edges used to teleport
+       stragglers to the far side, and cohesion then dragged the whole flock after
+       them until it left the frame. Bouncing keeps every agent on screen. */
+    const edge=3;
+    if(nx<edge){ nx=edge; if(nvx<0) nvx=-nvx*0.5; }
+    else if(nx>W-edge){ nx=W-edge; if(nvx>0) nvx=-nvx*0.5; }
+    if(ny<edge){ ny=edge; if(nvy<0) nvy=-nvy*0.5; }
+    else if(ny>H-edge){ ny=H-edge; if(nvy>0) nvy=-nvy*0.5; }
+    /* Like the walls: an agent drawn in front of the logo that still ends up inside a letter is moved out
+       along the escape direction (by its distance to open space), and its velocity into the letter is removed. */
+    if(logoL&&z>=LOGO_Z-.28){
+      const cell=logoCell(nx,ny,logoL);
+      if(cell>=0){
+        const [ex,ey]=logoEscape(cell,logoL), step=(logo.dist[cell]+1)*logo.dw/logo.mw;
+        nx+=ex*step; ny+=ey*step;
+        const vn=nvx*ex+nvy*ey; if(vn<0){ nvx-=vn*ex; nvy-=vn*ey; }
+      }
+    }
+    velX[i]=nvx; velY[i]=nvy;
+    posX[i]=nx; posY[i]=ny;
+    if(q.trailMode==='pheromone'&&A!=='aco') depositPheromone(nx,ny,.35*simSpeed); // ACO deposits by fitness instead
+
+    computeColor(i,tmpCol);
+    const sizeMul=audioData?(1+audioLvl*1.5):1.0;
+    const base=i*STRIDE;
+    instData[base]=nx; instData[base+1]=ny; instData[base+2]=nvx; instData[base+3]=nvy;
+    instData[base+4]=tmpCol[0]; instData[base+5]=tmpCol[1]; instData[base+6]=tmpCol[2]; instData[base+7]=z;
+    instData[base+8]=sizeMul; instData[base+9]=(A==='ffsync')?ffFlash[i]:0;
+  }
+}
+/* Rewrite one agent's GPU record without stepping physics (used for the paused redraw). */
+function writeInstance(i){
+  computeColor(i,tmpCol);
+  const b=i*STRIDE;
+  instData[b]=posX[i]; instData[b+1]=posY[i]; instData[b+2]=velX[i]; instData[b+3]=velY[i];
+  instData[b+4]=tmpCol[0]; instData[b+5]=tmpCol[1]; instData[b+6]=tmpCol[2]; instData[b+7]=zArr[i];
+  instData[b+8]=1; instData[b+9]=q.algo==='ffsync'?ffFlash[i]:0;
+}
+
+/* ================= UI wiring ================= */
+$('algo').onchange=e=>{ q.algo=e.target.value; if(q.algo==='physarum'&&q.trailMode==='fade') q.trailMode='pheromone'; q.preset='custom'; reset(); syncUI(); };
+$('shape').onchange=e=>{ q.shape=e.target.value; q.preset='custom'; syncUI(); };
+$('colorMode').onchange=e=>{ q.colorMode=e.target.value; q.preset='custom'; syncUI(); };
+['trailMode','view','backdrop'].forEach(k=>$(k).onchange=e=>{ q[k]=e.target.value; if(k==='trailMode'){ pher.fill(0); clearRibbons(); } q.preset='custom'; syncUI(); });
+['flow','cine','logoCollide','logoFollow','handSkeleton','handPreview','handTwo','handLabels','handMirror'].forEach(k=>$(k).onchange=e=>{ q[k]=e.target.checked; syncUI(); });
+['handMax','handModel'].forEach(k=>$(k).onchange=e=>{ q[k]=e.target.value; applyHandOptions(); syncUI(); });
+$('logoBtn').onclick=()=>{ q.logo=!q.logo; needsRedraw=true; syncUI(); };
+$('obsBtn').onclick=()=>{ obsPlace=!obsPlace; syncUI(); };
+$('obsClear').onclick=()=>{ obstacles.length=0; obsPlace=false; needsRedraw=true; syncUI(); };
+const PRESETS={
+  murmuration:{algo:'boids',count:1300,speed:6.2,radius:85,sep:1.5,trail:.3,explore:.8,social:.95,conv:.5,shape:'starling',colorMode:'gradient',ca:'#8ecbff',cb:'#3b5bdb',cc:'#e8f4ff',size:1.5,glow:20,alpha:.5,trailMode:'ribbon',view:'depth',wind:.5,predators:1,stars:.85,cine:true,flow:false},
+  slime:{algo:'physarum',count:700,speed:3.2,radius:60,sep:1,trail:.12,explore:.5,social:.4,conv:.3,shape:'circle',colorMode:'state',ca:'#37ff8b',cb:'#0aa35f',cc:'#d6ffe9',size:1,glow:12,alpha:.4,trailMode:'pheromone',view:'flat',wind:0,predators:0,stars:.25,cine:true,flow:false},
+  firefly:{algo:'fa',count:520,speed:2.2,radius:95,sep:2.2,trail:.05,explore:.9,social:.35,conv:.1,obj:.2,shape:'circle',colorMode:'mono',ca:'#ffd54a',cb:'#7c3aed',cc:'#ff9d00',size:1.5,glow:40,alpha:.6,trailMode:'fade',view:'depth',wind:.15,predators:0,stars:.95,cine:true,flow:false},
+  nebula:{algo:'aco',count:850,speed:4.6,radius:70,sep:1.6,trail:.16,explore:.7,social:.8,conv:.45,shape:'capsule',colorMode:'rainbow',ca:'#ff3d81',cb:'#7c3aed',cc:'#00e5ff',size:1.3,glow:30,alpha:.6,trailMode:'pheromone',view:'depth',wind:.3,predators:0,stars:.7,cine:true,flow:false},
+  deeppso:{algo:'pso',count:650,speed:5.4,radius:75,sep:1.8,trail:.2,explore:.65,social:.7,conv:.6,shape:'drone',colorMode:'speed',ca:'#00e5ff',cb:'#7c3aed',cc:'#ff3d81',size:1.4,glow:40,alpha:.7,trailMode:'fade',view:'depth',wind:.25,predators:0,stars:1,cine:true,flow:false},
+  quantum:{algo:'gwo',count:380,speed:6.5,radius:90,sep:2,trail:.12,explore:.75,social:.85,conv:.55,shape:'diamond',colorMode:'state',ca:'#6ee7ff',cb:'#c084fc',cc:'#ff3d81',size:1.8,glow:55,alpha:.8,trailMode:'ribbon',view:'depth',wind:.2,predators:2,stars:.6,cine:true,flow:false}};
+$('preset').onchange=e=>{
+  const pr=PRESETS[e.target.value]; if(!pr){ q.preset='custom'; return; }
+  q={...q,obj:D.obj,...pr,preset:e.target.value}; q.palette=matchPalette(); // obj resets unless the preset sets it (Firefly Night lowers it)
+  obstacles.length=0; obsPlace=false;
+  refreshColors(); syncUI(); reset(); clearTrails();
+};
+['ca','cb','cc'].forEach(k=>$(k).oninput=e=>{ q[k]=e.target.value; q.palette='custom'; $('palette').value='custom'; refreshColors(); });
+$('bg').oninput=e=>{ q.bg=e.target.value; refreshColors(); };
+$('palette').onchange=e=>{ q.palette=e.target.value; const p=PALETTES[q.palette]; if(p){ q.ca=p[0]; q.cb=p[1]; q.cc=p[2]; } refreshColors(); syncUI(); };
+/* Bests scored on the previous landscape are meaningless on the new one (negative Wave Field scores
+   could never be beaten on Rastrigin), so scoring starts from scratch. */
+$('landscape').onchange=e=>{ q.landscape=e.target.value; for(let i=0;i<MAX_N;i++){ fitA[i]=Infinity; bestX[i]=posX[i]; bestY[i]=posY[i]; } gBestFit=Infinity; pher.fill(0); };
+$('quality').onchange=e=>{ q.quality=e.target.value; syncUI(); };
+const ranges=['count','speed','radius','sep','trail','explore','social','conv','size','glow','alpha','obj','mouse','reach','depth','bloom','drift','center','coupling','interval','jitter','whiten','sat','hue','cycle','exposure','stars','wind','predators','logoSize','handStrength','handTravel','handSmooth','handHold'];
+ranges.forEach(k=>$(k).oninput=e=>{ q[k]=+e.target.value; if(k==='count') syncCount(); if(k==='interval'||k==='jitter') reseedIntervals(); syncUI(); });
+$('ffMode').onchange=e=>q.ffMode=e.target.value;
+$('ffPrc').onchange=e=>q.ffPrc=e.target.value;
+$('pause').onclick=()=>{ paused=!paused; $('pause').textContent=paused?'Resume':'Pause'; $('state').textContent=paused?'PAUSED':'RUNNING'; };
+$('reset').onclick=reset;
+$('clear').onclick=()=>clearTrails();
+$('random').onclick=()=>{
+  [q.ca,q.cb,q.cc]=harmonyPalette(); q.palette='custom';
+  const modes=['gradient','heading','depth','density','fitness','pointer','wave','confetti','rainbow'];
+  q.colorMode=modes[Math.floor(Math.random()*modes.length)];
+  q.shape=PICKABLE_SHAPES[Math.floor(Math.random()*PICKABLE_SHAPES.length)];
+  const algos=['boids','pso','mopso','aco','abc','gwo','woa','fa','ffsync','bfo','afs','physarum'];
+  q.algo=algos[Math.floor(Math.random()*algos.length)];
+  if(q.algo==='physarum'&&q.trailMode==='fade') q.trailMode='pheromone';
+  q.preset='custom';
+  refreshColors(); syncUI(); reset();
+};
+$('defaults').onclick=()=>{ q={...D}; obstacles.length=0; obsPlace=false; refreshColors(); syncUI(); reset(); clearTrails(); };
+$('save').onclick=()=>{
+  let ok=true; try{ localStorage.setItem('swarmLabV5',JSON.stringify(q)); }catch(e){ ok=false; } // storage can be blocked (private mode, site data off)
+  $('save').textContent=ok?'Saved ✓':'Save Failed'; setTimeout(()=>$('save').textContent='Save Preset',1200);
+};
+try{ Object.assign(q,JSON.parse(localStorage.getItem('swarmLabV5')||'{}')); }catch(e){}
+try{ const r=sessionStorage.getItem('swarmLabV5:restore'); if(r){ sessionStorage.removeItem('swarmLabV5:restore'); Object.assign(q,JSON.parse(r)); } }catch(e){} // settings kept across a context-loss reload
+q.palette=matchPalette();
+refreshColors();
+
+function syncUI(){
+  syncCount();
+  $('sCount').textContent=count; $('sAlgo').textContent=q.algo.toUpperCase(); $('sQuality').textContent=q.quality.toUpperCase();
+  const map={count:'Count',speed:'Speed',radius:'Radius',sep:'Sep',trail:'Trail',explore:'Explore',social:'Social',conv:'Conv',size:'Size',glow:'Glow',alpha:'Alpha',obj:'Obj',mouse:'Mouse',reach:'Reach',depth:'Depth',bloom:'Bloom',drift:'Drift',center:'Center',coupling:'Coupling',interval:'Interval',jitter:'Jitter',whiten:'Whiten',sat:'Sat',hue:'Hue',cycle:'Cycle',exposure:'Exposure',stars:'Stars',wind:'Wind',predators:'Predators',logoSize:'LogoSize',handStrength:'HandStrength',handTravel:'HandTravel',handSmooth:'HandSmooth',handHold:'HandHold'};
+  Object.entries(map).forEach(([k,n])=>{
+    const e=$(k), v=$('v'+n);
+    if(e) e.value=q[k];
+    if(v) v.textContent=typeof q[k]==='number' ? q[k].toFixed(k==='count'||k==='radius'||k==='glow'||k==='reach'||k==='hue'||k==='predators'||k==='handHold'?0:2) : q[k];
+  });
+  $('algo').value=q.algo; $('shape').value=q.shape; $('colorMode').value=q.colorMode; $('landscape').value=q.landscape; $('quality').value=q.quality;
+  $('ca').value=q.ca; $('cb').value=q.cb; $('cc').value=q.cc; $('bg').value=q.bg; $('palette').value=q.palette;
+  $('colorDesc').textContent=COLOR_DESC[q.colorMode]||'';
+  $('ffMode').value=q.ffMode; $('ffPrc').value=q.ffPrc;
+  $('ffControls').style.display = q.algo==='ffsync' ? 'flex' : 'none';
+  syncPreds();
+  $('trailMode').value=q.trailMode; $('view').value=q.view; $('backdrop').value=q.backdrop; $('preset').value=q.preset||'custom';
+  $('flow').checked=!!q.flow; $('cine').checked=!!q.cine; $('logoCollide').checked=!!q.logoCollide; $('logoFollow').checked=!!q.logoFollow;
+  $('handSkeleton').checked=!!q.handSkeleton; $('handPreview').checked=!!q.handPreview; $('handTwo').checked=!!q.handTwo;
+  $('handLabels').checked=!!q.handLabels; $('handMirror').checked=!!q.handMirror; $('handMax').value=String(q.handMax); $('handModel').value=q.handModel;
+  updateHandPreview();
+  $('obsBtn').textContent='Obstacles: '+(obsPlace?'ON':'OFF'); $('obsBtn').classList.toggle('on',obsPlace);
+  $('logoBtn').textContent='Logo 3D: '+(q.logo?'ON':'OFF'); $('logoBtn').classList.toggle('on',!!q.logo);
+  $('desc').textContent=desc[q.algo];
+}
+for(const b of document.querySelectorAll('.tabs button')) b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(z=>z.classList.remove('active')); document.querySelectorAll('.tab').forEach(z=>z.classList.remove('active')); b.classList.add('active'); $(b.dataset.tab).classList.add('active'); };
+$('toggle').onclick=()=>{ $('panel').classList.toggle('collapsed'); $('chev').textContent=$('panel').classList.contains('collapsed')?'▼':'▲'; };
+// while paused, slider / colour / shape changes still show immediately
+$('panel').addEventListener('input',()=>{ needsRedraw=true; }); $('panel').addEventListener('change',()=>{ needsRedraw=true; });
+
+/* Pointer / touch interaction */
 function setPointer(e){
-  pointer.prevX=pointer.x;pointer.prevY=pointer.y;
+  pointer.prevX=pointer.x; pointer.prevY=pointer.y;
   const r=c.getBoundingClientRect();
   pointer.x=(e.clientX-r.left)*(W/r.width);
   pointer.y=(e.clientY-r.top)*(H/r.height);
-  pointer.vx=pointer.x-pointer.prevX;pointer.vy=pointer.y-pointer.prevY;
+  pointer.vx=pointer.x-pointer.prevX; pointer.vy=pointer.y-pointer.prevY;
   pointer.active=true;
 }
 c.style.touchAction='none';
-window.addEventListener('pointermove',e=>{ if(e.pointerType==='mouse' || e.pointerType==='touch' || e.pointerType==='pen') setPointer(e); });
+window.addEventListener('pointermove',e=>{ if(e.pointerType==='mouse'||e.pointerType==='touch'||e.pointerType==='pen') setPointer(e); });
 window.addEventListener('pointerdown',e=>{
-  if(e.target.closest && e.target.closest('.panel')) return;
+  // Canvas only. Capturing the pointer for a press on UI outside the panel (the fullscreen button)
+  // retargeted its click to the canvas, so that button never worked with a mouse.
+  if(e.target!==c) return;
   setPointer(e);
+  if(obsPlace){ if(obstacles.length<12) obstacles.push({x:pointer.x,y:pointer.y,r:45+Math.random()*40}); needsRedraw=true; return; } // placing, not repelling
   pointer.down=true;
-  if(e.pointerId!=null && c.setPointerCapture){
-    try{c.setPointerCapture(e.pointerId)}catch(_){}
-  }
+  if(e.pointerId!=null && c.setPointerCapture){ try{ c.setPointerCapture(e.pointerId); }catch(_){} }
 });
-window.addEventListener('pointerup',e=>{
-  pointer.down=false;
-  if(e.pointerId!=null && c.releasePointerCapture){
-    try{c.releasePointerCapture(e.pointerId)}catch(_){}
-  }
-});
+window.addEventListener('pointerup',e=>{ pointer.down=false; if(e.pointerId!=null && c.releasePointerCapture){ try{ c.releasePointerCapture(e.pointerId); }catch(_){} } });
 window.addEventListener('pointercancel',()=>pointer.down=false);
-window.addEventListener('blur',()=>{pointer.down=false;});
-window.addEventListener('mouseleave',()=>{pointer.active=false;pointer.down=false;const ps=document.getElementById('pointerStatus');if(ps)ps.textContent='MOUSE: READY'});
+window.addEventListener('blur',()=>{ pointer.down=false; });
+// mouseleave doesn't bubble, so a window listener doesn't reliably see it; a mouseout with no
+// relatedTarget means the mouse left the page, and the swarm goes back to idle drift
+document.addEventListener('mouseout',e=>{ if(e.relatedTarget) return; pointer.active=false; pointer.down=false; const ps=$('pointerStatus'); if(ps) ps.textContent='MOUSE: READY'; });
+/* Keyboard shortcuts: SPACE pause · R reset · C clear trails · F fullscreen. Ignored while a slider,
+   select or text field has focus; Space's default is prevented so a focused button isn't clicked as well. */
+window.addEventListener('keydown',e=>{
+  const tag=e.target&&e.target.tagName;
+  if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA'||e.ctrlKey||e.metaKey||e.altKey) return;
+  const k=(e.key||'').toLowerCase();
+  if(e.code==='Space'){ e.preventDefault(); $('pause').click(); }
+  else if(k==='r') reset();
+  else if(k==='c') clearTrails();
+  else if(k==='f') $('fullscreenBtn').click();
+});
 
-/* Mouse/touch interaction strength is now clearly visible */
-/* Hand Tracking & Expanded Features */
-let handTrackingEnabled=false, camera=null;
+/* ================= Hand tracking =================
+   MediaPipe landmarks become per-hand state: a One-Euro-filtered interaction point (palm centre, or the index
+   fingertip while pointing), a gesture read from joint angles scaled by palm size (so it works near or far from
+   the camera), and debounced mode changes. Hands keep their identity by handedness and survive short dropouts. */
+let handTrackingEnabled=false, camera=null, handsSolver=null;
 const videoElement=$('input_video'), handBtn=$('handTrackBtn');
-function onResults(results) {
-  if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-    let newHands = [];
-    for(let i=0; i<results.multiHandLandmarks.length; i++){
-      const lm = results.multiHandLandmarks[i], wrist = lm[0], palm = lm[9];
-      let nx = (1-palm.x - 0.5) * 1.6 + 0.5;
-      let ny = (palm.y - 0.5) * 1.6 + 0.5;
-      let pt = activeHands[i] || {x:nx*W,y:ny*H,prevX:nx*W,prevY:ny*H,vx:0,vy:0,mode:'open',down:false,active:true,gestureFrames:0,lastGesture:'open',blast:0};
-      pt.prevX=pt.x; pt.prevY=pt.y;
-      pt.x += ((nx*W) - pt.x)*0.45; pt.y += ((ny*H) - pt.y)*0.45;
-      pt.vx=pt.x-pt.prevX; pt.vy=pt.y-pt.prevY;
-      const d=(i)=>Math.hypot(lm[i].x-wrist.x,lm[i].y-wrist.y,lm[i].z-wrist.z);
-      const mcp=(i)=>Math.hypot(lm[i-3].x-wrist.x,lm[i-3].y-wrist.y,lm[i-3].z-wrist.z);
-      const iExt=d(8)>mcp(8), mExt=d(12)>mcp(12), rExt=d(16)>mcp(16), pExt=d(20)>mcp(20);
-      const pinchD = Math.hypot(lm[8].x-lm[4].x,lm[8].y-lm[4].y,lm[8].z-lm[4].z);
-      
-      let state = 'open';
-      if(pinchD < 0.05) state = 'repel';
-      else if(!iExt && !mExt && !rExt && !pExt) state = 'grab';
-      else if(iExt && mExt && !rExt && !pExt) state = 'vortex';
-      
-      if(state === pt.lastGesture) pt.gestureFrames++;
-      else { pt.gestureFrames=0; pt.lastGesture=state; }
-      if(pt.gestureFrames > 2) {
-        if(pt.mode === 'grab' && state !== 'grab') pt.blast = 20;
-        pt.mode = state; pt.down = (state==='repel'); 
-      }
-      newHands.push(pt);
-    }
-    activeHands = newHands;
-    let ps=$('pointerStatus'); if(ps)ps.textContent=`HANDS: ${activeHands.length} DETECTED`;
-  } else {
-    activeHands = [];
-    let ps=$('pointerStatus'); if(ps)ps.textContent='HAND: NO DETECT';
+class OneEuro{ // adaptive low-pass: steady while the hand is still, low lag when it moves fast
+  constructor(){ this.x=null; this.dx=0; this.t=0; }
+  static alpha(cutoff,dt){ const tau=1/(2*Math.PI*cutoff); return 1/(1+tau/dt); }
+  filter(x,tMs,minCutoff,beta){
+    if(this.x===null){ this.x=x; this.t=tMs; return x; }
+    const dt=Math.max(1e-3,(tMs-this.t)/1000); this.t=tMs;
+    this.dx+=OneEuro.alpha(1,dt)*((x-this.x)/dt-this.dx);
+    this.x+=OneEuro.alpha(minCutoff+beta*Math.abs(this.dx),dt)*(x-this.x);
+    return this.x;
   }
 }
+const HAND_BONES=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+const GESTURES={
+  open:{icon:'✋',name:'FOLLOW',col:[.62,.8,1]},   grab:{icon:'✊',name:'GRAB',col:[1,.18,.5]},
+  point:{icon:'☝️',name:'DRAW',col:[.3,1,.75]},     vortex:{icon:'✌️',name:'VORTEX',col:[.16,.78,1]},
+  repel:{icon:'🤏',name:'PUSH',col:[1,.78,.16]},    freeze:{icon:'🤘',name:'SLOW-MO',col:[.75,.55,1]},
+  thumbs:{icon:'👍',name:'PALETTE',col:[1,.9,.3]}
+};
+const CAM_ASPECT=640/480; // landmark x is normalised by width: scale it so distances and angles are isotropic
+function lmDist(a,b){ return Math.hypot((a.x-b.x)*CAM_ASPECT,a.y-b.y,(a.z-b.z)*CAM_ASPECT); }
+function jointCos(lm,a,b,c){ // cosine of the bend at joint b (1 = straight)
+  const ux=(lm[b].x-lm[a].x)*CAM_ASPECT, uy=lm[b].y-lm[a].y, vx=(lm[c].x-lm[b].x)*CAM_ASPECT, vy=lm[c].y-lm[b].y;
+  return (ux*vx+uy*vy)/((Math.hypot(ux,uy)*Math.hypot(vx,vy))||1);
+}
+function fingerExtended(lm,mcp,pip,tip){ return jointCos(lm,mcp,pip,tip)>.5&&lmDist(lm[tip],lm[0])>lmDist(lm[pip],lm[0])*1.08; }
+function readGesture(lm,h){
+  const palm=lmDist(lm[0],lm[9])||1e-3;
+  const idx=fingerExtended(lm,5,6,8), mid=fingerExtended(lm,9,10,12), ring=fingerExtended(lm,13,14,16), pinky=fingerExtended(lm,17,18,20);
+  const pinch=lmDist(lm[4],lm[8])/palm;
+  h.pinching=h.pinching?pinch<.42:pinch<.28; // hysteresis: a pinch is easier to hold than to start
+  // a real pinch happens in front of the palm; in a fist the thumb can also rest on a curled index tip
+  if(h.pinching&&lmDist(lm[8],lm[9])>palm*.55) return 'repel';
+  if(!idx&&!mid&&!ring&&!pinky){
+    const thumbUp=jointCos(lm,2,3,4)>.6&&lm[4].y<lm[2].y-palm*.35&&lm[4].y<lm[5].y-palm*.15;
+    return thumbUp?'thumbs':'grab';
+  }
+  if(idx&&!mid&&!ring&&!pinky) return 'point';
+  if(idx&&mid&&!ring&&!pinky) return 'vortex';
+  if(idx&&!mid&&!ring&&pinky) return 'freeze';
+  return 'open';
+}
+const handsById=new Map();
+function handFor(id){
+  let h=handsById.get(id);
+  if(!h){
+    h={id,isHand:true,active:true,x:W/2,y:H/2,tx:W/2,ty:H/2,vx:0,vy:0,mode:'open',down:false,blast:0,pulse:0,
+       cand:'open',candN:0,pinching:false,thumbArmed:true,reachMul:1,spin:/left/i.test(id)?-1:1,
+       fx:new OneEuro(),fy:new OneEuro(),screen:new Float32Array(42),seen:0,fresh:true};
+    handsById.set(id,h);
+  }
+  return h;
+}
+function nextPalette(){
+  const keys=Object.keys(PALETTES), k=keys[(keys.indexOf(q.palette)+1)%keys.length];
+  q.palette=k; [q.ca,q.cb,q.cc]=PALETTES[k]; refreshColors(); syncUI();
+}
+function nextPreset(){
+  const keys=Object.keys(PRESETS), sel=$('preset');
+  sel.value=keys[(keys.indexOf(q.preset)+1)%keys.length]; sel.dispatchEvent(new Event('change'));
+}
+function applyHandOptions(){
+  if(handsSolver) handsSolver.setOptions({maxNumHands:+q.handMax===1?1:2,modelComplexity:q.handModel==='lite'?0:1,minDetectionConfidence:.5,minTrackingConfidence:.5});
+}
+const COMBOS={
+  bridge:{icon:'🙌',name:'BRIDGE',col:[.5,1,.9]},        crush:{icon:'✊✊',name:'CRUSH',col:[1,.25,.45]},
+  galaxy:{icon:'✌️✌️',name:'GALAXY',col:[.35,.7,1]},      string:{icon:'☝️☝️',name:'STRING',col:[.35,1,.7]},
+  stream:{icon:'✋→✊',name:'STREAM',col:[.9,.6,1]},      zoom:{icon:'🤏🤏',name:'ZOOM',col:[1,.8,.3]},
+  timestop:{icon:'🤘🤘',name:'TIME STOP',col:[.8,.6,1]},  presets:{icon:'👍👍',name:'PRESET',col:[1,.9,.3]}
+};
+const handLook=h=>handCombo&&(h===handCombo.a||h===handCombo.b)?COMBOS[handCombo.type]:GESTURES[h.mode];
+/* seek steering toward (tx,ty), capped like the flocking forces, added into out */
+function seekInto(px,py,vx,vy,tx,ty,w,ms,mf,out){
+  const ddx=tx-px, ddy=ty-py, d=Math.hypot(ddx,ddy); if(d<=0) return;
+  let sx=ddx/d*ms-vx, sy=ddy/d*ms-vy; const m=Math.hypot(sx,sy); if(m>mf){ sx=sx/m*mf; sy=sy/m*mf; }
+  out[0]+=sx*w; out[1]+=sy*w;
+}
+const comboOut=[0,0];
+/* Force a two-hand gesture puts on one agent; replaces the two hands' individual forces while it lasts. */
+function comboForce(C,i,px,py,vx,vy,ms,mf){
+  comboOut[0]=0; comboOut[1]=0;
+  const g=q.handStrength, A=C.a, B=C.b;
+  if(C.type==='bridge'||C.type==='string'){
+    const abx=B.x-A.x, aby=B.y-A.y, L2=abx*abx+aby*aby||1, L=Math.sqrt(L2);
+    let s=((px-A.x)*abx+(py-A.y)*aby)/L2; s=s<0?0:s>1?1:s;
+    const cx=A.x+abx*s, cy=A.y+aby*s, qd=Math.hypot(cx-px,cy-py), tight=C.type==='string', R=q.reach*(tight?.6:1.1), near=qd<R?1-qd/R:0;
+    seekInto(px,py,vx,vy,cx,cy,q.mouse*g*(tight?.6+1.4*near:.35+.9*near),ms,mf,comboOut);
+    const flow=mf*(tight?1:.6)*near*g*(phaseArr[i]<.5?1:-1); // two-way traffic along the strand
+    comboOut[0]+=abx/L*flow; comboOut[1]+=aby/L*flow;
+  } else if(C.type==='crush'){
+    const dx=C.mx-px, dy=C.my-py, d=Math.hypot(dx,dy)||1, R=Math.max(26,C.d*.3);
+    if(d>R) seekInto(px,py,vx,vy,C.mx,C.my,(1.6+Math.min(1.5,(d-R)/200))*g,ms,mf,comboOut);
+    else { comboOut[0]+=-dy/d*ms*.03*g; comboOut[1]+=dx/d*ms*.03*g; } // slow churn inside the ball
+  } else if(C.type==='galaxy'){
+    const dx=px-C.mx, dy=py-C.my, d=Math.hypot(dx,dy)||1, R=Math.max(60,C.d*.5), e=d-R;
+    const radial=-Math.sign(e)*Math.min(1,Math.abs(e)/60)*mf*2.6*g;                   // onto the ring
+    const tang=ms*.1*g*(.35+.65*Math.max(0,1-Math.abs(e)/(R*1.6+200)))*C.spin;         // and around it
+    comboOut[0]+=dx/d*radial-dy/d*tang; comboOut[1]+=dy/d*radial+dx/d*tang;
+  } else if(C.type==='stream'){
+    const src=C.src, snk=C.snk;
+    seekInto(px,py,vx,vy,snk.x,snk.y,1.1*g,ms,mf,comboOut);                            // everything drains into the fist
+    const dx=px-src.x, dy=py-src.y, d=Math.hypot(dx,dy), R=q.reach*.5*(src.reachMul||1);
+    if(d<R){ const tx=snk.x-src.x, ty=snk.y-src.y, tl=Math.hypot(tx,ty)||1, s=(1-d/R)*ms*.9*g; comboOut[0]+=tx/tl*s; comboOut[1]+=ty/tl*s; } // launched from the open hand
+  } else seekInto(px,py,vx,vy,C.mx,C.my,.25*q.mouse*g,ms,mf,comboOut);               // zoom / time stop / presets: gentle gather
+  return comboOut;
+}
+function onResults(results){
+  if(!handTrackingEnabled) return; // late results after tracking was stopped
+  const now=performance.now(), lms=results.multiHandLandmarks||[], hd=results.multiHandedness||[];
+  const travel=q.handTravel||1.6, minCut=.3+2.7*(1-q.handSmooth), beta=.004+.02*(1-q.handSmooth);
+  const mir=q.handMirror!==false, map=p=>[((mir?1-p.x:p.x)-.5)*travel*W+W/2,(p.y-.5)*travel*H+H/2]; // mirrored (selfie view), scaled so a smaller movement covers the screen
+  const used=new Set();
+  for(let i=0;i<lms.length;i++){
+    const lm=lms[i];
+    let id=(hd[i]&&hd[i].label)||('Hand'+i); if(used.has(id)) id+='#2'; used.add(id);
+    const h=handFor(id);
+    const g=readGesture(lm,h);
+    if(g===h.cand) h.candN++; else { h.cand=g; h.candN=0; }
+    if(h.candN>=Math.max(0,(q.handHold|0)-1)&&h.mode!==g){ // a new gesture must hold for Gesture Hold frames (3 = ~0.1s)
+      if(h.mode==='grab') h.blast=20; // opening a fist releases a shockwave
+      h.mode=g; h.pulse=1;
+      if(g==='thumbs'&&h.thumbArmed){ nextPalette(); h.thumbArmed=false; }
+    }
+    if(h.mode!=='thumbs') h.thumbArmed=true;
+    h.down=h.mode==='repel';
+    h.reachMul=Math.min(1.8,Math.max(.6,lmDist(lm[0],lm[9])/.16)); // closer to the camera = bigger palm = wider reach
+    const [sx,sy]=map(h.mode==='point'?lm[8]:lm[9]);
+    if(h.fresh){ h.x=sx; h.y=sy; h.fresh=false; }
+    h.tx=h.fx.filter(sx,now,minCut,beta); h.ty=h.fy.filter(sy,now,minCut,beta);
+    const ox=h.tx-sx, oy=h.ty-sy; // skeleton rides on the filtered point, fingers keep their live shape
+    for(let k=0;k<21;k++){ const [x2,y2]=map(lm[k]); h.screen[k*2]=x2+ox; h.screen[k*2+1]=y2+oy; }
+    h.seen=now;
+  }
+  for(const [id,h] of handsById) if(now-h.seen>300) handsById.delete(id); // brief dropouts don't make a hand flicker
+  activeHands=[...handsById.values()];
+  const ps=$('pointerStatus');
+  if(ps) ps.textContent=activeHands.length?'HANDS: '+[...new Set(activeHands.map(h=>{ const L=handLook(h); return L.icon+' '+L.name; }))].join(' · '):'HAND: SHOW YOUR HAND';
+}
+/* Per render frame: glide toward the filtered target (camera results arrive at ~30 Hz, frames at 60+),
+   track hand velocity for swipes, and resolve the two-hand gestures. */
+function updateHands(frameSpeed){
+  if(handBurst){ handBurst.f-=frameSpeed; if(handBurst.f<=0) handBurst=null; }
+  const now=performance.now(), k=Math.min(1,.55*frameSpeed), inv=1/Math.max(.25,frameSpeed);
+  for(const h of activeHands){
+    const nx=h.x+(h.tx-h.x)*k, ny=h.y+(h.ty-h.y)*k;
+    h.vx=h.vx*.6+(nx-h.x)*inv*.4; h.vy=h.vy*.6+(ny-h.y)*inv*.4; // px per 60fps frame, lightly smoothed
+    h.x=nx; h.y=ny;
+    if(h.pulse>0) h.pulse=Math.max(0,h.pulse-.045*frameSpeed);
+  }
+  let type=null;
+  if(q.handTwo&&activeHands.length===2){
+    const [a,b]=activeHands, d=Math.hypot(a.x-b.x,a.y-b.y), mx=(a.x+b.x)/2, my=(a.y+b.y)/2, m1=a.mode, m2=b.mode, both=m=>m1===m&&m2===m;
+    if(now>=comboQuietUntil){
+      if(both('open')) type=d>140?'bridge':null;
+      else if(both('grab')) type='crush';
+      else if(both('vortex')) type='galaxy';
+      else if(both('point')) type='string';
+      else if(both('repel')) type='zoom';
+      else if(both('freeze')) type='timestop';
+      else if(both('thumbs')) type='presets';
+      else if((m1==='open'&&m2==='grab')||(m1==='grab'&&m2==='open')) type='stream';
+    }
+    const left=a.x<b.x?a:b, right=left===a?b:a;
+    handCombo=type?{type,a,b,d,mx,my,spin:left.y<right.y?-1:1,src:m1==='open'?a:b,snk:m1==='open'?b:a}:null; // tilt the pair to reverse the galaxy
+    if(type) comboLast={mx,my};
+    const closing=handPairDist>0?(handPairDist-d)*inv:0; // clap: the hands meet fast
+    if(d<Math.min(W,H)*.14&&closing>9&&now-lastClap>700){ handBurst={x:mx,y:my,f:24,k:1.4}; a.pulse=b.pulse=1; lastClap=now; }
+    handPairDist=d;
+    if(type==='zoom'&&comboType==='zoom'&&zoomStartD>0){
+      const v=zoomStartVal*d/zoomStartD;
+      if(q.logo) q.logoSize=Math.min(2,Math.max(.4,v)); else q.size=Math.min(3.5,Math.max(.4,v));
+      if(now-lastZoomSync>150){ lastZoomSync=now; syncUI(); }
+    }
+  } else { handCombo=null; handPairDist=0; }
+  if(type!==comboType){ // a two-hand gesture started, ended or changed
+    if(comboType==='crush'&&now-comboSince>300){ // letting go of a crush explodes it, harder the longer it was held
+      handBurst={x:comboLast.mx,y:comboLast.my,f:24,k:Math.min(2.2,.8+(now-comboSince)/1500)};
+      comboQuietUntil=now+400; // the opening hands must not start a stream mid-explosion
+      if(type==='stream'){ type=null; handCombo=null; }
+    }
+    if(type==='zoom'){ zoomStartD=Math.max(40,handCombo.d); zoomStartVal=q.logo?q.logoSize:q.size; }
+    if(type==='presets'&&presetsArmed){ presetsArmed=false; nextPreset(); }
+    if(handCombo){ handCombo.a.pulse=handCombo.b.pulse=1; }
+    comboType=type; comboSince=now;
+  }
+  if(comboType!=='presets') presetsArmed=true;
+}
+const handTags=[$('handTag0'),$('handTag1')];
+function updateHandTags(){
+  for(let i=0;i<handTags.length;i++){
+    const el=handTags[i], h=activeHands[i];
+    if(!h||!handTrackingEnabled||!q.handLabels){ if(!el.hidden) el.hidden=true; continue; }
+    const G=handLook(h), txt=G.icon+' '+G.name;
+    if(el.textContent!==txt){ el.textContent=txt; el.style.borderColor=`rgba(${G.col.map(v=>v*255|0)},.75)`; }
+    if(el.hidden) el.hidden=false;
+    el.style.transform=`translate(${h.x|0}px,${(h.y|0)-54}px) translate(-50%,-50%)`;
+  }
+}
+function updateHandPreview(){
+  videoElement.classList.toggle('preview',handTrackingEnabled&&!!q.handPreview);
+  videoElement.style.transform=q.handMirror===false?'none':''; // the preview follows the mirroring choice
+}
+function buildHandSegments(){ // skeleton bones and joints coloured by gesture, plus the guide of a two-hand gesture
+  let o=0;
+  for(const h of activeHands){
+    const G=handLook(h), s=h.screen, r=G.col[0], g=G.col[1], b=G.col[2];
+    for(const [a,c] of HAND_BONES){
+      segData[o]=s[a*2]; segData[o+1]=s[a*2+1]; segData[o+2]=s[c*2]; segData[o+3]=s[c*2+1];
+      segData[o+4]=r; segData[o+5]=g; segData[o+6]=b; segData[o+7]=.5; segData[o+8]=2.2; o+=SEG_STRIDE;
+    }
+    for(let k=0;k<21;k++){
+      const x=s[k*2], y=s[k*2+1], tip=k===4||k===8||k===12||k===16||k===20;
+      segData[o]=x-2; segData[o+1]=y; segData[o+2]=x+2; segData[o+3]=y;
+      segData[o+4]=r; segData[o+5]=g; segData[o+6]=b; segData[o+7]=tip?.95:.7; segData[o+8]=tip?7:5; o+=SEG_STRIDE;
+    }
+  }
+  const C=handCombo;
+  if(C){
+    const col=COMBOS[C.type].col;
+    const put=(x1,y1,x2,y2,a,w)=>{ segData[o]=x1; segData[o+1]=y1; segData[o+2]=x2; segData[o+3]=y2; segData[o+4]=col[0]; segData[o+5]=col[1]; segData[o+6]=col[2]; segData[o+7]=a; segData[o+8]=w; o+=SEG_STRIDE; };
+    if(C.type==='galaxy'||C.type==='crush'){ // dashed ring the swarm is pulled onto
+      const R=C.type==='galaxy'?Math.max(60,C.d*.5):Math.max(26,C.d*.3), n=48;
+      for(let k=0;k<n;k+=2){ const a1=k/n*6.2832, a2=(k+1)/n*6.2832; put(C.mx+Math.cos(a1)*R,C.my+Math.sin(a1)*R,C.mx+Math.cos(a2)*R,C.my+Math.sin(a2)*R,.35,1.6); }
+    } else put(C.a.x,C.a.y,C.b.x,C.b.y,C.type==='string'?.4:.22,C.type==='string'?1.8:1.4); // link between the hands
+  }
+  return o/SEG_STRIDE;
+}
+const MP_CDN='https://cdn.jsdelivr.net/npm/@mediapipe/';
+let mediaPipeLoad=null;
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.crossOrigin='anonymous'; s.onload=res; s.onerror=()=>rej(new Error('Could not load '+src)); document.head.appendChild(s); }); }
+function loadMediaPipe(){
+  if(!mediaPipeLoad) mediaPipeLoad=Promise.all([loadScript(MP_CDN+'camera_utils/camera_utils.js'),loadScript(MP_CDN+'hands/hands.js')]).catch(e=>{ mediaPipeLoad=null; throw e; });
+  return mediaPipeLoad;
+}
+function stopHandTracking(label){
+  handTrackingEnabled=false; activeHands=[]; handsById.clear(); handCombo=null; comboType=null; handBurst=null;
+  updateHandPreview(); updateHandTags();
+  if(camera){ try{ camera.stop(); }catch(_){} camera=null; }
+  if(handsSolver){ try{ handsSolver.close(); }catch(_){} handsSolver=null; }
+  handBtn.textContent=label; handBtn.style.background='';
+  const ps=$('pointerStatus'); if(ps) ps.textContent='MOUSE: READY';
+}
 if(handBtn) handBtn.onclick=async()=>{
-  if(handTrackingEnabled)return;
-  handBtn.textContent='Loading Camera...';
-  handTrackingEnabled=true;
+  if(handTrackingEnabled) return;
+  handBtn.textContent='Loading Camera...'; handTrackingEnabled=true;
   try{
-    const hands=new Hands({locateFile:(file)=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
-    hands.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:0.5,minTrackingConfidence:0.5});
+    await loadMediaPipe();
+    // Ask for the camera ourselves first: camera_utils reports a denied/missing camera with a blocking alert()
+    const probe=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480}});
+    probe.getTracks().forEach(tr=>tr.stop());
+    const hands=handsSolver=new Hands({locateFile:(file)=>`${MP_CDN}hands/${file}`});
+    applyHandOptions(); // Max Hands / Tracking Model from the Hands tab
     hands.onResults(onResults);
-    camera=new Camera(videoElement,{onFrame:async()=>{await hands.send({image:videoElement})},width:640,height:480});
-    camera.start();
-    handBtn.textContent='🤚 Hands Active';
-    handBtn.style.background='#8b5cf633';
-  }catch(e){console.error(e);handBtn.textContent='Camera Error';handTrackingEnabled=false;}
+    camera=new Camera(videoElement,{onFrame:async()=>{
+      if(!handTrackingEnabled) return;
+      try{ await hands.send({image:videoElement}); }catch(err){ console.error(err); stopHandTracking('Hand Model Error'); }
+    },width:640,height:480});
+    await camera.start(); // rejects when there is no camera or permission is denied (was not awaited, so failures still said "Hands Active")
+    handBtn.textContent='🤚 Hands Active'; handBtn.style.background='#8b5cf633';
+    updateHandPreview();
+    const ps=$('pointerStatus'); if(ps) ps.textContent='HAND: SHOW YOUR HAND';
+  }catch(e){
+    console.error(e);
+    stopHandTracking(e&&e.name==='NotAllowedError'?'Camera Blocked':/^Could not load/.test(e&&e.message)?'Load Failed':'Camera Error');
+  }
 };
 $('audioBtn').onclick=async()=>{
-  if(audioCtx)return;
+  if(audioCtx) return;
   $('audioBtn').textContent='Loading Mic...';
+  let stream=null;
   try{
-    let stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-    analyser = audioCtx.createAnalyser(); analyser.fftSize = 256;
-    audioData = new Uint8Array(analyser.frequencyBinCount);
-    let source = audioCtx.createMediaStreamSource(stream);
-    source.connect(analyser);
-    $('audioBtn').textContent='🎤 Audio Active';
-    $('audioBtn').style.background='#10b98133';
-  }catch(e){$('audioBtn').textContent='Mic Error';console.error(e)}
+    stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    if(ctx.state==='suspended') ctx.resume().catch(()=>{}); // Safari can create the context suspended
+    analyser=ctx.createAnalyser(); analyser.fftSize=256;
+    ctx.createMediaStreamSource(stream).connect(analyser);
+    audioData=new Uint8Array(analyser.frequencyBinCount); audioCtx=ctx;
+    $('audioBtn').textContent='🎤 Audio Active'; $('audioBtn').style.background='#10b98133';
+  }catch(e){
+    if(stream) stream.getTracks().forEach(tr=>tr.stop());
+    analyser=null; audioData=null; $('audioBtn').textContent='Mic Error'; console.error(e);
+  }
 };
 $('recordBtn').onclick=()=>{
-  if(mediaRecorder && mediaRecorder.state==='recording'){
-    mediaRecorder.stop();
-    $('recordBtn').textContent='🔴 Record Video';
-    $('recordBtn').style.background='';
-    return;
+  const btn=$('recordBtn');
+  if(mediaRecorder && mediaRecorder.state==='recording'){ mediaRecorder.stop(); btn.textContent='🔴 Record Video'; btn.style.background=''; return; }
+  /* Use a container the browser can actually encode: Safari records MP4, not WebM. */
+  const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(m))||'';
+  let stream=null, rec;
+  try{
+    stream=c.captureStream(30);
+    rec=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);
+  }catch(e){
+    console.error(e); if(stream) stream.getTracks().forEach(tr=>tr.stop());
+    btn.textContent='Recording Unsupported'; setTimeout(()=>btn.textContent='🔴 Record Video',2000); return;
   }
-  let stream = c.captureStream(30);
-  mediaRecorder = new MediaRecorder(stream, {mimeType: 'video/webm'});
-  recordedChunks = [];
-  mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
-  mediaRecorder.onstop = () => {
-    let blob = new Blob(recordedChunks, {type: 'video/webm'});
-    let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'swarm_recording.webm';
+  const chunks=[];
+  rec.ondataavailable=e=>{ if(e.data.size>0) chunks.push(e.data); };
+  rec.onstop=()=>{
+    stream.getTracks().forEach(tr=>tr.stop());
+    const type=rec.mimeType||mime||'video/webm', url=URL.createObjectURL(new Blob(chunks,{type}));
+    const a=document.createElement('a'); a.href=url; a.download='swarm_recording.'+(type.includes('mp4')?'mp4':'webm');
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
   };
-  mediaRecorder.start();
-  $('recordBtn').textContent='⏹ Stop Recording';
-  $('recordBtn').style.background='#ef444433';
+  mediaRecorder=rec; recordedChunks=chunks;
+  rec.start();
+  btn.textContent='⏹ Stop Recording'; btn.style.background='#ef444433';
 };
 
-sync();reset();requestAnimationFrame(loop);
+/* ================= Render ================= */
+function updateAnalyser(){ if(analyser && audioData) analyser.getByteFrequencyData(audioData); }
+
+/* Quality tiers: 0 ultra, 1 high, 2 medium, 3 low. Tiers set resolution and bloom size; ribbons and the
+   flow overlay need tier <= 2, film grain / aberration tier <= 1. Returns true when the render targets must be rebuilt. */
+let lastQualityChange=0;
+const TIER_NAMES=['ultra','high','medium','low'];
+function updateQualitySettings(){
+  let tier;
+  if(q.quality==='auto'){
+    // at most one step every 4s, otherwise it can flip-flop (a resolution change reallocates render targets)
+    if(performance.now()-lastQualityChange<4000){ $('sQuality').textContent='AUTO · '+TIER_NAMES[qTier].toUpperCase(); return false; }
+    tier=qTier;
+    if(fpsSmooth<40&&tier<3) tier++; else if(fpsSmooth>57&&tier>0) tier--;
+  } else tier=Math.max(0,TIER_NAMES.indexOf(q.quality==='performance'?'medium':q.quality)); // 'performance' = presets saved by the old build
+  const dprMax=window.devicePixelRatio||1, wantDpr=[Math.min(dprMax,3),Math.min(dprMax,2),1,1][tier], wantDiv=[2,2,4,4][tier];
+  const rebuild=Math.abs(wantDpr-dynamicDpr)>0.01||wantDiv!==bloomDiv;
+  if(rebuild||tier!==qTier) lastQualityChange=performance.now();
+  qTier=tier; dynamicDpr=wantDpr; bloomDiv=wantDiv;
+  $('sQuality').textContent=(q.quality==='auto'?'AUTO · ':'')+TIER_NAMES[tier].toUpperCase();
+  return rebuild;
+}
+
+/* ---------- Render helpers ---------- */
+function setSpriteUniforms(u,P,isGlow){
+  gl.uniform2f(u.u_resolution,W,H); gl.uniform2f(u.u_camera,P.camX,P.camY); gl.uniform2f(u.u_center,W/2,H/2);
+  gl.uniform1f(u.u_depthStrength,q.depth*40); gl.uniform1f(u.u_isGlow,isGlow); gl.uniform1f(u.u_pr,q.depth*.8);
+  gl.uniform1f(u.u_maxSpeed,q.speed*2.2); gl.uniform1f(u.u_sat,q.sat); gl.uniform1f(u.u_hue,P.hueRad);
+  gl.uniform1f(u.u_time,t); gl.uniform1f(u.u_flat,P.flat); gl.uniform1f(u.u_flap,0); gl.uniform2f(u.u_zRange,-1e6,1e6);
+}
+function drawSwarm(P,zLo,zHi){
+  gl.bindVertexArray(vaoParticles);
+  gl.enable(gl.BLEND);
+  if(q.glow>0.01){
+    gl.blendFunc(gl.ONE,gl.ONE);
+    gl.useProgram(progGlow); setSpriteUniforms(uGlow,P,1);
+    gl.uniform1f(uGlow.u_sizeMul,q.glow*q.size*0.85*0.5); gl.uniform1f(uGlow.u_alpha,q.alpha*0.65*P.glowK); gl.uniform2f(uGlow.u_zRange,zLo,zHi);
+    gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,count);
+  }
+  gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+  gl.useProgram(progBody); setSpriteUniforms(uBody,P,0);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,atlasTex); gl.uniform1i(uBody.u_atlas,0);
+  gl.uniform2f(uBody.u_atlasGrid,atlasData.cols,atlasData.rows);
+  gl.uniform1f(uBody.u_shape,SHAPE_IDX[q.shape]||0);
+  // atlas shapes are baked at s=ATLAS_S in a 128px cell, so the quad is scaled by 64/ATLAS_S to match the size slider
+  gl.uniform1f(uBody.u_sizeMul,q.size*(64/ATLAS_S)*(SHAPE_SCALE[q.shape]||1));
+  gl.uniform1f(uBody.u_whiten,q.whiten); gl.uniform1f(uBody.u_flap,q.shape==='starling'?1:0); gl.uniform2f(uBody.u_zRange,zLo,zHi);
+  gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,count);
+  gl.bindVertexArray(null);
+}
+function uploadExtra(n){ gl.bindBuffer(gl.ARRAY_BUFFER,extraBuf); gl.bufferSubData(gl.ARRAY_BUFFER,0,extraData.subarray(0,n*STRIDE)); }
+function drawExtraGlow(P,n,alpha){ // UI-coloured sprites: no grading, no parallax
+  gl.enable(gl.BLEND); gl.blendFunc(gl.ONE,gl.ONE);
+  gl.useProgram(progGlow); setSpriteUniforms(uGlow,P,1);
+  gl.uniform1f(uGlow.u_sizeMul,1); gl.uniform1f(uGlow.u_alpha,alpha); gl.uniform1f(uGlow.u_sat,1); gl.uniform1f(uGlow.u_hue,0); gl.uniform1f(uGlow.u_flat,1);
+  gl.bindVertexArray(vaoExtra); gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,n); gl.bindVertexArray(null);
+}
+const DEPTH1=1.35; // VS depth scale at z>=1: extra sprites divide their size by it
+function drawObstacles(P){
+  const n=Math.min(obstacles.length,EXTRA_CAP);
+  for(let i=0;i<n;i++){ const o=obstacles[i]; putExtra(i,o.x,o.y,0,0,0,1,o.r/DEPTH1); }
+  uploadExtra(n);
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+  gl.useProgram(progDisc); setSpriteUniforms(uDisc,P,0);
+  gl.uniform1f(uDisc.u_sizeMul,1); gl.uniform1f(uDisc.u_flat,1); gl.uniform1f(uDisc.u_pr,0);
+  gl.bindVertexArray(vaoExtra); gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,n); gl.bindVertexArray(null);
+  for(let i=0;i<n;i++){ const o=obstacles[i], a=.25+.1*Math.sin(t*2+i); putExtra(i,o.x,o.y,.43*a,.906*a,a,1,o.r*1.2/DEPTH1); }
+  uploadExtra(n); drawExtraGlow(P,n,1);
+}
+function drawLogo(P){
+  const N=28, D=logo.depth, hw=logo.dw/2, hh=logo.dh/2;
+  gl.useProgram(progLogo);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,logo.tex); gl.uniform1i(uLogo.u_logo,0);
+  gl.uniform2f(uLogo.u_resolution,W,H); gl.uniform2f(uLogo.u_center,logo.cx,logo.cy); gl.uniform2f(uLogo.u_half,hw,hh);
+  gl.uniform1f(uLogo.u_yaw,logo.yaw); gl.uniform1f(uLogo.u_pitch,logo.pitch); gl.uniform1f(uLogo.u_focal,Math.max(W,H)*.9);
+  gl.uniform2f(uLogo.u_texel,1/logo.dw,1/logo.dh); gl.uniform1f(uLogo.u_time,t);
+  gl.bindVertexArray(vaoQuad);
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+  gl.uniform1f(uLogo.u_mode,0); gl.uniform2f(uLogo.u_pad,hw*.45,hh*1.6); gl.uniform1f(uLogo.u_layerZ,D+6); // dark backing
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  gl.uniform1f(uLogo.u_mode,1); gl.uniform2f(uLogo.u_pad,0,0);
+  for(let k=N;k>=1;k--){ // extruded edge, back to front: mid steel at the face, darkening toward the back (darker than the face so the letters stay separated)
+    const s=Math.pow(k/N,.8);
+    gl.uniform3f(uLogo.u_sideCol,.42+(.09-.42)*s,.48+(.11-.48)*s,.58+(.16-.58)*s);
+    gl.uniform1f(uLogo.u_layerZ,D*k/N); gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  }
+  gl.uniform1f(uLogo.u_mode,2); gl.uniform1f(uLogo.u_layerZ,0); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); // front face
+  gl.bindVertexArray(null);
+}
+function drawPredatorsAndInteractors(P){
+  let n=0;
+  for(const pr of preds){ const pulse=1+.15*Math.sin(t*6+pr.ph); putExtra(n++,pr.x,pr.y,1,.24,.16,1,30*pulse/DEPTH1); }
+  const blobs=[]; if(pointer.active) blobs.push(pointer); for(const h of activeHands) blobs.push(h);
+  for(const pt of blobs){
+    if(pt.blast>0) pt.blast--;
+    const mode=!pt.isHand&&pt.down?'repel':pt.mode;
+    const targetSize={grab:24,vortex:80,repel:120,point:18,freeze:60}[mode]||45;
+    pt.visSize=(pt.visSize||45)+(targetSize-(pt.visSize||45))*0.15;
+    const mc=pt.isHand?handLook(pt).col:(mode==='repel'?[1,0.78,0.16]:[0.59,0.63,0.71]);
+    pt.visC=pt.visC||[0.59,0.63,0.71];
+    pt.visC[0]+=(mc[0]-pt.visC[0])*.1; pt.visC[1]+=(mc[1]-pt.visC[1])*.1; pt.visC[2]+=(mc[2]-pt.visC[2])*.1;
+    putExtra(n++,pt.x,pt.y,pt.visC[0],pt.visC[1],pt.visC[2],1,pt.visSize*.5);
+    if(pt.isHand&&pt.pulse>0){ const a=pt.pulse*.8; putExtra(n++,pt.x,pt.y,pt.visC[0]*a,pt.visC[1]*a,pt.visC[2]*a,1,pt.visSize*(1.2+(1-pt.pulse)*4)); } // flash when the gesture changes
+  }
+  if(handBurst){ const a=handBurst.f/24; putExtra(n++,handBurst.x,handBurst.y,a,a*.92,a*.85,1,120+(1-a)*280); } // shockwave flash
+  if(n){ uploadExtra(n); drawExtraGlow(P,n,.55); }
+  if(!preds.length) return;
+  preds.forEach((pr,k)=>{ const pulse=1+.15*Math.sin(t*6+pr.ph); putExtra(k,pr.x,pr.y,1,.18,.18,1,pulse); putExtraVel(k,pr.vx,pr.vy); });
+  uploadExtra(preds.length);
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+  gl.useProgram(progBody); setSpriteUniforms(uBody,P,0);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,atlasTex); gl.uniform1i(uBody.u_atlas,0);
+  gl.uniform2f(uBody.u_atlasGrid,atlasData.cols,atlasData.rows); gl.uniform1f(uBody.u_shape,SHAPE_IDX.predator);
+  gl.uniform1f(uBody.u_sizeMul,q.size*2.6*(64/ATLAS_S)/DEPTH1);
+  gl.uniform1f(uBody.u_whiten,0); gl.uniform1f(uBody.u_sat,1); gl.uniform1f(uBody.u_hue,0); gl.uniform1f(uBody.u_flat,1); gl.uniform1f(uBody.u_pr,0);
+  gl.bindVertexArray(vaoExtra); gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,preds.length); gl.bindVertexArray(null);
+}
+
+function renderFrame(clean){
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fboScene.fb);
+  gl.viewport(0,0,fboScene.w,fboScene.h);
+
+  // 1. trail fade
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+  // fade toward the backdrop; ribbon / pheromone modes clear faster because their own trails carry the motion
+  const fadeA=clean?1:q.trailMode==='fade'?Math.min(1,q.trail):.5;
+  setBackdropUniforms(fadeA);
+  drawFSQuad();
+
+  // 2. pheromone field (ACO, Physarum, Pheromone Field trail mode), coloured by the palette. Scaled by the
+  //    fade alpha so its steady-state brightness doesn't depend on the trail length.
+  if(pheromoneActive()){
+    gl.blendFunc(gl.ONE,gl.ONE);
+    gl.useProgram(progPher);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,pherTex); gl.uniform1i(uPher.u_pher,0);
+    gl.uniform3f(uPher.u_colA,colA[0],colA[1],colA[2]); gl.uniform3f(uPher.u_colC,colC[0],colC[1],colC[2]);
+    gl.uniform1f(uPher.u_intensity,0.9*fadeA);
+    drawFSQuad();
+  }
+
+  const P={camX:pointer.active?pointer.x:W/2, camY:pointer.active?pointer.y:H/2,
+    hueRad:((q.hue+t*q.cycle*60)%360)*Math.PI/180, flat:q.view==='flat'?1:0,
+    // additive glow piles up to ~1/fade over a trail; normalise to the default 0.18 so long trails don't burn out to white
+    glowK:Math.min(1.8,Math.sqrt(fadeA/.18))};
+
+  // 3. obstacles, then ribbon trails (additive)
+  if(obstacles.length) drawObstacles(P);
+  if(q.trailMode==='ribbon'&&qTier<=2){ gl.enable(gl.BLEND); gl.blendFunc(gl.ONE,gl.ONE); drawSegments(buildRibbonSegments()); }
+
+  // 4. the swarm, split around the logo's depth so near agents fly in front of it and far ones behind
+  gl.bindBuffer(gl.ARRAY_BUFFER,instBuf);
+  gl.bufferSubData(gl.ARRAY_BUFFER,0,instData.subarray(0,count*STRIDE));
+  if(logo.on){ drawSwarm(P,-1e6,LOGO_Z-.28); drawLogo(P); drawSwarm(P,LOGO_Z-.28,1e6); }
+  else drawSwarm(P,-1e6,1e6);
+
+  // 5. predators and pointer / hand blobs
+  drawPredatorsAndInteractors(P);
+
+  // 6. bloom extraction + blur
+  gl.disable(gl.BLEND);
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fboBright.fb); gl.viewport(0,0,fboBright.w,fboBright.h);
+  gl.useProgram(progBright);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,fboScene.tex); gl.uniform1i(uBright.u_src,0);
+  gl.uniform1f(uBright.u_threshold,0.35);
+  drawFSQuad();
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fboBlurA.fb); gl.viewport(0,0,fboBlurA.w,fboBlurA.h);
+  gl.useProgram(progBlur);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,fboBright.tex); gl.uniform1i(uBlur.u_src,0);
+  gl.uniform2f(uBlur.u_dir,1,0); gl.uniform2f(uBlur.u_texel,1/fboBright.w,1/fboBright.h);
+  drawFSQuad();
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fboBlurB.fb); gl.viewport(0,0,fboBlurB.w,fboBlurB.h);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,fboBlurA.tex); gl.uniform1i(uBlur.u_src,0);
+  gl.uniform2f(uBlur.u_dir,0,1); gl.uniform2f(uBlur.u_texel,1/fboBlurA.w,1/fboBlurA.h);
+  drawFSQuad();
+
+  // 6. composite to screen
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null); gl.viewport(0,0,c.width,c.height);
+  gl.useProgram(progComposite);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,fboScene.tex); gl.uniform1i(uComposite.u_scene,0);
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D,fboBlurB.tex); gl.uniform1i(uComposite.u_bloom,1);
+  gl.uniform1f(uComposite.u_bloomStrength,q.bloom); gl.uniform1f(uComposite.u_exposure,q.exposure);
+  gl.uniform1f(uComposite.u_cine,q.cine?1:0); gl.uniform1f(uComposite.u_fine,qTier<=1?1:0);
+  gl.uniform1f(uComposite.u_time,t); gl.uniform2f(uComposite.u_res,W,H);
+  drawFSQuad();
+
+  // 8. flow-field overlay, straight onto the screen (no trails, no bloom)
+  if(q.flow&&qTier<=2){ gl.enable(gl.BLEND); gl.blendFunc(gl.ONE,gl.ONE); drawSegments(buildFlowSegments()); gl.disable(gl.BLEND); }
+
+  // 9. hand skeleton overlay
+  if(q.handSkeleton&&activeHands.length){ gl.enable(gl.BLEND); gl.blendFunc(gl.ONE,gl.ONE); drawSegments(buildHandSegments()); gl.disable(gl.BLEND); }
+}
+
+/* ================= Main loop ================= */
+function loop(now){
+  if(contextLost){ requestAnimationFrame(loop); return; }
+  const dtRaw=Math.max(0,now-last); last=now; frames++; fpsAccum+=dtRaw;
+  if(fpsAccum>=500){ fps=Math.round(frames*1000/fpsAccum); fpsSmooth=fpsSmooth*0.7+fps*0.3; $('fps').textContent=fps; frames=0; fpsAccum=0;
+    if(updateQualitySettings()) resize();
+  }
+  if(!paused){
+    const dt=Math.min(dtRaw,50);
+    const simSpeed=dt/16.6667;
+    t+=.014*simSpeed;
+    if(!pointer.active){ const d=q.drift; pointer.x=W/2+Math.cos(t*.45)*(W*.32*d); pointer.y=H/2+Math.sin(t*.6)*(H*.25*d); }
+    pointer.vx*=.85; pointer.vy*=.85;
+    updateAnalyser();
+    const isFF=q.algo==='ffsync';
+    if(!isFF || q.colorMode==='fitness') evaluateFitness(simSpeed);
+    if(pheromoneActive()) stepPheromone(simSpeed);
+    rebuildGrid();
+    if(isFF) stepFireflies(Math.min(dt,50)/1000);
+    updateHands(simSpeed);
+    updateHandTags();
+    /* Slow-motion: any tracked hand held as a fist-with-pinky ("rock"), or both hands in Time Stop, slows the
+       swarm and every timed effect while the hands themselves keep tracking at full speed. */
+    const slowMo=comboType==='timestop'?.08:activeHands.some(h=>h.mode==='freeze')?.28:1;
+    const physSpeed=simSpeed*slowMo;
+    stepPredators(physSpeed);
+    updateLogo(physSpeed);
+    updatePhysics(physSpeed);
+    pushRibbonHistory();
+    renderFrame(false); needsRedraw=false;
+    if(isFF){
+      $('best').textContent=ffOrder.toFixed(3);
+      const el=$('ffOrder'); if(el) el.textContent=ffOrder.toFixed(2);
+    } else {
+      $('best').textContent=Number.isFinite(gBestFit)?gBestFit.toFixed(3):'—';
+    }
+  } else if(needsRedraw){
+    /* Paused: after a resize (which recreates the render targets, e.g. entering fullscreen) or a
+       settings change, draw one clean frame of the frozen swarm instead of leaving it black or stale. */
+    needsRedraw=false;
+    for(let i=0;i<count;i++) writeInstance(i);
+    renderFrame(true);
+  }
+  requestAnimationFrame(loop);
+}
+
+resize();
+syncUI();
+reset();
+requestAnimationFrame(loop);
 })();
 </script>
 
@@ -393,11 +2105,8 @@ sync();reset();requestAnimationFrame(loop);
   const btn=document.getElementById('fullscreenBtn');
   async function toggleFullscreen(){
     try{
-      if(!document.fullscreenElement){
-        await document.documentElement.requestFullscreen();
-      }else{
-        await document.exitFullscreen();
-      }
+      if(!document.fullscreenElement){ await document.documentElement.requestFullscreen(); }
+      else{ await document.exitFullscreen(); }
     }catch(e){ console.warn('Fullscreen unavailable:',e); }
   }
   if(btn) btn.addEventListener('click',toggleFullscreen);
