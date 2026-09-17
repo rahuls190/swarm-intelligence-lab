@@ -49,7 +49,7 @@ font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
     <div class="tab active" id="algorithm">
       <button class="btn primary" id="aquariumBtn">🐠 Digital Fish Tank</button>
       <div id="aquariumControls" hidden>
-        <div class="legend">Living aquarium · Move gently to attract. Press the water to startle the school; release to watch it regroup.</div>
+        <div class="legend">3D aquarium · Move gently to attract. Press the water to startle the school; release to watch it regroup.</div>
         <div class="row" style="margin-top:8px"><label for="fishSpecies">Fish species</label><select id="fishSpecies"><option value="neon">Neon tetra</option><option value="silver">Silver schooling fish</option><option value="gold">Golden barb</option></select></div>
         <div class="grid" style="margin-top:8px"><button class="btn" id="feedFish">Feed fish</button><button class="btn" id="calmFish">Calm the school</button></div>
         <div class="legend" id="fishStatus" aria-live="polite" style="margin-top:8px">Schooling peacefully</div>
@@ -261,6 +261,8 @@ const fishFood={x:0,y:0,life:0};
 const fishFear=new Float32Array(MAX_N),fishNextFear=new Float32Array(MAX_N);
 const fishNextX=new Float32Array(MAX_N),fishNextY=new Float32Array(MAX_N);
 const fishNextVX=new Float32Array(MAX_N),fishNextVY=new Float32Array(MAX_N);
+const fishVZ=new Float32Array(MAX_N),fishNextVZ=new Float32Array(MAX_N),fishNextZ=new Float32Array(MAX_N);
+const fishMotion=new Float32Array(MAX_N*4),fishPackedMotion=new Float32Array(MAX_N*4);
 const fishNearest=new Int32Array(7),fishDistances=new Float32Array(7);
 
 /* ================= WebGL setup ================= */
@@ -1010,12 +1012,17 @@ let fboScene=null, fboBright=null, fboBlurA=null, fboBlurB=null;
 let bloomDiv=4, dynamicDpr=1; // conservative startup for integrated GPUs
 let needsRedraw=false; // while paused: draw one frame after a resize or a settings change
 function bgClearFBO(fbo,r,g,b,a){ gl.bindFramebuffer(gl.FRAMEBUFFER,fbo.fb); gl.viewport(0,0,fbo.w,fbo.h); gl.clearColor(r,g,b,a); gl.clear(gl.COLOR_BUFFER_BIT); }
-function freeFBO(f){ if(f){ gl.deleteFramebuffer(f.fb); gl.deleteTexture(f.tex); } }
+function freeFBO(f){ if(f){ if(f.depth)gl.deleteRenderbuffer(f.depth); gl.deleteFramebuffer(f.fb); gl.deleteTexture(f.tex); } }
 function setupFBOs(){
   // release the previous targets first; every resize / quality switch used to leak all four
   freeFBO(fboScene); freeFBO(fboBright); freeFBO(fboBlurA); freeFBO(fboBlurB);
   const bw=Math.max(2,Math.floor(c.width/bloomDiv)), bh=Math.max(2,Math.floor(c.height/bloomDiv));
   fboScene=makeFBO(c.width,c.height,gl.LINEAR);
+  fboScene.depth=gl.createRenderbuffer();gl.bindRenderbuffer(gl.RENDERBUFFER,fboScene.depth);
+  gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT16,c.width,c.height);
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fboScene.fb);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,fboScene.depth);
+  gl.bindRenderbuffer(gl.RENDERBUFFER,null);gl.bindFramebuffer(gl.FRAMEBUFFER,null);
   fboBright=makeFBO(bw,bh,gl.LINEAR);
   fboBlurA=makeFBO(bw,bh,gl.LINEAR);
   fboBlurB=makeFBO(bw,bh,gl.LINEAR);
@@ -1060,7 +1067,11 @@ function initAgent(i){
   if(q.algo==='aquarium'){posX[i]=W*(.25+Math.random()*.5);posY[i]=H*(.25+Math.random()*.4);}
   const a=Math.random()*6.283, s=q.speed*(0.5+Math.random());
   velX[i]=Math.cos(a)*s; velY[i]=Math.sin(a)*s; angArr[i]=a;
-  if(q.algo==='aquarium'){const heading=(i%3)*.42-.42;velX[i]=Math.cos(heading)*s;velY[i]=Math.sin(heading)*s;}
+  if(q.algo==='aquarium'){
+    const heading=(Math.random()-.5)*.8,cruise=q.speed*(.6+Math.random()*.2);
+    velX[i]=Math.cos(heading)*cruise;velY[i]=(Math.random()-.5)*.06;fishVZ[i]=Math.sin(heading)*cruise;
+    fishMotion[i*4]=heading;fishMotion[i*4+1]=0;fishMotion[i*4+2]=Math.random()*6.283;fishMotion[i*4+3]=.06;
+  }
   bestX[i]=posX[i]; bestY[i]=posY[i]; fitA[i]=Infinity;
   zArr[i]=0.65+Math.random()*0.7; phaseArr[i]=Math.random();
   ffPhase[i]=Math.random();
@@ -1587,7 +1598,7 @@ $('logoBtn').onclick=()=>{ q.logo=!q.logo; needsRedraw=true; syncUI(); };
 $('obsBtn').onclick=()=>{ obsPlace=!obsPlace; syncUI(); };
 $('obsClear').onclick=()=>{ obstacles.length=0; obsPlace=false; needsRedraw=true; syncUI(); };
 const PRESETS={
-  aquarium:{algo:'aquarium',count:100,speed:2.2,radius:140,sep:2.8,trail:.6,explore:.28,social:1.05,conv:.48,shape:'fish',colorMode:'depth',ca:'#75bdd0',cb:'#b9d7d5',cc:'#deebe0',bg:'#082d35',whiten:0,sat:1,hue:0,cycle:0,exposure:1.05,size:1.7,glow:0,bloom:0,alpha:0,trailMode:'fade',view:'depth',depth:.45,backdrop:'aquarium',wind:.12,predators:0,stars:0,cine:false,flow:false,logo:false,mouse:.5,drift:.15,center:.4,quality:'auto',fishSpecies:'neon'},
+  aquarium:{algo:'aquarium',count:60,speed:1.3,radius:160,sep:2.1,trail:.6,explore:.28,social:1.05,conv:.48,shape:'fish',colorMode:'depth',ca:'#75bdd0',cb:'#b9d7d5',cc:'#deebe0',bg:'#082d35',whiten:0,sat:1,hue:0,cycle:0,exposure:1.0,size:1.8,glow:0,bloom:0,alpha:0,trailMode:'fade',view:'depth',depth:.45,backdrop:'aquarium',wind:.12,predators:0,stars:0,cine:false,flow:false,logo:false,mouse:.5,drift:.15,center:.4,quality:'auto',fishSpecies:'neon'},
   natural:{algo:'boids',count:600,speed:3.6,radius:75,sep:1.7,trail:.6,explore:.3,social:1,conv:.45,shape:'starling',colorMode:'depth',ca:'#26313d',cb:'#435261',cc:'#778594',bg:'#b8c9d6',whiten:0,sat:.55,hue:0,cycle:0,exposure:1,size:1.8,glow:0,bloom:0,alpha:0,trailMode:'fade',view:'depth',depth:.65,backdrop:'solid',wind:.18,predators:0,stars:0,cine:false,flow:false,logo:false,mouse:.15,drift:.2,quality:'auto'},
   murmuration:{algo:'boids',count:1300,speed:6.2,radius:85,sep:1.5,trail:.3,explore:.8,social:.95,conv:.5,shape:'starling',colorMode:'gradient',ca:'#8ecbff',cb:'#3b5bdb',cc:'#e8f4ff',size:1.5,glow:20,alpha:.5,trailMode:'ribbon',view:'depth',wind:.5,predators:1,stars:.85,cine:true,flow:false},
   slime:{algo:'physarum',count:700,speed:3.2,radius:60,sep:1,trail:.12,explore:.5,social:.4,conv:.3,shape:'circle',colorMode:'state',ca:'#37ff8b',cb:'#0aa35f',cc:'#d6ffe9',size:1,glow:12,alpha:.4,trailMode:'pheromone',view:'flat',wind:0,predators:0,stars:.25,cine:true,flow:false},
@@ -2053,6 +2064,153 @@ function updateQualitySettings(){
   return rebuild;
 }
 
+/* Fish are volumetric meshes, not rotating billboards. Shared low-poly geometry is instanced.
+   Bodies write depth first; thin translucent fins render second with depth writes disabled. */
+const VS_FISH_3D=`#version 300 es
+layout(location=0) in vec3 a_pos;
+layout(location=1) in vec3 a_normal;
+layout(location=2) in vec2 a_uv;
+layout(location=3) in float a_part;
+layout(location=4) in vec4 a_state;
+layout(location=5) in vec2 a_size;
+layout(location=6) in vec4 a_motion;
+uniform vec2 u_resolution;uniform float u_size;
+out vec2 v_uv;out vec3 v_normal;out float v_part;out float v_depth;out vec3 v_local;
+void main(){
+  vec3 p=a_pos,n=a_normal;
+  float rear=clamp((0.32-p.x)/1.35,0.0,1.0);
+  float wave=a_motion.z-p.x*3.8;
+  // Subcarangiform swimming: most flex is in the rear third, not the head.
+  float amp=a_motion.w*rear*rear;
+  p.z+=sin(wave)*amp;
+  float slope=a_motion.w*(-2.0*rear/1.35*sin(wave)-3.8*rear*rear*cos(wave));
+  n=normalize(vec3(n.x-slope*n.z,n.y,n.z));
+  if(a_part>0.5 && a_part<1.5){p.z+=sin(a_motion.z*.7+p.x*6.0)*.018*abs(p.y);}
+  float yaw=a_motion.x,pitch=a_motion.y;
+  mat3 tilt=mat3(cos(pitch),sin(pitch),0.0,-sin(pitch),cos(pitch),0.0,0.0,0.0,1.0);
+  mat3 turn=mat3(cos(yaw),0.0,sin(yaw),0.0,1.0,0.0,-sin(yaw),0.0,cos(yaw));
+  mat3 rotation=turn*tilt;
+  float scale=u_size*a_size.x*(0.75+(a_state.z-.65)*.65);
+  vec3 local=rotation*p*scale;
+  vec2 world=a_state.xy+local.xy;
+  float depth=(a_state.z-1.0)*400.0+local.z;
+  gl_Position=vec4(world/u_resolution*vec2(2.0,-2.0)+vec2(-1.0,1.0),-depth/600.0,1.0);
+  v_uv=a_uv;v_normal=rotation*n;v_part=a_part;v_depth=a_state.z;v_local=a_pos;
+}`;
+const FS_FISH_3D=`#version 300 es
+precision highp float;
+in vec2 v_uv;in vec3 v_normal;in float v_part;in float v_depth;in vec3 v_local;
+uniform sampler2D u_tex;uniform float u_species;uniform float u_ready;
+out vec4 outColor;
+void main(){
+  vec3 n=normalize(v_normal);
+  if(v_part<0.5 && n.z<0.0)discard;
+  vec3 light=normalize(vec3(-.25,-.78,.58));
+  float diffuse=max(0.0,dot(n,light));
+  float spec=pow(max(0.0,dot(reflect(-light,n),vec3(0.0,0.0,1.0))),35.0);
+  vec3 base=vec3(.29,.43,.43);float alpha=1.0;
+  if(v_part<0.5){
+    vec4 skin=texture(u_tex,vec2(v_uv.x,(v_uv.y+u_species)/3.0));
+    // The texture is photographic albedo; geometry supplies thickness and orientation.
+    if(u_ready>.5 && skin.a>.15)base=skin.rgb;
+    else{
+      base=mix(vec3(.10,.20,.22),vec3(.46,.55,.52),smoothstep(-.14,.12,v_local.y));
+      if(u_species<.5){
+        float stripe=1.0-smoothstep(.015,.042,abs(v_local.y+.015));
+        base=mix(base,vec3(.015,.35,.52),stripe);
+        if(v_local.x<.15&&v_local.y>.03)base=mix(base,vec3(.38,.045,.035),.85);
+      }
+      if(u_species>1.5)base*=vec3(1.5,1.0,.45);
+    }
+    base*=vec3(.83,.94,.94)*(.58+.44*diffuse);
+    base+=vec3(.25,.33,.32)*spec*.4;
+  }else if(v_part<1.5){
+    float ray=.5+.5*sin(v_uv.x*54.0+v_uv.y*13.0);
+    base=u_species>1.5?vec3(.44,.36,.20):vec3(.32,.43,.43);
+    base*=.75+.25*ray;alpha=.20+.16*ray;
+    base+=spec*.15;
+  }else if(v_part<2.5){
+    base=vec3(.015,.024,.028)+spec*vec3(.65,.75,.73);
+  }else{
+    base=vec3(.33,.42,.37)*(.7+.4*diffuse);
+  }
+  float haze=clamp((1.4-v_depth)*.23,0.0,.22);
+  base=mix(base,vec3(.025,.17,.19),haze);
+  outColor=vec4(base,alpha);
+}`;
+const progFish3D=program(VS_FISH_3D,FS_FISH_3D);
+const uFish3D=uniforms(progFish3D,['u_resolution','u_size','u_tex','u_species','u_ready']);
+function buildFishMesh(){
+  const body=[],fins=[];
+  const push=(dst,p,n,uv,part)=>dst.push(...p,...n,...uv,part);
+  const tri=(dst,a,b,c,part)=>{for(const v of [a,b,c])push(dst,v.p,v.n,v.uv,part);};
+  const ring=(i,j)=>{
+    const u=i/22,angle=j/14*Math.PI*2,x=-.62+u*1.45;
+    const radius=.018+.15*Math.pow(Math.sin(Math.PI*u),.72)*(1-.12*u);
+    const y=Math.cos(angle)*radius,z=Math.sin(angle)*radius*.48;
+    const normal=[0,Math.cos(angle),Math.sin(angle)/.48];
+    // Texture fish has its body axis slightly below the centre of the cell.
+    return {p:[x,y,z],n:normal,uv:[.50+x*.49,.535+y*.57]};
+  };
+  for(let i=0;i<22;i++)for(let j=0;j<14;j++){
+    const a=ring(i,j),b=ring(i+1,j),c=ring(i+1,j+1),d=ring(i,j+1);
+    tri(body,a,b,c,0);tri(body,a,c,d,0);
+  }
+  // Rounded pupil and metallic iris on both sides of the head.
+  for(const side of [-1,1])for(const [radius,z0,part] of [[.030,.045,3],[.023,.055,2]]){
+    const point=(i,j)=>{const a=i/5*Math.PI,b=j/10*Math.PI*2;
+      const n=[Math.sin(a)*Math.cos(b),Math.cos(a),Math.sin(a)*Math.sin(b)];
+      return {p:[.65+n[0]*radius,-.030+n[1]*radius,side*z0+n[2]*radius*.45],n,uv:[0,0]};};
+    for(let i=0;i<5;i++)for(let j=0;j<10;j++){
+      const a=point(i,j),b=point(i+1,j),c=point(i+1,j+1),d=point(i,j+1);tri(body,a,b,c,part);tri(body,a,c,d,part);
+    }
+  }
+  const fin=(points)=>{
+    const a=points[0];
+    for(let i=1;i<points.length-1;i++){
+      const vs=[a,points[i],points[i+1]].map(p=>({p,n:[0,0,1],uv:[p[0],p[1]]}));tri(fins,...vs,1);
+    }
+  };
+  // Forked caudal, dorsal, anal and paired pectoral fins.
+  fin([[-.60,0,0],[-1.04,-.25,0],[-.95,-.04,0],[-.85,0,0],[-.95,.04,0],[-1.04,.25,0]]);
+  fin([[-.22,-.125,0],[-.15,-.34,0],[.15,-.14,0],[.30,-.10,0]]);
+  fin([[-.36,.11,0],[-.36,.25,0],[.08,.15,0]]);
+  for(const side of [-1,1])fin([[.30,.04,side*.065],[.08,.17,side*.22],[.0,.08,side*.16]]);
+  return {data:new Float32Array([...body,...fins]),bodyCount:body.length/9,total:(body.length+fins.length)/9};
+}
+const fishMesh=buildFishMesh(),fishMeshBuf=gl.createBuffer(),fishMotionBuf=gl.createBuffer(),fishStateBuf=gl.createBuffer();
+const fishRenderState=new Float32Array(MAX_N*6);
+const vaoFish=gl.createVertexArray();gl.bindVertexArray(vaoFish);
+gl.bindBuffer(gl.ARRAY_BUFFER,fishMeshBuf);gl.bufferData(gl.ARRAY_BUFFER,fishMesh.data,gl.STATIC_DRAW);
+for(const [loc,size,offset] of [[0,3,0],[1,3,12],[2,2,24],[3,1,32]]){gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,size,gl.FLOAT,false,36,offset);}
+gl.bindBuffer(gl.ARRAY_BUFFER,fishStateBuf);gl.bufferData(gl.ARRAY_BUFFER,fishRenderState.byteLength,gl.DYNAMIC_DRAW);
+for(const [loc,size,offset] of [[4,4,0],[5,2,16]]){gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,size,gl.FLOAT,false,24,offset);gl.vertexAttribDivisor(loc,1);}
+gl.bindBuffer(gl.ARRAY_BUFFER,fishMotionBuf);gl.bufferData(gl.ARRAY_BUFFER,fishMotion.byteLength,gl.DYNAMIC_DRAW);
+gl.enableVertexAttribArray(6);gl.vertexAttribPointer(6,4,gl.FLOAT,false,16,0);gl.vertexAttribDivisor(6,1);
+gl.bindVertexArray(null);
+function drawFish3D(zLo,zHi){
+  let n=0;
+  // A separate pack avoids uploading unrelated simulation attributes and maintains stable fish identity.
+  for(let i=0;i<count;i++){
+    if(zArr[i]<zLo||zArr[i]>=zHi)continue;
+    const b=n*6;fishRenderState[b]=posX[i];fishRenderState[b+1]=posY[i];fishRenderState[b+2]=zArr[i];fishRenderState[b+3]=0;
+    fishRenderState[b+4]=.82+phaseArr[i]*.36;fishRenderState[b+5]=0;
+    fishPackedMotion.set(fishMotion.subarray(i*4,i*4+4),n*4);n++;
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER,fishStateBuf);gl.bufferSubData(gl.ARRAY_BUFFER,0,fishRenderState.subarray(0,n*6));
+  gl.bindBuffer(gl.ARRAY_BUFFER,fishMotionBuf);gl.bufferSubData(gl.ARRAY_BUFFER,0,fishPackedMotion.subarray(0,n*4));
+  gl.useProgram(progFish3D);gl.bindVertexArray(vaoFish);
+  gl.uniform2f(uFish3D.u_resolution,W,H);gl.uniform1f(uFish3D.u_size,q.size*15);
+  gl.uniform1f(uFish3D.u_species,q.fishSpecies==='gold'?2:q.fishSpecies==='silver'?1:0);
+  gl.uniform1f(uFish3D.u_ready,fishTextureReady?1:0);
+  gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,fishTex);gl.uniform1i(uFish3D.u_tex,2);
+  gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.depthMask(true);gl.disable(gl.BLEND);
+  gl.drawArraysInstanced(gl.TRIANGLES,0,fishMesh.bodyCount,n);
+  gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);
+  gl.drawArraysInstanced(gl.TRIANGLES,fishMesh.bodyCount,fishMesh.total-fishMesh.bodyCount,n);
+  gl.depthMask(true);gl.disable(gl.DEPTH_TEST);gl.bindVertexArray(null);
+}
+
 /* ---------- Render helpers ---------- */
 function setSpriteUniforms(u,P,isGlow){
   gl.uniform2f(u.u_resolution,W,H); gl.uniform2f(u.u_camera,P.camX,P.camY); gl.uniform2f(u.u_center,W/2,H/2);
@@ -2061,6 +2219,7 @@ function setSpriteUniforms(u,P,isGlow){
   gl.uniform1f(u.u_time,t); gl.uniform1f(u.u_flat,P.flat); gl.uniform1f(u.u_flap,0); gl.uniform2f(u.u_zRange,-1e6,1e6);
 }
 function drawSwarm(P,zLo,zHi){
+  if(q.algo==='aquarium'&&q.shape==='fish'){drawFish3D(zLo,zHi);return;}
   gl.bindVertexArray(vaoParticles);
   gl.enable(gl.BLEND);
   if(q.glow>0.01){
@@ -2154,6 +2313,7 @@ function renderFrame(clean){
   gl.bindFramebuffer(gl.FRAMEBUFFER,fboScene.fb);
   gl.viewport(0,0,fboScene.w,fboScene.h);
 
+  gl.depthMask(true);gl.clearDepth(1);gl.clear(gl.DEPTH_BUFFER_BIT);
   // 1. trail fade
   gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
   // fade toward the backdrop; ribbon / pheromone modes clear faster because their own trails carry the motion
@@ -2235,75 +2395,93 @@ function renderFrame(clean){
 function updateAquarium(dt){
   dt=Math.min(dt,2);const seconds=dt/60;
   fishFood.life=Math.max(0,fishFood.life-seconds);
-  if(fishFood.life>0)fishFood.y=Math.min(H*.62,fishFood.y+dt*.13);
-  let meanFear=0;
-  const R=q.radius,r2=R*R,baseSpeed=q.speed;
+  if(fishFood.life>0)fishFood.y=Math.min(H*.60,fishFood.y+dt*.09);
+  let meanFear=0;const R=q.radius,r2=R*R;
   for(let i=0;i<count;i++){
-    const x=posX[i],y=posY[i],vx=velX[i],vy=velY[i],speed=Math.hypot(vx,vy)||1;
+    const x=posX[i],y=posY[i],z=(zArr[i]-1)*400,vx=velX[i],vy=velY[i],vz=fishVZ[i];
+    const speed=Math.hypot(vx,vy,vz)||1,seed=phaseArr[i],phase=seed*6.283;
     fishDistances.fill(Infinity);fishNearest.fill(-1);
-    let sx=0,sy=0,nearFear=0,neighbors=0;
-    const separation=Math.max(16,q.sep*9*q.size),sep2=separation*separation;
+    let sx=0,sy=0,sz=0,nearFear=0,neighbors=0;
+    const separation=Math.max(18,q.sep*q.size*7),sep2=separation*separation;
     forEachNeighbor(i,j=>{
-      const dx=posX[j]-x,dy=posY[j]-y,dz=(zArr[j]-zArr[i])*100,d2=dx*dx+dy*dy+dz*dz;
+      const dx=posX[j]-x,dy=posY[j]-y,dz=(zArr[j]-zArr[i])*400,d2=dx*dx+dy*dy+dz*dz;
       if(d2>=r2||d2<.001)return;
       neighbors++;
-      if(d2<sep2){const k=(1-d2/sep2)/Math.max(d2,16);sx-=dx*k;sy-=dy*k;}
+      if(d2<sep2){const k=(1-d2/sep2)/Math.max(d2,20);sx-=dx*k;sy-=dy*k;sz-=dz*k;}
       nearFear=Math.max(nearFear,fishFear[j]*(1-Math.sqrt(d2)/R));
-      if(dx*vx+dy*vy < -0.65*Math.sqrt(d2)*speed)return;
-      if(d2>=fishDistances[6])return;
+      if(dx*vx+dy*vy+dz*vz<-.65*Math.sqrt(d2)*speed||d2>=fishDistances[6])return;
       let k=6;while(k>0&&d2<fishDistances[k-1]){fishDistances[k]=fishDistances[k-1];fishNearest[k]=fishNearest[k-1];k--;}
       fishDistances[k]=d2;fishNearest[k]=j;
     });
-    crowd[i]=neighbors;
-    let ax=0,ay=0,cx=0,cy=0,n=0;
-    for(let k=0;k<7;k++){const j=fishNearest[k];if(j<0)break;ax+=velX[j];ay+=velY[j];cx+=posX[j];cy+=posY[j];n++;}
-    let fear=Math.max(fishFear[i]*Math.exp(-seconds*1.7),nearFear*.95);
-    let fx=sx*4.5,fy=sy*4.5;
-    if(n){fx+=(ax/n-vx)*.05*q.social+(cx/n-x)*.0016*q.conv;fy+=(ay/n-vy)*.05*q.social+(cy/n-y)*.0016*q.conv;}
-    const phase=phaseArr[i]*6.283;
-    fx+=Math.cos(t*.63+phase)*.012*q.explore;fy+=Math.sin(t*.47+phase)*.016*q.explore;
-    fy+=(H*.48-y)*.00005;fx+=(W*.5-x)*.000018;
-    fx+=Math.sin(y*.005+t*.3)*q.wind*.035;
+    crowd[i]=neighbors;let ax=0,ay=0,az=0,cx=0,cy=0,cz=0,n=0;
+    for(let k=0;k<7;k++){const j=fishNearest[k];if(j<0)break;n++;ax+=velX[j];ay+=velY[j];az+=fishVZ[j];cx+=posX[j];cy+=posY[j];cz+=(zArr[j]-1)*400;}
+    let fear=Math.max(fishFear[i]*Math.exp(-seconds*1.9),nearFear*.94);
+    let fx=sx*2.2,fy=sy*1.8,fz=sz*2.2;
+    if(n){
+      fx+=(ax/n-vx)*.045*q.social+(cx/n-x)*.0007*q.conv;
+      fy+=(ay/n-vy)*.035*q.social+(cy/n-y)*.0005*q.conv;
+      fz+=(az/n-vz)*.045*q.social+(cz/n-z)*.0007*q.conv;
+    }
+    // Correlated wandering, not frame-to-frame jitter or a shared orbit target.
+    fx+=Math.sin(t*.31+phase)*.006*q.explore;
+    fz+=Math.cos(t*.27+phase*1.9)*.012*q.explore;
+    fy+=Math.sin(t*.23+phase*2.1)*.0025;
+    fy+=(H*(.42+seed*.12)-y)*.000018;
+    fx+=Math.sin(y*.003+t*.2)*q.wind*.012;
     const interact=pt=>{
-      const dx=x-pt.x,dy=y-pt.y,d=Math.hypot(dx,dy)||1,reach=Math.min(q.reach,240);
+      const dx=x-pt.x,dy=y-pt.y,d=Math.hypot(dx,dy)||1,reach=Math.min(q.reach,210);
       if(d>reach)return;
       if(pt.down||pt.mode==='repel'||pt.blast>0){
-        fear=Math.max(fear,1-d/reach);const f=(1-d/reach)*.65*q.mouse;fx+=dx/d*f;fy+=dy/d*f;
-      }else if(fishFood.life<=0){const f=(1-d/reach)*.026*q.mouse;fx-=dx/d*f;fy-=dy/d*f;}
+        fear=Math.max(fear,1-d/reach);
+        const f=(1-d/reach)*.35*q.mouse;fx+=dx/d*f;fy+=dy/d*f*.45;fz+=(seed>.5?1:-1)*f*.65;
+      }else if(fishFood.life<=0){const f=(1-d/reach)*.011*q.mouse;fx-=dx/d*f;fy-=dy/d*f*.4;}
     };
     if(pointer.active)interact(pointer);for(const h of activeHands)interact(h);
-    for(const pr of preds){interact({x:pr.x,y:pr.y,down:true});}
+    for(const pr of preds)interact({x:pr.x,y:pr.y,down:true});
     if(fishFood.life>0){
-      const dx=fishFood.x+Math.sin(phase*7)*26-x,dy=fishFood.y+Math.cos(phase*5)*20-y,d=Math.hypot(dx,dy)||1;
-      fx+=dx/d*.085;fy+=dy/d*.085;
+      const dx=fishFood.x+Math.sin(phase*7)*35-x,dy=fishFood.y+Math.cos(phase*5)*25-y,dz=Math.sin(phase)*45-z;
+      const d=Math.hypot(dx,dy,dz)||1,approach=Math.min(.055,d*.0011);
+      fx+=dx/d*approach;fy+=dy/d*approach;fz+=dz/d*approach;
     }
-    // Keep the school above the substrate and away from glass with a soft turning zone.
-    const left=W*.10,right=W*.90,top=H*.13,bottom=H*.78,margin=Math.max(35,Math.min(W,H)*.12);
-    if(x<left+margin)fx+=Math.pow(Math.max(0,(left+margin-x)/margin),2)*.18;
-    if(x>right-margin)fx-=Math.pow(Math.max(0,(x-right+margin)/margin),2)*.18;
-    if(y<top+margin)fy+=Math.pow(Math.max(0,(top+margin-y)/margin),2)*.18;
-    if(y>bottom-margin)fy-=Math.pow(Math.max(0,(y-bottom+margin)/margin),2)*.18;
-    for(const ob of obstacles){const dx=x-ob.x,dy=y-ob.y,d=Math.hypot(dx,dy)||1;if(d<ob.r+45){const f=(1-d/(ob.r+45))*.4;fx+=dx/d*f;fy+=dy/d*f;}}
-    const maxAccel=.10+fear*.22,f=Math.hypot(fx,fy);if(f>maxAccel){fx*=maxAccel/f;fy*=maxAccel/f;}
-    let nx=vx+fx*dt,ny=vy+fy*dt;
-    const desired=baseSpeed*(.68+phaseArr[i]*.25)*(1+fear*1.25);
-    let sp=Math.hypot(nx,ny)||.001;const smoothSpeed=sp+(desired-sp)*Math.min(1,.035*dt);
-    const oldAngle=Math.atan2(vy,vx),target=Math.atan2(ny,nx);
-    let turn=Math.atan2(Math.sin(target-oldAngle),Math.cos(target-oldAngle));
-    const maxTurn=(.038+fear*.055)*dt;turn=Math.max(-maxTurn,Math.min(maxTurn,turn));
-    nx=Math.cos(oldAngle+turn)*smoothSpeed;ny=Math.sin(oldAngle+turn)*smoothSpeed;
-    let px=x+nx*dt,py=y+ny*dt;
-    if(px<8){px=8;nx=Math.abs(nx);}if(px>W-8){px=W-8;nx=-Math.abs(nx);}
-    if(py<8){py=8;ny=Math.abs(ny);}if(py>H*.84){py=H*.84;ny=-Math.abs(ny);}
-    fishNextX[i]=px;fishNextY[i]=py;fishNextVX[i]=nx;fishNextVY[i]=ny;fishNextFear[i]=fear;meanFear+=fear;
+    // Look ahead before reaching the glass. Turning happens in X/Z (through depth), not somersaults.
+    const look=32,left=W*.10,right=W*.90,top=H*.15,bottom=H*.78;
+    const pxAhead=x+vx*look,pzAhead=z+vz*look;
+    const side=(seed>.5?1:-1);
+    if(pxAhead<left+55){const k=Math.max(0,(left+55-pxAhead)/100);fx+=k*.06;fz+=side*k*.025;}
+    if(pxAhead>right-55){const k=Math.max(0,(pxAhead-right+55)/100);fx-=k*.06;fz+=side*k*.025;}
+    if(pzAhead<-105)fz+=(-105-pzAhead)*.0013;
+    if(pzAhead>105)fz-=(pzAhead-105)*.0013;
+    if(y+vy*look<top+35)fy+=(top+35-y-vy*look)*.0009;
+    if(y+vy*look>bottom-35)fy-=(y+vy*look-bottom+35)*.0009;
+    for(const ob of obstacles){const dx=x-ob.x,dy=y-ob.y,d=Math.hypot(dx,dy)||1;if(d<ob.r+45){const f=(1-d/(ob.r+45))*.2;fx+=dx/d*f;fy+=dy/d*f;}}
+    const maxForce=.045+fear*.16,force=Math.hypot(fx,fy,fz);
+    if(force>maxForce){fx*=maxForce/force;fy*=maxForce/force;fz*=maxForce/force;}
+    let tx=vx+fx*dt,ty=vy+fy*dt,tz=vz+fz*dt;
+    const oldYaw=fishMotion[i*4],oldPitch=fishMotion[i*4+1];
+    const desiredYaw=Math.atan2(tz,tx);
+    const delta=Math.atan2(Math.sin(desiredYaw-oldYaw),Math.cos(desiredYaw-oldYaw));
+    const limit=(.019+fear*.045)*dt,yaw=oldYaw+Math.max(-limit,Math.min(limit,delta));
+    const desiredPitch=Math.max(-.30-fear*.15,Math.min(.30+fear*.15,Math.atan2(ty,Math.hypot(tx,tz))));
+    const pitch=oldPitch+(desiredPitch-oldPitch)*Math.min(1,.065*dt);
+    // Each fish has its own short propulsion burst followed by a longer glide.
+    const cycle=.5+.5*Math.sin(t*(1.7+seed*.5)+phase*3);
+    const stroke=cycle>.58?Math.pow((cycle-.58)/.42,.7):0;
+    const desiredSpeed=q.speed*(.60+seed*.18)*(0.74+stroke*.40)*(1+fear*1.35);
+    const sp=speed+(desiredSpeed-speed)*Math.min(1,(stroke>.1?.045:.015)*dt);
+    const nx=Math.cos(yaw)*Math.cos(pitch)*sp,ny=Math.sin(pitch)*sp,nz=Math.sin(yaw)*Math.cos(pitch)*sp;
+    fishNextX[i]=Math.max(8,Math.min(W-8,x+nx*dt));
+    fishNextY[i]=Math.max(H*.10,Math.min(H*.82,y+ny*dt));
+    fishNextZ[i]=Math.max(.64,Math.min(1.36,1+(z+nz*dt)/400));
+    fishNextVX[i]=nx;fishNextVY[i]=ny;fishNextVZ[i]=nz;fishNextFear[i]=fear;meanFear+=fear;
+    fishMotion[i*4]=yaw;fishMotion[i*4+1]=pitch;
+    fishMotion[i*4+2]+=(5.0+sp*5.0)*(0.6+stroke*.4+fear*.35)*seconds;
+    const amplitude=.025+stroke*.12+fear*.10;
+    fishMotion[i*4+3]+=(amplitude-fishMotion[i*4+3])*Math.min(1,.13*dt);
   }
-  posX.set(fishNextX.subarray(0,count));posY.set(fishNextY.subarray(0,count));
-  velX.set(fishNextVX.subarray(0,count));velY.set(fishNextVY.subarray(0,count));fishFear.set(fishNextFear.subarray(0,count));
-  for(let i=0;i<count;i++){
-    zArr[i]=Math.max(.65,Math.min(1.35,zArr[i]+Math.sin(t*.32+phaseArr[i]*10)*.00045*dt));
-    ptrDist[i]=Math.hypot(posX[i]-pointer.x,posY[i]-pointer.y);writeInstance(i);
-  }
-  const status=fishFood.life>0?'Feeding · food slowly sinks':meanFear/count>.1?'Startled · regrouping':'Schooling peacefully';
+  posX.set(fishNextX.subarray(0,count));posY.set(fishNextY.subarray(0,count));zArr.set(fishNextZ.subarray(0,count));
+  velX.set(fishNextVX.subarray(0,count));velY.set(fishNextVY.subarray(0,count));fishVZ.set(fishNextVZ.subarray(0,count));fishFear.set(fishNextFear.subarray(0,count));
+  for(let i=0;i<count;i++){ptrDist[i]=Math.hypot(posX[i]-pointer.x,posY[i]-pointer.y);writeInstance(i);}
+  const status=fishFood.life>0?'Feeding · food slowly sinks':meanFear/count>.08?'Startled · regrouping':'Schooling peacefully';
   if($('fishStatus').textContent!==status)$('fishStatus').textContent=status;
 }
 
@@ -2359,7 +2537,7 @@ function loop(now){
   requestAnimationFrame(loop);
 }
 
-if(location.hash==='#aquarium'||location.pathname.endsWith('/digital-fish-tank.html')){q={...q,...PRESETS.aquarium,preset:'aquarium'};refreshColors();}
+if(location.hash==='#aquarium'||/digital-fish-tank(?:-v2)?\.html$/.test(location.pathname)){q={...q,...PRESETS.aquarium,preset:'aquarium'};refreshColors();}
 resize();
 syncUI();
 reset();
