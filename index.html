@@ -181,6 +181,7 @@ font-size:20px;cursor:pointer;backdrop-filter:blur(10px)">⛶</button>
       <div class="row"><div class="label"><span>Presets</span></div>
         <select id="preset">
           <option value="custom">— Custom —</option>
+          <option value="natural">Natural Flock · Lightweight</option>
           <option value="murmuration">🐦 Starling Murmuration</option>
           <option value="slime">🧫 Slime Mold Network</option>
           <option value="firefly">✨ Firefly Night</option>
@@ -338,7 +339,13 @@ void main(){
     float stretch=1.0+clamp(speed/max(u_maxSpeed,0.001),0.0,1.0)*0.55;
     scale.x*=stretch;
     scale.y*=(1.0-u_pr*0.45);
-    if(u_flap>0.5) scale.y*=0.7+0.3*sin(u_time*10.0+(pos.x+pos.y)*0.05); // neighbours flap in travelling waves
+    if(u_flap>0.5){
+      // Stable per-bird rhythm: movement through the scene never changes wing phase.
+      float seed=fract(sin(float(gl_InstanceID)*127.1)*43758.5453);
+      float beat=u_time*(24.0+seed*8.0)+seed*6.28318;
+      float glide=smoothstep(0.55,0.85,sin(u_time*1.8+seed*19.0));
+      scale.y*=mix(0.65+0.35*sin(beat),0.92,glide);
+    }
   }
   vec2 local=a_corner*scale;
   local=rot*local;
@@ -814,7 +821,7 @@ const nebTex=gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D,nebTex);
 gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
 gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-let nebulaDirty=true, nebulaBuiltAt=0, qTier=1;
+let nebulaDirty=true, nebulaBuiltAt=0, qTier=2;
 function buildNebula(){
   const w=Math.max(2,Math.round(W*.5)), h=Math.max(2,Math.round(H*.5)); // soft blobs: half resolution is plenty
   nebCv.width=w; nebCv.height=h;
@@ -855,7 +862,7 @@ function paintBackdrop(){
 
 /* ---------- Framebuffers (recreated on resize / quality change) ---------- */
 let fboScene=null, fboBright=null, fboBlurA=null, fboBlurB=null;
-let bloomDiv=2, dynamicDpr=Math.min(window.devicePixelRatio||1,2); // starts at the High tier
+let bloomDiv=4, dynamicDpr=1; // conservative startup for integrated GPUs
 let needsRedraw=false; // while paused: draw one frame after a resize or a settings change
 function bgClearFBO(fbo,r,g,b,a){ gl.bindFramebuffer(gl.FRAMEBUFFER,fbo.fb); gl.viewport(0,0,fbo.w,fbo.h); gl.clearColor(r,g,b,a); gl.clear(gl.COLOR_BUFFER_BIT); }
 function freeFBO(f){ if(f){ gl.deleteFramebuffer(f.fb); gl.deleteTexture(f.tex); } }
@@ -1252,7 +1259,7 @@ function updatePhysics(simSpeed){
       if(d2>rNb2||d2===0) return;
       nAll++;
       if(d2<rSep2){ sx-=dx/d2; sy-=dy/d2; nSep++; }
-      else if(nAli<9){ ax+=velX[j]; ay+=velY[j]; nAli++; cx+=posX[j]; cy+=posY[j]; nCoh++; }
+      else if(nAli<9 && (A!=='boids'||q.shape!=='starling'||dx*vx+dy*vy>-0.5*Math.sqrt(d2*(vx*vx+vy*vy)))){ ax+=velX[j]; ay+=velY[j]; nAli++; cx+=posX[j]; cy+=posY[j]; nCoh++; }
     });
     crowd[i]+=(nAll-crowd[i])*.12;
     /* Every optimization algorithm below pulls toward a single best-found point with no distance cap, while
@@ -1432,6 +1439,7 @@ $('logoBtn').onclick=()=>{ q.logo=!q.logo; needsRedraw=true; syncUI(); };
 $('obsBtn').onclick=()=>{ obsPlace=!obsPlace; syncUI(); };
 $('obsClear').onclick=()=>{ obstacles.length=0; obsPlace=false; needsRedraw=true; syncUI(); };
 const PRESETS={
+  natural:{algo:'boids',count:600,speed:3.6,radius:75,sep:1.7,trail:.6,explore:.3,social:1,conv:.45,shape:'starling',colorMode:'depth',ca:'#26313d',cb:'#435261',cc:'#778594',bg:'#b8c9d6',whiten:0,sat:.55,hue:0,cycle:0,exposure:1,size:1.8,glow:0,bloom:0,alpha:0,trailMode:'fade',view:'depth',depth:.65,backdrop:'solid',wind:.18,predators:0,stars:0,cine:false,flow:false,logo:false,mouse:.15,drift:.2,quality:'auto'},
   murmuration:{algo:'boids',count:1300,speed:6.2,radius:85,sep:1.5,trail:.3,explore:.8,social:.95,conv:.5,shape:'starling',colorMode:'gradient',ca:'#8ecbff',cb:'#3b5bdb',cc:'#e8f4ff',size:1.5,glow:20,alpha:.5,trailMode:'ribbon',view:'depth',wind:.5,predators:1,stars:.85,cine:true,flow:false},
   slime:{algo:'physarum',count:700,speed:3.2,radius:60,sep:1,trail:.12,explore:.5,social:.4,conv:.3,shape:'circle',colorMode:'state',ca:'#37ff8b',cb:'#0aa35f',cc:'#d6ffe9',size:1,glow:12,alpha:.4,trailMode:'pheromone',view:'flat',wind:0,predators:0,stars:.25,cine:true,flow:false},
   firefly:{algo:'fa',count:520,speed:2.2,radius:95,sep:2.2,trail:.05,explore:.9,social:.35,conv:.1,obj:.2,shape:'circle',colorMode:'mono',ca:'#ffd54a',cb:'#7c3aed',cc:'#ff9d00',size:1.5,glow:40,alpha:.6,trailMode:'fade',view:'depth',wind:.15,predators:0,stars:.95,cine:true,flow:false},
@@ -1450,7 +1458,7 @@ $('palette').onchange=e=>{ q.palette=e.target.value; const p=PALETTES[q.palette]
 /* Bests scored on the previous landscape are meaningless on the new one (negative Wave Field scores
    could never be beaten on Rastrigin), so scoring starts from scratch. */
 $('landscape').onchange=e=>{ q.landscape=e.target.value; for(let i=0;i<MAX_N;i++){ fitA[i]=Infinity; bestX[i]=posX[i]; bestY[i]=posY[i]; } gBestFit=Infinity; pher.fill(0); };
-$('quality').onchange=e=>{ q.quality=e.target.value; syncUI(); };
+$('quality').onchange=e=>{ q.quality=e.target.value; syncUI(); if(updateQualitySettings()) resize(); needsRedraw=true; };
 const ranges=['count','speed','radius','sep','trail','explore','social','conv','size','glow','alpha','obj','mouse','reach','depth','bloom','drift','center','coupling','interval','jitter','whiten','sat','hue','cycle','exposure','stars','wind','predators','logoSize','handStrength','handTravel','handSmooth','handHold','handOpacity'];
 ranges.forEach(k=>$(k).oninput=e=>{ q[k]=+e.target.value; if(k==='count') syncCount(); if(k==='interval'||k==='jitter') reseedIntervals(); syncUI(); });
 $('ffMode').onchange=e=>q.ffMode=e.target.value;
@@ -1806,8 +1814,11 @@ if(handBtn) handBtn.onclick=async()=>{
     const hands=handsSolver=new Hands({locateFile:(file)=>`${MP_CDN}hands/${file}`});
     applyHandOptions(); // Max Hands / Tracking Model from the Hands tab
     hands.onResults(onResults);
+    let lastHandFrame=0;
     camera=new Camera(videoElement,{onFrame:async()=>{
-      if(!handTrackingEnabled) return;
+      const now=performance.now();
+      if(!handTrackingEnabled||document.hidden||now-lastHandFrame<1000/(qTier>=2?20:30)) return;
+      lastHandFrame=now;
       try{ await hands.send({image:videoElement}); }catch(err){ console.error(err); stopHandTracking('Hand Model Error'); }
     },width:640,height:480});
     await camera.start(); // rejects when there is no camera or permission is denied (was not awaited, so failures still said "Hands Active")
@@ -1876,9 +1887,9 @@ function updateQualitySettings(){
     // at most one step every 4s, otherwise it can flip-flop (a resolution change reallocates render targets)
     if(performance.now()-lastQualityChange<4000){ $('sQuality').textContent='AUTO · '+TIER_NAMES[qTier].toUpperCase(); return false; }
     tier=qTier;
-    if(fpsSmooth<40&&tier<3) tier++; else if(fpsSmooth>57&&tier>0) tier--;
+    if(fpsSmooth<40&&tier<3) tier++; else if(fpsSmooth>57&&tier>1) tier--; // Ultra remains an explicit choice
   } else tier=Math.max(0,TIER_NAMES.indexOf(q.quality==='performance'?'medium':q.quality)); // 'performance' = presets saved by the old build
-  const dprMax=window.devicePixelRatio||1, wantDpr=[Math.min(dprMax,3),Math.min(dprMax,2),1,1][tier], wantDiv=[2,2,4,4][tier];
+  const dprMax=window.devicePixelRatio||1, wantDpr=[Math.min(dprMax,2),Math.min(dprMax,1.5),Math.min(dprMax,1),Math.min(dprMax,.75)][tier], wantDiv=[2,2,4,4][tier];
   const rebuild=Math.abs(wantDpr-dynamicDpr)>0.01||wantDiv!==bloomDiv;
   if(rebuild||tier!==qTier) lastQualityChange=performance.now();
   qTier=tier; dynamicDpr=wantDpr; bloomDiv=wantDiv;
@@ -1933,7 +1944,7 @@ function drawObstacles(P){
   uploadExtra(n); drawExtraGlow(P,n,1);
 }
 function drawLogo(P){
-  const N=28, D=logo.depth, hw=logo.dw/2, hh=logo.dh/2;
+  const N=[28,18,10,6][qTier], D=logo.depth, hw=logo.dw/2, hh=logo.dh/2;
   gl.useProgram(progLogo);
   gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,logo.tex); gl.uniform1i(uLogo.u_logo,0);
   gl.uniform2f(uLogo.u_resolution,W,H); gl.uniform2f(uLogo.u_center,logo.cx,logo.cy); gl.uniform2f(uLogo.u_half,hw,hh);
@@ -2021,8 +2032,10 @@ function renderFrame(clean){
   // 5. predators and pointer / hand blobs
   drawPredatorsAndInteractors(P);
 
-  // 6. bloom extraction + blur
+  // Skip all three post-processing passes when bloom is disabled or in Low quality.
+  const bloomActive=q.bloom>0.001&&qTier<3;
   gl.disable(gl.BLEND);
+  if(bloomActive){
   gl.bindFramebuffer(gl.FRAMEBUFFER,fboBright.fb); gl.viewport(0,0,fboBright.w,fboBright.h);
   gl.useProgram(progBright);
   gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,fboScene.tex); gl.uniform1i(uBright.u_src,0);
@@ -2040,12 +2053,13 @@ function renderFrame(clean){
   gl.uniform2f(uBlur.u_dir,0,1); gl.uniform2f(uBlur.u_texel,1/fboBlurA.w,1/fboBlurA.h);
   drawFSQuad();
 
+  }
   // 6. composite to screen
   gl.bindFramebuffer(gl.FRAMEBUFFER,null); gl.viewport(0,0,c.width,c.height);
   gl.useProgram(progComposite);
   gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,fboScene.tex); gl.uniform1i(uComposite.u_scene,0);
   gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D,fboBlurB.tex); gl.uniform1i(uComposite.u_bloom,1);
-  gl.uniform1f(uComposite.u_bloomStrength,q.bloom); gl.uniform1f(uComposite.u_exposure,q.exposure);
+  gl.uniform1f(uComposite.u_bloomStrength,bloomActive?q.bloom:0); gl.uniform1f(uComposite.u_exposure,q.exposure);
   gl.uniform1f(uComposite.u_cine,q.cine?1:0); gl.uniform1f(uComposite.u_fine,qTier<=1?1:0);
   gl.uniform1f(uComposite.u_time,t); gl.uniform2f(uComposite.u_res,W,H);
   drawFSQuad();
@@ -2058,7 +2072,13 @@ function renderFrame(clean){
 }
 
 /* ================= Main loop ================= */
+let lastPresented=0;
 function loop(now){
+  if(document.hidden){ last=now; lastPresented=0; frames=0; fpsAccum=0; requestAnimationFrame(loop); return; }
+  // Avoid running simulation and post-processing at 120/144/240 Hz on gaming monitors.
+  const elapsed=now-lastPresented, frameInterval=1000/60;
+  if(elapsed<frameInterval-.5){ requestAnimationFrame(loop); return; }
+  lastPresented=now-(elapsed%frameInterval);
   if(contextLost){ requestAnimationFrame(loop); return; }
   const dtRaw=Math.max(0,now-last); last=now; frames++; fpsAccum+=dtRaw;
   if(fpsAccum>=500){ fps=Math.round(frames*1000/fpsAccum); fpsSmooth=fpsSmooth*0.7+fps*0.3; $('fps').textContent=fps; frames=0; fpsAccum=0;
